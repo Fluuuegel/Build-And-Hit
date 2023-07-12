@@ -1,6 +1,10 @@
 **/.DS_Store
 
+**/.vs
+
 **/.vscode
+
+.vsconfig
 
 **/Logs
 
@@ -16,6 +20,6 @@
 
 **/Assembly-CSharp.csproj
 
-**/BuildAndHit.sln
+*.sln
 
 **/obj
