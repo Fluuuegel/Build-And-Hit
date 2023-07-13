@@ -16,7 +16,7 @@ public class Player1Select : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Debug.Log("Player1Select");
     }
 
     // Update is called once per frame

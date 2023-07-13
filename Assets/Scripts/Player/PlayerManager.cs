@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerManager
 {
-    public GameObject mPlayerPrefab = new GameObject();
+    public GameObject mPlayerPrefab;
 
     public Vector2 mPlayerInitPos = new Vector2(-2.5f, 10f);
     

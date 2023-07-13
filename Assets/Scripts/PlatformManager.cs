@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlatformManager 
 {
-    public GameObject mPlatformPrefab = new GameObject();
+    public GameObject mPlatformPrefab;
 
     private List<GameObject> mPlatforms = new List<GameObject>();
 
