@@ -5,14 +5,14 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager sTheGlobalBehavior = null;
-    private CubeManager mCubeManager = null;
+    private BlockManager mBlockManager = null;
     private PlatformManager mPlatformManager = null;
     private PlayerManager mPlayerManager = null;
     void Start()
     {
 
         GameManager.sTheGlobalBehavior = this;
-        mCubeManager = new CubeManager();
+        mBlockManager = new BlockManager();
         mPlatformManager = new PlatformManager();
         mPlayerManager = new PlayerManager();
     }
