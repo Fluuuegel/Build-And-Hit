@@ -70,7 +70,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void ServiceBuildState() {
         isBuild = true;
-        transform.position = mPlayerInitPos;
+        //transform.position = mPlayerInitPos;
 
         isLocked = true;
         mPlayerState = PlayerState.eIdle;
