@@ -2,24 +2,114 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBehaviour : SingletonMonobehaviour<PlayerBehaviour>
+public class PlayerBehaviour : MonoBehaviour
 {
-    public GameObject mPlayerPrefab = new GameObject();
+    private enum BlockColor {
+        eRed,
+        eGreen,
+        eBlue
+    };
 
+    private enum PlayerState {
+        eIdle,
+        eBuild,
+        eHit
+    };
+
+    private BlockColor mBlockColor = BlockColor.eRed;
+    private PlayerState mPlayerState = PlayerState.eIdle;
     public Vector2 mPlayerInitPos = new Vector2(-2.5f, 10f);
+    public bool isLocked = true;
 
-    public PlayerBehaviour() {
-        mPlayerPrefab = Resources.Load<GameObject>("Prefabs/Player");
+    private bool isBuild = true;
+    // private BlockManager mBlockManager = null;
+    private int mHitNum = 0;
+
+    void Start() {
+    }
+
+    public void Lock() {
+        this.isLocked = true;
+    }
+
+    public void unLock() {
+        this.isLocked = false;
     }
     
-    void Start() {
-        mPlayerPrefab = Resources.Load<GameObject>("Prefabs/Player");
-        GameObject p = GameObject.Instantiate(mPlayerPrefab) as GameObject;
-        p.transform.position = mPlayerInitPos;
+    private void UpdateFSM()
+    {
+        switch (mPlayerState)
+        {
+            case PlayerState.eIdle:
+                ServiceIdleState();
+                break;
+            case PlayerState.eBuild:
+                ServiceBuildState();
+                break;
+            case PlayerState.eHit:
+                ServiceHitState();
+                break;
+        }
     }
 
+    private void ServiceIdleState() {
+        if(!isLocked) {
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                mPlayerState = PlayerState.eBuild;
+                Debug.Log("Build");
+                return ;
+            } 
+            if (Input.GetKeyDown(KeyCode.H)) {
+                mPlayerState = PlayerState.eHit;
+                Debug.Log("Hit");
+                return ;
+            }
+        }
+    }
+
+    public void ServiceBuildState() {
+        isBuild = true;
+        transform.position = mPlayerInitPos;
+
+        isLocked = true;
+        mPlayerState = PlayerState.eIdle;
+    }
+
+    public void ServiceHitState() {
+        isBuild = false;
+
+        if (Input.GetKeyDown(KeyCode.Q)) {
+            mHitNum = 1;
+            isLocked = true;
+
+            Debug.Log("Hit 1");
+
+            mPlayerState = PlayerState.eIdle;
+        }
+        if(Input.GetKeyDown(KeyCode.W)) {
+            mHitNum = 2;
+            isLocked = true;
+
+            Debug.Log("Hit 2");
+
+            mPlayerState = PlayerState.eIdle;
+        }
+        if(Input.GetKeyDown(KeyCode.E)) {
+            mHitNum = 3;
+            isLocked = true;
+
+            Debug.Log("Hit 3");
+
+            mPlayerState = PlayerState.eIdle;
+        }
+
+        // Get the position
+
+    }
     void Update()
     {
-        
+        UpdateFSM();
     }
+
 }
