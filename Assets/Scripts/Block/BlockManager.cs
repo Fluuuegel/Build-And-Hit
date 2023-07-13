@@ -13,13 +13,14 @@ public class BlockManager
     private Vector2 mPlayerInitPos;
     private Vector2 mBlockInitPos;
     private float mLastTimeBuild = 0f;
+    private int mCurLayerCount = 1;
+    private bool mCanBuild = true;
     public void SetInitPos(Vector2 pos) {
         mPlayerInitPos = pos;
         mBlockInitPos = pos;
         mBlockInitPos.y = 20f;
     }
-    private int mCurLayerCount = 0;
-    private bool mCanBuild = true;
+    
     public BlockManager() {
         InitializeBlocks();
     }
@@ -34,7 +35,7 @@ public class BlockManager
             GameObject p = GameObject.Instantiate(mBlockPrefabs[randomInt]) as GameObject;
             p.transform.position = new Vector3(mPlayerInitPos.x, mPlayerInitPos.y + 0.5f * i, 0f);
             SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
-            spriteRenderer.sortingOrder = i;
+            spriteRenderer.sortingOrder = mCurLayerCount;
             mBlocks.Add(p);
             //fixme: set p's manager
             BlockBehaviour script = p.GetComponent<BlockBehaviour>();
@@ -86,7 +87,7 @@ public class BlockManager
         mCurLayerCount--;
         for(int i = index; i < mBlocks.Count; i++) {
             SpriteRenderer spriteRenderer = mBlocks[i].GetComponent<SpriteRenderer>();
-            spriteRenderer.sortingOrder = i;
+            spriteRenderer.sortingOrder = i + 1;
         }
         return 1;
     }
