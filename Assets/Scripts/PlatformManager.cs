@@ -9,9 +9,19 @@ public class PlatformManager
     private List<GameObject> mPlatforms = new List<GameObject>();
 
     private Vector3 mPlayerInitPos = new Vector3(-2.5f, -1.2f, 0f);
-
+    public void setPlayerInitPos(Vector3 pos) {
+        mPlayerInitPos = pos;
+    }
+    public void setPlayerInitPos(int x, int y, int z) {
+        mPlayerInitPos = new Vector3(x, y, z);
+    }
     private Vector3 mEnemyInitPos = new Vector3(2.5f, 1.0f, 0f);
-
+    public void setEnemyInitPos(Vector3 pos) {
+        mEnemyInitPos = pos;
+    }
+    public void setEnemyInitPos(int x, int y, int z) {
+        mEnemyInitPos = new Vector3(x, y, z);
+    }
     public void InitializePlatform() {
         mPlatformPrefab = Resources.Load<GameObject>("Prefabs/PlatformSmall");
         GameObject p1 = GameObject.Instantiate(mPlatformPrefab) as GameObject;

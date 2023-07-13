@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4139368251612663950}
   - component: {fileID: 7798945672223739583}
   - component: {fileID: 1863307321390128375}
+  - component: {fileID: 712364445850906887}
   m_Layer: 0
   m_Name: BlueCube
   m_TagString: Untagged
@@ -133,3 +134,15 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.1040854, y: 0.5491328}
   m_EdgeRadius: 0
+--- !u!114 &712364445850906887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7441866820227326556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2db37b601d158439ba5f4f956d5c67ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
