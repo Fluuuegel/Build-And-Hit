@@ -39,7 +39,7 @@ namespace Block.Block_test
             }
             if (Input.GetKeyDown(KeyCode.D))
             {
-                mTestEnemy.DestroyOneBlock();
+                mTestEnemy.DestroyOneBlock(1);
             }
         }
     }

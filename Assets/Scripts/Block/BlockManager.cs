@@ -10,6 +10,11 @@ public class BlockManager
     private static GameObject[] mBlockPrefabs = new GameObject[3];
     private List<GameObject> mBlocks = new List<GameObject>();
 
+    public GameObject GetBlockAt(int index)
+    {
+        return mBlocks[index];
+    }
+    
     private Vector2 mPlayerInitPos;
     private Vector2 mBlockInitPos;
     private float mLastTimeBuild = 0f;
@@ -39,7 +44,8 @@ public class BlockManager
             mBlocks.Add(p);
             //fixme: set p's manager
             BlockBehaviour script = p.GetComponent<BlockBehaviour>();
-            script.setBlockManager(this);
+            script.SetBlockManager(this);
+            SetBlockColor(randomInt, script);
             mCurLayerCount++;
         }
     }
@@ -52,10 +58,12 @@ public class BlockManager
             return -1;
         }
         GameObject p;
+        
         if (color == -1)
         {
             int randonInt = Random.Range(0, 3);
             p = GameObject.Instantiate(mBlockPrefabs[randonInt]) as GameObject;
+            color = randonInt;
         }
         else
         {
@@ -67,14 +75,15 @@ public class BlockManager
         mBlocks.Add(p);
         mCurLayerCount++;
         BlockBehaviour script = p.GetComponent<BlockBehaviour>();
-        script.setBlockManager(this);
+        script.SetBlockManager(this);
+        SetBlockColor(color, script);
         mLastTimeBuild = Time.time;
         return 1;
     }
 
     public int DestroyOneBlock(int index = 0)
     {
-        if (mBlocks.Count == 0)
+        if (mBlocks.Count == 0 || index >= mBlocks.Count)
         {
             return -1;
         }
@@ -85,9 +94,11 @@ public class BlockManager
         //delete the instance
         BlockScript.SelfDestroy();
         mCurLayerCount--;
-        for(int i = index; i < mBlocks.Count; i++) {
+        for(int i = 0; i < mBlocks.Count; i++) {
             SpriteRenderer spriteRenderer = mBlocks[i].GetComponent<SpriteRenderer>();
             spriteRenderer.sortingOrder = i + 1;
+            BlockScript = mBlocks[i].GetComponent<BlockBehaviour>();
+            BlockScript.SetBlockIndex(i);
         }
         return 1;
     }
@@ -108,4 +119,23 @@ public class BlockManager
         }
     }
 
+    private void SetBlockColor(int color, BlockBehaviour blockBehaviour)
+    {
+        if (color == 0)
+        {
+            blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.red);
+        }
+        else if(color == 1)
+        {
+            blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.green);
+        }
+        else if(color == 2)
+        {
+            blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.blue);
+        }
+        else
+        {
+            Debug.Log("SetBlockColor: color error!!!");
+        }
+    } 
 }
