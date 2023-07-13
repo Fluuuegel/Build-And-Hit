@@ -8,13 +8,15 @@ public class GameManager : MonoBehaviour
     private BlockManager mBlockManager = null;
     private PlatformManager mPlatformManager = null;
     private PlayerManager mPlayerManager = null;
+    private TurnManager mTurnManager = null;
     void Start()
     {
 
         GameManager.sTheGlobalBehavior = this;
+        mPlayerManager = gameObject.AddComponent<PlayerManager>();
         mBlockManager = new BlockManager();
         mPlatformManager = new PlatformManager();
-        mPlayerManager = new PlayerManager();
+        mTurnManager = gameObject.AddComponent<TurnManager>();
     }
 
     // Update is called once per frame
