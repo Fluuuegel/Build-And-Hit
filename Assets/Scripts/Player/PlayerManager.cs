@@ -18,22 +18,11 @@ public class PlayerManager : MonoBehaviour
         mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/{Player1Select.player1Select}");
         mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/{Player2Select.player2Select}");
         GameObject p1, p2;
-        if(isPlayer1) {
-            p1 = GameObject.Instantiate(mPlayerPrefab[0]) as GameObject;
-            p1.name = "Player1";
-        }
-        else { 
-            p1 = GameObject.Instantiate(mPlayerPrefab[1]) as GameObject;
-            p1.name = "Player1";
-        }
-        if(isPlayer2) {
-            p2 = GameObject.Instantiate(mPlayerPrefab[0]) as GameObject;
-            p2.name = "Player2";
-        }
-        else {
-            p2 = GameObject.Instantiate(mPlayerPrefab[1]) as GameObject;
-            p2.name = "Player2";
-        }
+        p1 = GameObject.Instantiate(mPlayerPrefab[0]) as GameObject;
+        p1.name = "Player1";
+        p2 = GameObject.Instantiate(mPlayerPrefab[1]) as GameObject;
+        p2.name = "Player2";
+
         p1.transform.position = mPlayer1InitPos;
         p2.transform.position = mPlayer2InitPos;
     }

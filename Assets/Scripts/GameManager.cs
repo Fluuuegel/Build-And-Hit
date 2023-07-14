@@ -9,7 +9,6 @@ public class GameManager : MonoBehaviour
     private PlatformManager mPlatformManager = null;
     private PlayerManager mPlayerManager = null;
     private TurnManager mTurnManager = null;
-    private UIManager mUIManager = null;
     void Start()
     {
 
@@ -17,7 +16,6 @@ public class GameManager : MonoBehaviour
         mPlayerManager = gameObject.AddComponent<PlayerManager>();
         mBlockManager = new BlockManager();
         mPlatformManager = new PlatformManager();
-        mUIManager = gameObject.AddComponent<UIManager>();
         mTurnManager = gameObject.AddComponent<TurnManager>();
         
     }
