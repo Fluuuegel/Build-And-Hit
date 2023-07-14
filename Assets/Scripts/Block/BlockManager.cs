@@ -138,4 +138,6 @@ public class BlockManager
             Debug.Log("SetBlockColor: color error!!!");
         }
     } 
+
+
 }
