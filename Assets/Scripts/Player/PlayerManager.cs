@@ -10,9 +10,7 @@ public class PlayerManager : MonoBehaviour
 
     public Vector2 mPlayer2InitPos = new Vector2(2.5f, 10f);
 
-    private bool player1IsCh1 = true;
 
-    private bool player2IsCh1 = true;
 
     public void InitializePlayer() {
         mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/{Player1Select.player1Select}");
