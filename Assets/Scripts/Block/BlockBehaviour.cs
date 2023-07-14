@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class BlockBehaviour : MonoBehaviour
 {
-    
+
+    public GameObject targetCollisionObject;
     public enum BlockColourType
     {
         red,
@@ -40,6 +41,7 @@ public class BlockBehaviour : MonoBehaviour
     {
         return mIndex;
     }
+    private bool isCollision = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -55,6 +57,26 @@ public class BlockBehaviour : MonoBehaviour
     {
         Destroy(this.gameObject);
     }
-    
-    
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject == targetCollisionObject)
+        {
+            string collidedObjectName = collision.gameObject.name;
+            isCollision = true;
+            Debug.Log("Name: " + collidedObjectName);
+        }
+    }
+
+    public bool isColli() { return isCollision; }
+/*    {
+        if (isCollision)
+        {
+            return isCollision;
+        }else
+        {
+            return false;
+        }
+    }*/
+
 }

@@ -189,8 +189,7 @@ MonoBehaviour:
 
     d: remove1 B
 
-    o: A
-    attack B
+    o: A attack B
 
     p: B attack A
 
@@ -1248,8 +1247,7 @@ MonoBehaviour:
 
     d: remove1 B
 
-    o: A
-    attack B
+    o: A attack B
 
     p: B attack A
 

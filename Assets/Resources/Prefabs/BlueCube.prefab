@@ -146,3 +146,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2db37b601d158439ba5f4f956d5c67ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetCollisionObject: {fileID: 0}
+  mMyColour: 0
