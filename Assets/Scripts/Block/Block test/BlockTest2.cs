@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -59,17 +60,20 @@ public class BlockTest2 : MonoBehaviour
                 //BlockNum = mTest.GetBlockAt(0);//1. 从Player获得的BlockNum
                 //BeHitColor = ...;//2. 根据BlockNum，从BlockManager获得Color=TowerBlock[BlockNum];
                 //HitColor = ...;//3. 从BlockManager获得Player Block Color
-                HitBlock = mTest.GetBlockAt(seq);//4. 获得Player手中的GameObject:HitBlock
-                HitBlockPos = HitBlock.transform.position;//5. 获得HitBlock的位置
-                BeHitBlock = mTestEnemy.GetBlockAt(seq);//6. 获得Tower指定被碰撞的GameObject:BeHitBlock
-                BeHitBlockPos = BeHitBlock.transform.position;//7. 获得BeHitBlock的位置
+                HitBlock = mTest.GetBlockAt(mTest.GetHeight()-1);//4. 获得Player手中的GameObject:HitBlock
+                if (HitBlock)
+                    HitBlockPos = HitBlock.transform.position;//5. 获得HitBlock的位置
+                BeHitBlock = mTestEnemy.GetBlockAt(mTestEnemy.GetHeight()-1);//6. 获得Tower指定被碰撞的GameObject:BeHitBlock
+                if (BeHitBlock)
+                    BeHitBlockPos = BeHitBlock.transform.position;//7. 获得BeHitBlock的位置
                 isHitIniti = false;//撞击初始化只执行一次
             }
 
             //如果仍未碰撞到时
             if (!isCollision)
             {
-                HitBehaviour(HitBlockPos, BeHitBlockPos, HitBlock, BeHitBlock);//8. 执行Hit飞行过程
+                if(HitBlock && BeHitBlock) 
+                    HitBehaviour(HitBlockPos, BeHitBlockPos, HitBlock, BeHitBlock);//8. 执行Hit飞行过程
             }
         }
     }
@@ -94,8 +98,11 @@ public class BlockTest2 : MonoBehaviour
             //mTest.DestroyOneBlock(1);
             //mTestEnemy.DestroyOneBlock(0);
             //yield return new WaitForSeconds(0.5f); Bug: 协程接口错误
-            Destroy(HitBlock);//销毁HitBlock
-            Destroy(BeHitBlock);//销毁BeHitBlock
+            //Destroy(HitBlock);//销毁HitBlock
+            mTest.DestroyOneBlock(mTest.GetHeight() - 1);
+            //Destroy(BeHitBlock);//销毁BeHitBlock
+            mTestEnemy.DestroyOneBlock(mTestEnemy.GetHeight() - 1);
+            
             isCollision = false;//撞击结束
             isHit = false;//碰撞操作结束
             seq += 1;

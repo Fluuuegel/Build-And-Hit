@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
 public class BlockManager
@@ -12,10 +13,20 @@ public class BlockManager
 
     public GameObject GetBlockAt(int index)
     {
+        if(index >= mBlocks.Count || index < 0)
+        {
+            Debug.Log("BlockManager::GetBlockAt: index out of range");
+            return null;
+        }
         return mBlocks[index];
     }
     public BlockBehaviour.BlockColourType GetBlockColorAt(int index)
     {
+        if(index >= mBlocks.Count)
+        {
+            Debug.Log("BlockBehaviour.BlockColourType index out of range");
+            return BlockBehaviour.BlockColourType.red;
+        }
         GameObject p = mBlocks[index];
         BlockBehaviour script = p.GetComponent<BlockBehaviour>();
         return script.GetBlockColour();
