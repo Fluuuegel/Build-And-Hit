@@ -10,9 +10,9 @@ public class PlayerManager : MonoBehaviour
 
     public Vector2 mPlayer2InitPos = new Vector2(2.5f, 10f);
 
-    private bool isPlayer1 = true;
+    private bool player1IsCh1 = true;
 
-    private bool isPlayer2 = true;
+    private bool player2IsCh1 = true;
 
     public void InitializePlayer() {
         mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/{Player1Select.player1Select}");
@@ -25,6 +25,9 @@ public class PlayerManager : MonoBehaviour
 
         p1.transform.position = mPlayer1InitPos;
         p2.transform.position = mPlayer2InitPos;
+        SpriteRenderer spriteRenderer = p2.GetComponent<SpriteRenderer>();
+        spriteRenderer.flipX = true;
+
     }
 
     void Start()

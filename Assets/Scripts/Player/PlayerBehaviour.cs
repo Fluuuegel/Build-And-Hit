@@ -12,6 +12,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private enum PlayerState {
         eIdle,
+        eWait,
         eBuild,
         eHit
     };
@@ -25,7 +26,10 @@ public class PlayerBehaviour : MonoBehaviour
     // private BlockManager mBlockManager = null;
     private int mHitNum = 0;
 
+    private Animator animator;
+
     void Start() {
+        animator = GetComponent<Animator>();
     }
 
     public void Lock() {
@@ -43,6 +47,9 @@ public class PlayerBehaviour : MonoBehaviour
             case PlayerState.eIdle:
                 ServiceIdleState();
                 break;
+            case PlayerState.eWait:
+                ServiceWaitState();
+                break;
             case PlayerState.eBuild:
                 ServiceBuildState();
                 break;
@@ -52,19 +59,25 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
+
     private void ServiceIdleState() {
+        animator.SetBool("player1IsHolding", false);
         if(!isLocked) {
-            if (Input.GetKeyDown(KeyCode.B))
-            {
-                mPlayerState = PlayerState.eBuild;
-                Debug.Log("Build");
-                return ;
-            } 
-            if (Input.GetKeyDown(KeyCode.H)) {
-                mPlayerState = PlayerState.eHit;
-                Debug.Log("Hit");
-                return ;
-            }
+            mPlayerState = PlayerState.eWait;
+        }
+    }
+
+    private void ServiceWaitState() {
+        animator.SetBool("player1IsHolding", true);
+        if (Input.GetKeyDown(KeyCode.B)) {
+            mPlayerState = PlayerState.eBuild;
+            Debug.Log("Build");
+            return ;
+        } 
+        if (Input.GetKeyDown(KeyCode.H)) {
+            mPlayerState = PlayerState.eHit;
+            Debug.Log("Hit");
+            return ;
         }
     }
 
