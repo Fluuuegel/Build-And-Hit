@@ -20,6 +20,11 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public PlayerManager GetPlayerManager()
+    {
+        return this.mPlayerManager;
+    }
+
     // Update is called once per frame
     void Update()
     {

@@ -28,6 +28,8 @@ public class PlayerBehaviour : MonoBehaviour
 
     private Animator animator;
 
+    private PlayerManager mPlayerManager = null;
+
     void Start() {
         animator = GetComponent<Animator>();
     }
@@ -94,7 +96,9 @@ public class PlayerBehaviour : MonoBehaviour
             mHitNum = 1;
             isLocked = true;
 
-            Debug.Log("Hit 1");
+            mPlayerManager = GameManager.sTheGlobalBehavior.GetPlayerManager();
+            mPlayerManager.getHitNum(mHitNum);
+            Debug.Log($"Hit the number {mHitNum} block");
 
             mPlayerState = PlayerState.eIdle;
         }
@@ -102,7 +106,9 @@ public class PlayerBehaviour : MonoBehaviour
             mHitNum = 2;
             isLocked = true;
 
-            Debug.Log("Hit 2");
+            mPlayerManager = GameManager.sTheGlobalBehavior.GetPlayerManager();
+            mPlayerManager.getHitNum(mHitNum);
+            Debug.Log($"Hit the number {mHitNum} block");
 
             mPlayerState = PlayerState.eIdle;
         }
@@ -110,12 +116,12 @@ public class PlayerBehaviour : MonoBehaviour
             mHitNum = 3;
             isLocked = true;
 
-            Debug.Log("Hit 3");
+            mPlayerManager = GameManager.sTheGlobalBehavior.GetPlayerManager();
+            mPlayerManager.getHitNum(mHitNum);
+            Debug.Log($"Hit the number {mHitNum} block");
 
             mPlayerState = PlayerState.eIdle;
         }
-
-        // Get the position
 
     }
     void Update()

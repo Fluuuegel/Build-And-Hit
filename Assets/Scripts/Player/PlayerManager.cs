@@ -10,7 +10,7 @@ public class PlayerManager : MonoBehaviour
 
     public Vector2 mPlayer2InitPos = new Vector2(2.5f, 10f);
 
-
+    public int mHitNum = 0;
 
     public void InitializePlayer() {
         mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/{Player1Select.player1Select}");
@@ -26,6 +26,11 @@ public class PlayerManager : MonoBehaviour
         SpriteRenderer spriteRenderer = p2.GetComponent<SpriteRenderer>();
         spriteRenderer.flipX = true;
 
+    }
+
+    public void getHitNum(int num) {
+        mHitNum = num;
+        Debug.Log($"PlayerManager Hit Num: {mHitNum}");
     }
 
     void Start()
