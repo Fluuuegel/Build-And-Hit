@@ -18,7 +18,7 @@ public class TurnManager : MonoBehaviour
         player = new GameObject[2];
     }
 
-    private void Start()//获得两个角色的实例以及PlayerBehaviour组件并锁定角色
+    private void Start()
     {
         player[0] = GameObject.Find("Player1");
         player[1] = GameObject.Find("Player2");
