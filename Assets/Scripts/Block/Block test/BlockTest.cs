@@ -39,7 +39,31 @@ namespace Block.Block_test
             }
             if (Input.GetKeyDown(KeyCode.D))
             {
-                mTestEnemy.DestroyOneBlock(1);
+                mTestEnemy.DestroyOneBlock(0);
+            }
+
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                GameObject bullet = mTest.GetBlockAt(0);
+                Debug.Log("bullet" );
+                Debug.Log(mTest.GetBlockColorAt(0));
+                if (bullet == null)
+                    return;
+                mTestEnemy.test_collision(bullet);
+                mTest.DestroyOneBlock(0);
+                
+            }
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                
+                GameObject bullet = mTestEnemy.GetBlockAt(0);
+                Debug.Log("bullet" );
+                Debug.Log(mTestEnemy.GetBlockColorAt(0));
+                if (bullet == null)
+                    return;
+                mTest.test_collision(bullet);
+                mTestEnemy.DestroyOneBlock(0);
+                
             }
         }
     }

@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 
 public class BlockManager
 {
-    public const int kInitalBlockCount = 1;
+    public const int kInitalBlockCount = 0;
     
     private static GameObject[] mBlockPrefabs = new GameObject[3];
     private List<GameObject> mBlocks = new List<GameObject>();
@@ -14,20 +14,54 @@ public class BlockManager
     {
         return mBlocks[index];
     }
+    public BlockBehaviour.BlockColourType GetBlockColorAt(int index)
+    {
+        GameObject p = mBlocks[index];
+        BlockBehaviour script = p.GetComponent<BlockBehaviour>();
+        return script.GetBlockColour();
+    }
     
     private Vector2 mPlayerInitPos;
     private Vector2 mBlockInitPos;
     private float mLastTimeBuild = 0f;
     private int mCurLayerCount = 1;
     private bool mCanBuild = true;
+    private float SpawnYAxis = 15f;
     public void SetInitPos(Vector2 pos) {
         mPlayerInitPos = pos;
         mBlockInitPos = pos;
-        mBlockInitPos.y = 20f;
+        mBlockInitPos.y = 18f;
     }
     
     public BlockManager() {
         InitializeBlocks();
+    }
+
+    private void SpawnNewBlock(int index, int color = -1, int init = 0)
+    //if init == 0, then spawn at the top of the screen
+    {
+        if (color == -1)
+        {
+            color = Random.Range(0, 3);
+        }
+        GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
+        BlockBehaviour script = p.GetComponent<BlockBehaviour>();
+        SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
+        mBlocks.Add(p);
+        if (init > 0)
+        {
+            p.transform.position = new Vector3(mPlayerInitPos.x, mPlayerInitPos.y + 0.7f * index, 0f);
+        }
+        else
+        {
+            p.transform.position = new Vector3(mBlockInitPos.x, SpawnYAxis, 0f);
+        }
+        spriteRenderer.sortingOrder = mCurLayerCount;
+        script.SetBlockManager(this);
+        script.SetBlockIndex(index);
+        SetBlockColor(color, script);
+        mCurLayerCount++;
+        
     }
     public void InitializeBlocks() {
         int randomInt;
@@ -36,7 +70,7 @@ public class BlockManager
         mBlockPrefabs[2] = Resources.Load<GameObject>("Prefabs/BlueCube");
 
         for(int i = 0; i < kInitalBlockCount; i++) {
-            randomInt = Random.Range(0, 3);
+            /*randomInt = Random.Range(0, 3);
             GameObject p = GameObject.Instantiate(mBlockPrefabs[randomInt]) as GameObject;
             p.transform.position = new Vector3(mPlayerInitPos.x, mPlayerInitPos.y + 0.5f * i, 0f);
             SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
@@ -46,7 +80,8 @@ public class BlockManager
             BlockBehaviour script = p.GetComponent<BlockBehaviour>();
             script.SetBlockManager(this);
             SetBlockColor(randomInt, script);
-            mCurLayerCount++;
+            mCurLayerCount++;*/
+            SpawnNewBlock(i,-1,1);
         }
     }
 
@@ -58,8 +93,7 @@ public class BlockManager
             return -1;
         }
         GameObject p;
-        
-        if (color == -1)
+        /*if (color == -1)
         {
             int randonInt = Random.Range(0, 3);
             p = GameObject.Instantiate(mBlockPrefabs[randonInt]) as GameObject;
@@ -77,7 +111,9 @@ public class BlockManager
         BlockBehaviour script = p.GetComponent<BlockBehaviour>();
         script.SetBlockManager(this);
         SetBlockColor(color, script);
-        mLastTimeBuild = Time.time;
+        mLastTimeBuild = Time.time;*/
+        SpawnNewBlock(GetHeight(),-1,0);
+        mCanBuild = false;
         return 1;
     }
 
@@ -89,6 +125,7 @@ public class BlockManager
         }
         GameObject p = mBlocks[index];
         BlockBehaviour BlockScript = p.GetComponent<BlockBehaviour>();
+        Debug.Log(GetBlockColorAt(index));
         //delete from list
         mBlocks.RemoveAt(index);
         //delete the instance
@@ -107,12 +144,12 @@ public class BlockManager
         return mBlocks.Count;
     }
 
-    private float mInterval = 0.2f;
+    private float mInterval = 0.3f;
     private void TriggerBuild()
     {
         if(Time.time - mLastTimeBuild > mInterval) {
             mCanBuild = true;
-            
+            mLastTimeBuild = Time.time;
         }
         else {
             mCanBuild = false;
@@ -137,5 +174,61 @@ public class BlockManager
         {
             Debug.Log("SetBlockColor: color error!!!");
         }
-    } 
+    }
+    
+    public static bool SameColor(GameObject block1, GameObject block2)
+    {
+        BlockBehaviour script1 = block1.GetComponent<BlockBehaviour>();
+        BlockBehaviour script2 = block2.GetComponent<BlockBehaviour>();
+        return script1.GetBlockColour() == script2.GetBlockColour();
+    }
+    public void test_collision(GameObject bullet, int index = 0)
+    {
+        Debug.Log("test_collision_start");
+        if(index >= mBlocks.Count || !bullet )
+        {
+            return;
+        }
+        List<int> toDestroy = new List<int>();
+        toDestroy.Add(index);
+        int start_from = index;
+        int destroy_cnt = 1;
+        if(!BlockManager.SameColor(bullet, mBlocks[index]))
+        {
+            DestroyOneBlock(index);
+            return;
+        }
+        else
+        {
+            
+            int temp = index;
+            while(index > 0 && SameColor(mBlocks[index], mBlocks[index - 1]))
+            {
+                index--;
+                destroy_cnt++;
+            }
+
+            start_from = index;
+            index = temp;
+            while(index <= mBlocks.Count - 2 && SameColor(mBlocks[index], mBlocks[index + 1]))
+            {
+                index++;
+                destroy_cnt++;
+            }
+        }
+        for(int i = 0; i < destroy_cnt; i++)
+        {
+            DestroyOneBlock(start_from);
+        }
+        Debug.Log("test_collision_end");
+    }
+    public void test_shoot(int bullet_index = 0)
+    {
+        DestroyOneBlock(bullet_index);
+    }
+    public BlockBehaviour.BlockColourType test_GetBlockColor(GameObject block)
+    {
+        BlockBehaviour script = block.GetComponent<BlockBehaviour>();
+        return script.GetBlockColour();
+    }
 }
