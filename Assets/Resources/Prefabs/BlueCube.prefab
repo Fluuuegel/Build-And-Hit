@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2271668932727481974}
   - component: {fileID: 2990243439374443590}
   - component: {fileID: 7591619574360079364}
+  - component: {fileID: 1296788066717705569}
   m_Layer: 0
   m_Name: BlueCube
   m_TagString: Untagged
@@ -138,3 +139,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetCollisionObject: {fileID: 0}
   mMyColour: 0
+--- !u!210 &1296788066717705569
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2990243439374443589}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0

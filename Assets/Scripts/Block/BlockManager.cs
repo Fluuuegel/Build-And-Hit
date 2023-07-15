@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using UnityEngine.Rendering;
 
 public class BlockManager
 {
@@ -47,12 +48,22 @@ public class BlockManager
         InitializeBlocks();
     }
 
-    private void SpawnNewBlock(Vector3 pos, int index, int color = -1, int init = 0)
+    private void SpawnNewBlock(bool p1Turn, Vector3 pos, int index, int color = -1, int init = 0)
     //if init == 0, then spawn at the top of the screen
     {
         GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
         BlockBehaviour script = p.GetComponent<BlockBehaviour>();
         SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
+        SortingGroup sortingGroup = p.GetComponent<SortingGroup>();
+        if (p1Turn) {
+            sortingGroup.sortingLayerName = "PlayerCube";
+            sortingGroup.sortingOrder = mCurLayerCount;
+        }
+        else {
+            sortingGroup.sortingLayerName = "EnemyCube";
+            sortingGroup.sortingOrder = mCurLayerCount;
+        }
+
         mBlocks.Add(p);
         if (init > 0)
         {
@@ -96,20 +107,16 @@ public class BlockManager
         mBlockPrefabs[0] = Resources.Load<GameObject>("Prefabs/RedCube");
         mBlockPrefabs[1] = Resources.Load<GameObject>("Prefabs/GreenCube");
         mBlockPrefabs[2] = Resources.Load<GameObject>("Prefabs/BlueCube");
-
-        for(int i = 0; i < kInitalBlockCount; i++) {
-            SpawnNewBlock(mPlayerInitPos, -1, 1);
-        }
     }
 
     //use color to define the block color, -1 means random
-    public int BuildOneBlock(Vector3 pos, int color = -1)
+    public int BuildOneBlock(bool p1Turn, Vector3 pos, int color = -1)
     {
         TriggerBuild();
         if(mCanBuild == false) {
             return -1;
         }
-        SpawnNewBlock(pos, GetHeight(), color, 0);
+        SpawnNewBlock(p1Turn, pos, GetHeight(), color, 0);
         mCanBuild = false;
         return 1;
     }

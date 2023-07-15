@@ -147,7 +147,6 @@ public class BlockListManager : MonoBehaviour
     public void ServiceHitState() {
 
         time += hitSpeed * Time.smoothDeltaTime;
-        Debug.Log("Hit: " + hitBlock.transform.position);
 
         float x = Mathf.LerpUnclamped(hitBlockPos.x, beHitBlockPos.x, time);
         float y = Mathf.LerpUnclamped(hitBlockPos.y, beHitBlockPos.y, time);
@@ -176,9 +175,9 @@ public class BlockListManager : MonoBehaviour
         Debug.Log("Build");
 
         if(p1Turn) {
-            mP1BlockManager.BuildOneBlock(p1.transform.position, (int)mBlockColor);
+            mP1BlockManager.BuildOneBlock(p1Turn, p1.transform.position, (int)mBlockColor);
         } else {
-            mP2BlockManager.BuildOneBlock(p1.transform.position, (int)mBlockColor);
+            mP2BlockManager.BuildOneBlock(p1Turn, p1.transform.position, (int)mBlockColor);
         }
         mBlockState = BlockState.eIdle;
         p1Turn = !p1Turn;
