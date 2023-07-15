@@ -174,7 +174,7 @@ public class BlockListManager : MonoBehaviour
 
     public void ServiceBuildState() {
         // TODO: Spawn a block
-
+        
         if(p1Turn) {
             mP1BlockManager.BuildOneBlock(p1Turn, (int)mBlockColor);
         } else {

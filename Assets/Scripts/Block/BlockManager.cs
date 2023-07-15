@@ -50,8 +50,13 @@ public class BlockManager
 
     private void SpawnNewBlock(bool p1Turn, int index, int color = -1, int init = 0)
     //if init == 0, then spawn at the top of the screen
-    {
+    {   
         GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
+        GameObject p1 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1();
+        GameObject p2 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2();
+        Vector3 p1Pos = p1.transform.position;
+        Vector3 p2Pos = p2.transform.position;
+
         BlockBehaviour script = p.GetComponent<BlockBehaviour>();
         SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
         SortingGroup sortingGroup = p.GetComponent<SortingGroup>();
@@ -60,16 +65,22 @@ public class BlockManager
         if (p1Turn) {
             sortingGroup.sortingLayerName = "PlayerCube";
             sortingGroup.sortingOrder = mCurLayerCount;
+            p1.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
         }
         else {
             sortingGroup.sortingLayerName = "EnemyCube";
             sortingGroup.sortingOrder = mCurLayerCount;
+            p2.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
         }
 
         mBlocks.Add(p);
+
         if (init > 0)
-        {
-            p.transform.position = new Vector3(mPlayerInitPos.x, mPlayerInitPos.y + 0.7f * index, 0f);
+        {   if(p1Turn) { // Change the position of the block
+                p.transform.position = new Vector3(p1Pos.x, p1Pos.y - 0.4f, 0f);
+            } else {
+                p.transform.position = new Vector3(p2Pos.x, p2Pos.y - 0.4f, 0f);
+            }
         }
         else
         {
@@ -117,7 +128,7 @@ public class BlockManager
         if(mCanBuild == false) {
             return -1;
         }
-        SpawnNewBlock(p1Turn, GetHeight(), color, 0);
+        SpawnNewBlock(p1Turn, GetHeight(), color, 1);
         mCanBuild = false;
         return 1;
     }
@@ -188,60 +199,57 @@ public class BlockManager
         }
         else
         {
-            Debug.Log("SetBlockColor: color error!!!");
+            Debug.Log("SetBlockColor: Wrong color!");
         }
     }
     
     public static bool SameColor(GameObject block1, GameObject block2)
     {
-        BlockBehaviour script1 = block1.GetComponent<BlockBehaviour>();
-        BlockBehaviour script2 = block2.GetComponent<BlockBehaviour>();
-        return script1.GetBlockColour() == script2.GetBlockColour();
+        BlockBehaviour b1 = block1.GetComponent<BlockBehaviour>();
+        BlockBehaviour b2 = block2.GetComponent<BlockBehaviour>();
+        return b1.GetBlockColour() == b2.GetBlockColour();
     }
     
-    public void test_collision(GameObject bullet, int index = 0)
+    public void CheckColor(GameObject hitBlock, int index = 0)
     {
-        Debug.Log("test_collision_start");
-        if(index >= mBlocks.Count || !bullet )
-        {
+        Debug.Log("Check color");
+        if(index >= mBlocks.Count || !hitBlock ) {
             return;
         }
-        List<int> toDestroy = new List<int>();
-        toDestroy.Add(index);
-        int start_from = index;
-        int destroy_cnt = 1;
-        if(!BlockManager.SameColor(bullet, mBlocks[index]))
+        // List<int> toDestroy = new List<int>();
+        // toDestroy.Add(index);
+        int startDeleteIndex = index;
+        int blocksToDestroyCnt = 1;
+        if(!BlockManager.SameColor(hitBlock, mBlocks[index]))
         {
             DestroyOneBlock(index);
             return;
         }
-        else
-        {
-            
+        else {
             int temp = index;
             while(index > 0 && SameColor(mBlocks[index], mBlocks[index - 1]))
             {
                 index--;
-                destroy_cnt++;
+                blocksToDestroyCnt++;
             }
 
-            start_from = index;
+            startDeleteIndex = index;
             index = temp;
             while(index <= mBlocks.Count - 2 && SameColor(mBlocks[index], mBlocks[index + 1]))
             {
                 index++;
-                destroy_cnt++;
+                blocksToDestroyCnt++;
             }
         }
-        for(int i = 0; i < destroy_cnt; i++)
+        for(int i = 0; i < blocksToDestroyCnt; i++)
         {
-            DestroyOneBlock(start_from);
+            DestroyOneBlock(startDeleteIndex);
         }
-        Debug.Log("test_collision_end");
     }
-    public void test_shoot(int bullet_index = 0)
+
+    public void test_shoot(int hitBlock_index = 0)
     {
-        DestroyOneBlock(bullet_index);
+        DestroyOneBlock(hitBlock_index);
     }
     public BlockBehaviour.BlockColourType test_GetBlockColor(GameObject block)
     {

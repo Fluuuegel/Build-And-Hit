@@ -49,7 +49,7 @@ namespace Block.Block_test
                 Debug.Log(mTest.GetBlockColorAt(0));
                 if (bullet == null)
                     return;
-                mTestEnemy.test_collision(bullet);
+                mTestEnemy.CheckColor(bullet);
                 mTest.DestroyOneBlock(0);
                 
             }
@@ -61,7 +61,7 @@ namespace Block.Block_test
                 Debug.Log(mTestEnemy.GetBlockColorAt(0));
                 if (bullet == null)
                     return;
-                mTest.test_collision(bullet);
+                mTest.CheckColor(bullet);
                 mTestEnemy.DestroyOneBlock(0);
                 
             }
