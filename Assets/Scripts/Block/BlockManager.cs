@@ -48,7 +48,7 @@ public class BlockManager
         InitializeBlocks();
     }
 
-    private void SpawnNewBlock(bool p1Turn, int index, int color = -1, int init = 0)
+    private void SpawnNewBlock(bool p1Turn, bool isHit, int index, int color = -1, int init = 0)
     //if init == 0, then spawn at the top of the screen
     {   
         GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
@@ -62,12 +62,12 @@ public class BlockManager
         SortingGroup sortingGroup = p.GetComponent<SortingGroup>();
 
         // Set the sorting layer of the block
-        if (p1Turn) {
+        if (p1Turn && !isHit) {
             sortingGroup.sortingLayerName = "PlayerCube";
             sortingGroup.sortingOrder = mCurLayerCount;
             p1.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
         }
-        else {
+        else if(!p1Turn && !isHit){
             sortingGroup.sortingLayerName = "EnemyCube";
             sortingGroup.sortingOrder = mCurLayerCount;
             p2.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
@@ -77,9 +77,17 @@ public class BlockManager
 
         if (init > 0)
         {   if(p1Turn) { // Change the position of the block
-                p.transform.position = new Vector3(p1Pos.x, p1Pos.y - 0.4f, 0f);
+                if(isHit) {
+                    p.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
+                } else {
+                    p.transform.position = new Vector3(p1Pos.x, p1Pos.y - 0.4f, 0f);
+                }
             } else {
-                p.transform.position = new Vector3(p2Pos.x, p2Pos.y - 0.4f, 0f);
+                if (isHit) {
+                    p.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
+                } else {
+                    p.transform.position = new Vector3(p2Pos.x, p2Pos.y - 0.4f, 0f);
+                }
             }
         }
         else
@@ -122,13 +130,13 @@ public class BlockManager
     }
 
     // Set the color of the block
-    public int BuildOneBlock(bool p1Turn, int color = -1)
+    public int BuildOneBlock(bool p1Turn, bool isHit, int color = -1)
     {
         TriggerBuild();
         if(mCanBuild == false) {
             return -1;
         }
-        SpawnNewBlock(p1Turn, GetHeight(), color, 1);
+        SpawnNewBlock(p1Turn, isHit, GetHeight(), color, 1);
         mCanBuild = false;
         return 1;
     }

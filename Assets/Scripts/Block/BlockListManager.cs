@@ -7,6 +7,7 @@ public class BlockListManager : MonoBehaviour
     private enum BlockState {
         eIdle,
         eWait,
+        eInitHit,
         eSelectHit,
         eHit,
         eBuild,
@@ -41,6 +42,8 @@ public class BlockListManager : MonoBehaviour
 
 
     private bool p1Turn = true;
+
+    private bool isHit = false;
     private float time;
 
     // Start is called before the first frame update
@@ -64,6 +67,9 @@ public class BlockListManager : MonoBehaviour
             case BlockState.eWait:
                 ServiceWaitState();
                 break;
+            case BlockState.eInitHit:
+                ServiceInitHitState();
+                break;
             case BlockState.eSelectHit:
                 ServiceSelectHitState();
                 break;
@@ -80,7 +86,6 @@ public class BlockListManager : MonoBehaviour
         mBlockColor = (BlockColor)Random.Range(0, 3);
         p1Animator = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1().GetComponent<PlayerBehaviour>().animator;
         p2Animator = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2().GetComponent<PlayerBehaviour>().animator;
-        Debug.Log("P1Turn: " + p1Turn);
         if (p1Turn) {
             p1Animator.SetBool("IsHolding", true);
             p2Animator.SetBool("IsHolding", false);
@@ -92,7 +97,6 @@ public class BlockListManager : MonoBehaviour
             p2Animator.SetBool("IsHolding", true);
             p2Animator.SetInteger("BlockColor", (int)mBlockColor);
         }
-        Debug.Log("Idle");
         mBlockState = BlockState.eWait;
     }
     
@@ -100,7 +104,6 @@ public class BlockListManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.B)) {
             mBlockState = BlockState.eBuild;
-            Debug.Log("Build");
             return ;
         } 
 
@@ -112,30 +115,39 @@ public class BlockListManager : MonoBehaviour
         }
     }
 
+    private void ServiceInitHitState() {
+        InitializeHit();
+        mBlockState = BlockState.eHit;
+    }
+
     private void ServiceSelectHitState() {
         if (Input.GetKeyDown(KeyCode.Q) && ((p1Turn && mP1BlockManager.GetHeight() >= 1) || (!p1Turn && mP2BlockManager.GetHeight() >= 1))) {
             mTargetBlockIndex = 1;
 
-            // Hit initialization
-            InitializeHit();
-            mBlockState = BlockState.eHit;
+            isHit = true;
+            mBlockState = BlockState.eBuild;
         }
-        if(Input.GetKeyDown(KeyCode.W) && ((p1Turn && mP1BlockManager.GetHeight() >= 2) || (!p1Turn && mP2BlockManager.GetHeight() >= 2))) {
+        if (Input.GetKeyDown(KeyCode.W) && ((p1Turn && mP1BlockManager.GetHeight() >= 2) || (!p1Turn && mP2BlockManager.GetHeight() >= 2))) {
             mTargetBlockIndex = 2;
 
-            InitializeHit();
-            mBlockState = BlockState.eHit;
+            isHit = true;
+            mBlockState = BlockState.eBuild;
         }
-        if(Input.GetKeyDown(KeyCode.E) && ((p1Turn && mP1BlockManager.GetHeight() >= 3) || (!p1Turn && mP2BlockManager.GetHeight() >= 3))) {
+        if (Input.GetKeyDown(KeyCode.E) && ((p1Turn && mP1BlockManager.GetHeight() >= 3) || (!p1Turn && mP2BlockManager.GetHeight() >= 3))) {
             mTargetBlockIndex = 3;
             
-            InitializeHit();
-            mBlockState = BlockState.eHit;
+            isHit = true;
+            mBlockState = BlockState.eBuild;
+        }
+
+        // You can retract the selection
+        if (Input.GetKeyDown(KeyCode.B)) {
+            mBlockState = BlockState.eBuild;
         }
     }
 
     public void InitializeHit() {
-        if(p1Turn) {
+        if (p1Turn) {
             hitBlock = mP1BlockManager.GetBlockAt(mP1BlockManager.GetHeight() - 1);
             beHitBlock = mP2BlockManager.GetBlockAt(mP2BlockManager.GetHeight() - mTargetBlockIndex);
         } else {
@@ -168,17 +180,24 @@ public class BlockListManager : MonoBehaviour
 
             mBlockState = BlockState.eIdle;
             p1Turn = !p1Turn;
+            isHit = false;
             time = 0;
         }
     }
 
     public void ServiceBuildState() {
         // TODO: Spawn a block
-        
-        if(p1Turn) {
-            mP1BlockManager.BuildOneBlock(p1Turn, (int)mBlockColor);
+        if (p1Turn) {
+            mP1BlockManager.BuildOneBlock(p1Turn, isHit, (int)mBlockColor);
+            p1Animator.SetBool("IsHolding", false);
         } else {
-            mP2BlockManager.BuildOneBlock(p1Turn, (int)mBlockColor);
+            mP2BlockManager.BuildOneBlock(p1Turn, isHit, (int)mBlockColor);
+            p2Animator.SetBool("IsHolding", false);
+        }
+        if (isHit) {
+            mBlockState = BlockState.eInitHit;
+            Debug.Log("isHit == true");
+            return ;
         }
         mBlockState = BlockState.eIdle;
         p1Turn = !p1Turn;
