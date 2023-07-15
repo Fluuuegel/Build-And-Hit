@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
 public class BlockManager
@@ -48,13 +47,32 @@ public class BlockManager
         InitializeBlocks();
     }
 
+    private void SpawnNewBlock(Vector3 pos, int index, int color = -1, int init = 0)
+    //if init == 0, then spawn at the top of the screen
+    {
+        GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
+        BlockBehaviour script = p.GetComponent<BlockBehaviour>();
+        SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
+        mBlocks.Add(p);
+        if (init > 0)
+        {
+            //p.transform.position = new Vector3(mPlayerInitPos.x, mPlayerInitPos.y + 0.7f * index, 0f);
+            p.transform.position = new Vector3(pos.x, pos.y + 0.3f, 0f);
+        }
+        else
+        {
+            p.transform.position = new Vector3(mBlockInitPos.x, SpawnYAxis, 0f);
+        }
+        spriteRenderer.sortingOrder = mCurLayerCount;
+        script.SetBlockManager(this);
+        script.SetBlockIndex(index);
+        SetBlockColor(color, script);
+        mCurLayerCount++;
+    }
+
     private void SpawnNewBlock(int index, int color = -1, int init = 0)
     //if init == 0, then spawn at the top of the screen
     {
-        if (color == -1)
-        {
-            color = Random.Range(0, 3);
-        }
         GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
         BlockBehaviour script = p.GetComponent<BlockBehaviour>();
         SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
@@ -72,58 +90,37 @@ public class BlockManager
         script.SetBlockIndex(index);
         SetBlockColor(color, script);
         mCurLayerCount++;
-        
     }
+
     public void InitializeBlocks() {
-        int randomInt;
         mBlockPrefabs[0] = Resources.Load<GameObject>("Prefabs/RedCube");
         mBlockPrefabs[1] = Resources.Load<GameObject>("Prefabs/GreenCube");
         mBlockPrefabs[2] = Resources.Load<GameObject>("Prefabs/BlueCube");
 
         for(int i = 0; i < kInitalBlockCount; i++) {
-            /*randomInt = Random.Range(0, 3);
-            GameObject p = GameObject.Instantiate(mBlockPrefabs[randomInt]) as GameObject;
-            p.transform.position = new Vector3(mPlayerInitPos.x, mPlayerInitPos.y + 0.5f * i, 0f);
-            SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
-            spriteRenderer.sortingOrder = mCurLayerCount;
-            mBlocks.Add(p);
-            //fixme: set p's manager
-            BlockBehaviour script = p.GetComponent<BlockBehaviour>();
-            script.SetBlockManager(this);
-            SetBlockColor(randomInt, script);
-            mCurLayerCount++;*/
-            SpawnNewBlock(i,-1,1);
+            SpawnNewBlock(mPlayerInitPos, -1, 1);
         }
     }
 
     //use color to define the block color, -1 means random
+    public int BuildOneBlock(Vector3 pos, int color = -1)
+    {
+        TriggerBuild();
+        if(mCanBuild == false) {
+            return -1;
+        }
+        SpawnNewBlock(pos, GetHeight(), color, 0);
+        mCanBuild = false;
+        return 1;
+    }
+
     public int BuildOneBlock(int color = -1)
     {
         TriggerBuild();
         if(mCanBuild == false) {
             return -1;
         }
-        GameObject p;
-        /*if (color == -1)
-        {
-            int randonInt = Random.Range(0, 3);
-            p = GameObject.Instantiate(mBlockPrefabs[randonInt]) as GameObject;
-            color = randonInt;
-        }
-        else
-        {
-            p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
-        }
-        p.transform.position = new Vector3(mBlockInitPos.x,mBlockInitPos.y, 0f);
-        SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
-        spriteRenderer.sortingOrder = mCurLayerCount;
-        mBlocks.Add(p);
-        mCurLayerCount++;
-        BlockBehaviour script = p.GetComponent<BlockBehaviour>();
-        script.SetBlockManager(this);
-        SetBlockColor(color, script);
-        mLastTimeBuild = Time.time;*/
-        SpawnNewBlock(GetHeight(),-1,0);
+        SpawnNewBlock(GetHeight(), color, 0);
         mCanBuild = false;
         return 1;
     }
@@ -193,6 +190,7 @@ public class BlockManager
         BlockBehaviour script2 = block2.GetComponent<BlockBehaviour>();
         return script1.GetBlockColour() == script2.GetBlockColour();
     }
+    
     public void test_collision(GameObject bullet, int index = 0)
     {
         Debug.Log("test_collision_start");

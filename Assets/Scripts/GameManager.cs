@@ -5,18 +5,16 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager sTheGlobalBehavior = null;
-    private BlockManager mBlockManager = null;
     private PlatformManager mPlatformManager = null;
     private PlayerManager mPlayerManager = null;
-    private TurnManager mTurnManager = null;
+    private BlockListManager mBlockListManager = null;
     void Start()
     {
 
         GameManager.sTheGlobalBehavior = this;
         mPlayerManager = gameObject.AddComponent<PlayerManager>();
-        mBlockManager = new BlockManager();
         mPlatformManager = new PlatformManager();
-        mTurnManager = gameObject.AddComponent<TurnManager>();
+        mBlockListManager = gameObject.AddComponent<BlockListManager>();
         
     }
 
