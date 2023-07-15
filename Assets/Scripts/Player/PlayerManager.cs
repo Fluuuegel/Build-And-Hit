@@ -10,9 +10,7 @@ public class PlayerManager : MonoBehaviour
 
     public Vector2 mPlayer2InitPos = new Vector2(2.5f, 10f);
 
-    private bool isPlayer1 = true;
 
-    private bool isPlayer2 = true;
 
 
     public void InitializePlayer() {
@@ -30,6 +28,9 @@ public class PlayerManager : MonoBehaviour
 
         p1.transform.position = mPlayer1InitPos;
         p2.transform.position = mPlayer2InitPos;
+        SpriteRenderer spriteRenderer = p2.GetComponent<SpriteRenderer>();
+        spriteRenderer.flipX = true;
+
     }
 
     void Start()
