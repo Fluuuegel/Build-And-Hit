@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Play.Publisher.Editor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerBehaviour : MonoBehaviour
 {
@@ -24,6 +26,13 @@ public class PlayerBehaviour : MonoBehaviour
     private bool isBuild = true;
     // private BlockManager mBlockManager = null;
     private int mHitNum = 0;
+
+    private GameObject mPlayerUI = null;
+    private Button mBuildButton = null;
+    private Button mHitButton = null;
+    private bool isBuildButtonClick = false;
+    private bool isHitButtonClick = false;
+
 
     void Start() {
     }
@@ -54,15 +63,17 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void ServiceIdleState() {
         if(!isLocked) {
-            if (Input.GetKeyDown(KeyCode.B))
+            if (isBuildButtonClick)
             {
                 mPlayerState = PlayerState.eBuild;
                 Debug.Log("Build");
-                return ;
+                isBuildButtonClick = false;
+                return;
             } 
-            if (Input.GetKeyDown(KeyCode.H)) {
+            if (isHitButtonClick) {
                 mPlayerState = PlayerState.eHit;
                 Debug.Log("Hit");
+                isHitButtonClick=false;
                 return ;
             }
         }
@@ -102,12 +113,44 @@ public class PlayerBehaviour : MonoBehaviour
             mPlayerState = PlayerState.eIdle;
         }
 
-        // Get the position
-
     }
     void Update()
     {
+        if(mPlayerUI == null && !isLocked)
+        {
+            BindUI();
+            BindButton();
+        }
         UpdateFSM();
     }
 
+    private void BindUI()
+    {
+        if(gameObject.name == "Player1")
+        {
+            mPlayerUI = GameObject.Find("UIOfPlayer1");
+        }
+        if(gameObject.name == "Player2")
+        {
+            mPlayerUI = GameObject.Find("UIOfPlayer2");
+        }
+    }
+
+    private void BindButton()
+    {
+        mBuildButton = mPlayerUI.transform.Find("Action").transform.Find("BuildButton").GetComponent<Button>();
+        mBuildButton.onClick.AddListener(BuildButtonClick);
+        mHitButton = mPlayerUI.transform.Find("Action").transform.Find("HitButton").GetComponent<Button>();
+        mHitButton.onClick.AddListener(HitButtonClick);
+    }
+
+    private void BuildButtonClick()
+    {
+        isBuildButtonClick = true;
+    }
+
+    private void HitButtonClick()
+    {
+        isHitButtonClick = true;
+    }
 }

@@ -14,12 +14,17 @@ public class PlayerManager : MonoBehaviour
 
     private bool isPlayer2 = true;
 
+
     public void InitializePlayer() {
         mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/{Player1Select.player1Select}");
         mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/{Player2Select.player2Select}");
         GameObject p1, p2;
+
+
         p1 = GameObject.Instantiate(mPlayerPrefab[0]) as GameObject;
         p1.name = "Player1";
+
+        
         p2 = GameObject.Instantiate(mPlayerPrefab[1]) as GameObject;
         p2.name = "Player2";
 
