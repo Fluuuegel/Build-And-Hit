@@ -140,8 +140,6 @@ public class BlockListManager : MonoBehaviour
             hitBlock = mP2BlockManager.GetBlockAt(mP2BlockManager.GetHeight() - 1);
             beHitBlock = mP1BlockManager.GetBlockAt(mP1BlockManager.GetHeight() - mTargetBlockIndex);
         }
-        Vector3 hitBlockPos;
-        Vector3 beHitBlockPos;
         hitBlockPos = hitBlock.transform.position;
         beHitBlockPos = beHitBlock.transform.position;
     }
