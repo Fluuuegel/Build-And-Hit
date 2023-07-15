@@ -103,7 +103,9 @@ public class BlockListManager : MonoBehaviour
             Debug.Log("Build");
             return ;
         } 
-        if (Input.GetKeyDown(KeyCode.H)) {
+
+        // Only if the player has blocks, can he be hit
+        if (Input.GetKeyDown(KeyCode.H) && ((p1Turn && mP2BlockManager.GetHeight() > 0) || (!p1Turn && mP1BlockManager.GetHeight() > 0))) {
             mBlockState = BlockState.eSelectHit;
             Debug.Log("SelectHit");
             return ;
@@ -111,20 +113,20 @@ public class BlockListManager : MonoBehaviour
     }
 
     private void ServiceSelectHitState() {
-        if (Input.GetKeyDown(KeyCode.Q)) {
+        if (Input.GetKeyDown(KeyCode.Q) && ((p1Turn && mP1BlockManager.GetHeight() >= 1) || (!p1Turn && mP2BlockManager.GetHeight() >= 1))) {
             mTargetBlockIndex = 1;
 
             // Hit initialization
             InitializeHit();
             mBlockState = BlockState.eHit;
         }
-        if(Input.GetKeyDown(KeyCode.W)) {
+        if(Input.GetKeyDown(KeyCode.W) && ((p1Turn && mP1BlockManager.GetHeight() >= 2) || (!p1Turn && mP2BlockManager.GetHeight() >= 2))) {
             mTargetBlockIndex = 2;
 
             InitializeHit();
             mBlockState = BlockState.eHit;
         }
-        if(Input.GetKeyDown(KeyCode.E)) {
+        if(Input.GetKeyDown(KeyCode.E) && ((p1Turn && mP1BlockManager.GetHeight() >= 3) || (!p1Turn && mP2BlockManager.GetHeight() >= 3))) {
             mTargetBlockIndex = 3;
             
             InitializeHit();
@@ -172,12 +174,11 @@ public class BlockListManager : MonoBehaviour
 
     public void ServiceBuildState() {
         // TODO: Spawn a block
-        Debug.Log("Build");
 
         if(p1Turn) {
-            mP1BlockManager.BuildOneBlock(p1Turn, p1.transform.position, (int)mBlockColor);
+            mP1BlockManager.BuildOneBlock(p1Turn, (int)mBlockColor);
         } else {
-            mP2BlockManager.BuildOneBlock(p1Turn, p1.transform.position, (int)mBlockColor);
+            mP2BlockManager.BuildOneBlock(p1Turn, (int)mBlockColor);
         }
         mBlockState = BlockState.eIdle;
         p1Turn = !p1Turn;

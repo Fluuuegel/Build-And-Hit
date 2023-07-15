@@ -48,13 +48,15 @@ public class BlockManager
         InitializeBlocks();
     }
 
-    private void SpawnNewBlock(bool p1Turn, Vector3 pos, int index, int color = -1, int init = 0)
+    private void SpawnNewBlock(bool p1Turn, int index, int color = -1, int init = 0)
     //if init == 0, then spawn at the top of the screen
     {
         GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
         BlockBehaviour script = p.GetComponent<BlockBehaviour>();
         SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
         SortingGroup sortingGroup = p.GetComponent<SortingGroup>();
+
+        // Set the sorting layer of the block
         if (p1Turn) {
             sortingGroup.sortingLayerName = "PlayerCube";
             sortingGroup.sortingOrder = mCurLayerCount;
@@ -67,8 +69,7 @@ public class BlockManager
         mBlocks.Add(p);
         if (init > 0)
         {
-            //p.transform.position = new Vector3(mPlayerInitPos.x, mPlayerInitPos.y + 0.7f * index, 0f);
-            p.transform.position = new Vector3(pos.x, pos.y + 0.3f, 0f);
+            p.transform.position = new Vector3(mPlayerInitPos.x, mPlayerInitPos.y + 0.7f * index, 0f);
         }
         else
         {
@@ -109,14 +110,14 @@ public class BlockManager
         mBlockPrefabs[2] = Resources.Load<GameObject>("Prefabs/BlueCube");
     }
 
-    //use color to define the block color, -1 means random
-    public int BuildOneBlock(bool p1Turn, Vector3 pos, int color = -1)
+    // Set the color of the block
+    public int BuildOneBlock(bool p1Turn, int color = -1)
     {
         TriggerBuild();
         if(mCanBuild == false) {
             return -1;
         }
-        SpawnNewBlock(p1Turn, pos, GetHeight(), color, 0);
+        SpawnNewBlock(p1Turn, GetHeight(), color, 0);
         mCanBuild = false;
         return 1;
     }
