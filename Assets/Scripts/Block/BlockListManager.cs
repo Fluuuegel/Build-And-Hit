@@ -121,19 +121,19 @@ public class BlockListManager : MonoBehaviour
     }
 
     private void ServiceSelectHitState() {
-        if (Input.GetKeyDown(KeyCode.Q) && ((p1Turn && mP1BlockManager.GetHeight() >= 1) || (!p1Turn && mP2BlockManager.GetHeight() >= 1))) {
+        if (Input.GetKeyDown(KeyCode.Q) && ((p1Turn && mP2BlockManager.GetHeight() >= 1) || (!p1Turn && mP1BlockManager.GetHeight() >= 1))) {
             mTargetBlockIndex = 1;
 
             isHit = true;
             mBlockState = BlockState.eBuild;
         }
-        if (Input.GetKeyDown(KeyCode.W) && ((p1Turn && mP1BlockManager.GetHeight() >= 2) || (!p1Turn && mP2BlockManager.GetHeight() >= 2))) {
+        if (Input.GetKeyDown(KeyCode.W) && ((p1Turn && mP2BlockManager.GetHeight() >= 2) || (!p1Turn && mP1BlockManager.GetHeight() >= 2))) {
             mTargetBlockIndex = 2;
 
             isHit = true;
             mBlockState = BlockState.eBuild;
         }
-        if (Input.GetKeyDown(KeyCode.E) && ((p1Turn && mP1BlockManager.GetHeight() >= 3) || (!p1Turn && mP2BlockManager.GetHeight() >= 3))) {
+        if (Input.GetKeyDown(KeyCode.E) && ((p1Turn && mP2BlockManager.GetHeight() >= 3) || (!p1Turn && mP1BlockManager.GetHeight() >= 3))) {
             mTargetBlockIndex = 3;
             
             isHit = true;

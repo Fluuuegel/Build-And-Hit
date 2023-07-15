@@ -176,6 +176,7 @@ public class BlockManager
     }
     public int GetHeight()
     {
+        Debug.Log("GetHeight: " + mBlocks.Count);
         return mBlocks.Count;
     }
 
