@@ -143,7 +143,6 @@ MonoBehaviour:
   _material: {fileID: 0}
   targetCollisionObject: {fileID: 0}
   mMyColour: 0
-  mIndex: 0
 --- !u!210 &4514572729982011977
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -152,8 +151,8 @@ SortingGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6186385690629784779}
   m_Enabled: 1
-  m_SortingLayerID: -297258771
-  m_SortingLayer: 2
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
 --- !u!198 &6186385690629784781
 ParticleSystem:
@@ -4960,7 +4959,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1414164971
-  m_SortingLayer: 0
+  m_SortingLayer: 3
   m_SortingOrder: 1
   m_RenderMode: 0
   m_MeshDistribution: 0
