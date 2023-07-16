@@ -5,21 +5,30 @@ using System.Security.Cryptography;
 using UnityEngine;
 using DG.Tweening;
 
-public class BlockBehaviour : MonoBehaviour
+/* TODO:
+
+    If u want to achieve particle effect when block is destroyed, use this script.
+    And u need to change a lot of things in BlockManager.cs. and add 'GreenCubeObj', 'RedCubeObj' prefabs in Resources folder.
+    U can refer to 'BlueCubeObj' prefab.
+    
+*/
+public class BlockObjBehaviour : MonoBehaviour
 {
+
     public ParticleSystem mParticle = null;
+
+    public GameObject BlueCube;
     public Material _material = null;
     public GameObject targetCollisionObject;
     public enum BlockColourType
     {
         red,
         green,
-        blue,
-        invalid_colour,
+        blue
     }
     private BlockManager mBlockManager = null;
     public BlockColourType mMyColour;
-    public int mIndex;
+    private int mIndex;
     public void SetBlockManager(BlockManager blockManager)
     {
         mBlockManager = blockManager;
@@ -45,19 +54,25 @@ public class BlockBehaviour : MonoBehaviour
         return mIndex;
     }
     private bool isCollision = false;
-
+    // Start is called before the first frame update
     void Start()
+
     {   
     }
-
+    // Update is called once per frame
     void Update()
     {
         
     }
 
     public void SelfDestroy()
-    {   
-        Destroy(this.gameObject);
+
+    {   _material = GetComponent<Renderer>().material;
+        mParticle = GetComponent<ParticleSystem>();
+        _material.DOFloat(10, "_Strength", 0.2f).OnComplete(() => {
+            Destroy(this.gameObject);
+            mParticle.Play();
+        });
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
@@ -66,9 +81,10 @@ public class BlockBehaviour : MonoBehaviour
         {
             string collidedObjectName = collision.gameObject.name;
             isCollision = true;
-//            Debug.Log("Name: " + collidedObjectName);
+            Debug.Log("Name: " + collidedObjectName);
         }
     }
 
     public bool isColli() { return isCollision; }
+
 }
