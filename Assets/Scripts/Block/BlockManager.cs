@@ -37,9 +37,7 @@ public class BlockManager
 
     private Vector2 mPlayerInitPos;
     private Vector2 mBlockInitPos;
-    private float mLastTimeBuild = 0f;
     private int mCurLayerCount = 1;
-    private bool mCanBuild = true;
     private float SpawnYAxis = 15f;
 
     public void SetInitPos(Vector2 pos)
@@ -54,12 +52,23 @@ public class BlockManager
         InitializeBlocks();
     }
 
-    private void SpawnNewBlock(bool p1Turn, bool isHit, int index, int color = -1, int init = 0)
-        //if init == 0, then spawn at the top of the screen
+    public void InitializeBlocks()
+    {
+        mBlockPrefabs[0] = Resources.Load<GameObject>("Prefabs/RedCube");
+        mBlockPrefabs[1] = Resources.Load<GameObject>("Prefabs/GreenCube");
+        mBlockPrefabs[2] = Resources.Load<GameObject>("Prefabs/BlueCube");
+    }
+
+    public void BuildOneBlock(bool p1Turn, bool isHit, int color = -1, bool init = false)
+    {
+        SpawnNewBlock(p1Turn, isHit, GetHeight(), color, init);
+    }
+
+    private void SpawnNewBlock(bool p1Turn, bool isHit, int index, int color = -1, bool init = false)
     {
         if (color == -1)
         {
-            color = Random.Range(0, 2);
+            color = Random.Range(0, 3);
         }
         GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
         GameObject p1 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1();
@@ -72,12 +81,13 @@ public class BlockManager
 
         // Set the sorting layer of the block
         // Set the position of the players in game
-        
-
+    
         mBlocks.Add(p);
-        /*--------------set new block----------------*/
-        if (init > 0)
-        {   if(p1Turn) { // Change the position of the block
+        
+        // Set block
+        if (!init)
+        {   
+            if(p1Turn) { // Change the position of the block
                 if(isHit) {
                     p.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
                 } else {
@@ -94,37 +104,29 @@ public class BlockManager
                     script.mParticle.Play();
                 }
             }
-        }
-        else//now is the initialization process
-        {
+        } else { // Initialization
             p.transform.position = new Vector3(mBlockInitPos.x, SpawnYAxis + 0.5f * GetHeight(), 0f);
         }
-        /*-----------------player change------------------*/
-        if (init > 0)
-        {//now is in the gameplay
-            if (p1Turn && !isHit)
-            {
+
+        // Set sorting layer of the block
+        if (!init) {
+            if (p1Turn && !isHit) {
                 blockSortingGroup.sortingLayerName = "PlayerCube";
                 blockSortingGroup.sortingOrder = mCurLayerCount;
                 p1.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
             }
-            else if (!p1Turn && !isHit)
-            {
+            else if (!p1Turn && !isHit) {
                 blockSortingGroup.sortingLayerName = "EnemyCube";
                 blockSortingGroup.sortingOrder = mCurLayerCount;
                 p2.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
             }
-        }
-        else
-        {//now is the initialization process
-            if (p1Turn && !isHit)
-            {
+        } else { 
+            if (p1Turn && !isHit) {
                 blockSortingGroup.sortingLayerName = "PlayerCube";
                 blockSortingGroup.sortingOrder = mCurLayerCount;
                 p1.transform.position = new Vector3(p1Pos.x, SpawnYAxis , 0f);
             }
-            else if (!p1Turn && !isHit)
-            {
+            else if (!p1Turn && !isHit) {
                 blockSortingGroup.sortingLayerName = "EnemyCube";
                 blockSortingGroup.sortingOrder = mCurLayerCount;
                 p2.transform.position = new Vector3(p2Pos.x, SpawnYAxis + 1.0f, 0f);
@@ -137,67 +139,7 @@ public class BlockManager
         mCurLayerCount++;
     }
 
-    private void SpawnNewBlock(int index, int color = -1, int init = 0)
-        //if init == 0, then spawn at the top of the screen
-    {
-        GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
-        BlockBehaviour script = p.GetComponent<BlockBehaviour>();
-        SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
-        mBlocks.Add(p);
-        if (init > 0)
-        {
-            p.transform.position = new Vector3(mPlayerInitPos.x, mPlayerInitPos.y + 0.7f * index, 0f);
-        }
-        else
-        {
-            p.transform.position = new Vector3(mBlockInitPos.x, SpawnYAxis, 0f);
-        }
-
-        spriteRenderer.sortingOrder = mCurLayerCount;
-        script.SetBlockManager(this);
-        script.SetBlockIndex(index);
-        SetBlockColor(color, script);
-        mCurLayerCount++;
-    }
-
-    public void InitializeBlocks()
-    {
-        mBlockPrefabs[0] = Resources.Load<GameObject>("Prefabs/RedCube");
-        mBlockPrefabs[1] = Resources.Load<GameObject>("Prefabs/GreenCube");
-        mBlockPrefabs[2] = Resources.Load<GameObject>("Prefabs/BlueCube");
-
-    }
-
     // Set the color of the block
-    //private int buildcnt = 0;
-    public int BuildOneBlock(bool p1Turn, bool isHit, int color = -1)
-    {
-        TriggerBuild();
-        if (mCanBuild == false)
-        {
-            return -1;
-        }
-        /*cheat
-         buildcnt++;
-        SpawnNewBlock(p1Turn, isHit, GetHeight(), (buildcnt/2)%2, 1);
-        */
-        SpawnNewBlock(p1Turn, isHit, GetHeight(), color, 1);
-        mCanBuild = false;
-        return 1;
-    }
-
-    public int BuildOneBlock(int color = -1)
-    {
-        TriggerBuild();
-        if (mCanBuild == false)
-        {
-            return -1;
-        }
-
-        SpawnNewBlock(GetHeight(), color, 0);
-        mCanBuild = false;
-        return 1;
-    }
 
     public int DestroyOneBlock(int index = 0)
     {
@@ -209,8 +151,7 @@ public class BlockManager
 
         GameObject p = mBlocks[index];
         BlockBehaviour BlockScript = p.GetComponent<BlockBehaviour>();
-        /*Debug.Log("正在被摧毁的方块颜色：");
-        Debug.Log(GetBlockColorAt(index));*/
+
         //delete from list
         mBlocks.RemoveAt(index);
         //delete the instance
@@ -231,21 +172,6 @@ public class BlockManager
     {
         //Debug.Log("GetHeight: " + mBlocks.Count);
         return mBlocks.Count;
-    }
-
-    private float mInterval = 0.3f;
-
-    private void TriggerBuild()
-    {
-        if (Time.time - mLastTimeBuild > mInterval)
-        {
-            mCanBuild = true;
-            mLastTimeBuild = Time.time;
-        }
-        else
-        {
-            mCanBuild = false;
-        }
     }
 
     private void SetBlockColor(int color, BlockBehaviour blockBehaviour)
@@ -314,27 +240,10 @@ public class BlockManager
         }
         
         Debug.Log("Entering combo -----------------------------------------------------");
-        //CombolFrom(startDeleteIndex - 1);
+
         targetBlock1 = GetBlockAt(startDeleteIndex - 1);
         targetBlock2 = GetBlockAt(startDeleteIndex);
         setComboLowerBound(startDeleteIndex -1);
-    }
-
-    public void test_shoot(int hitBlock_index = 0)
-    {
-        DestroyOneBlock(hitBlock_index);
-    }
-
-    public BlockBehaviour.BlockColourType test_GetBlockColor(GameObject block)
-    {
-        BlockBehaviour script = block.GetComponent<BlockBehaviour>();
-        return script.GetBlockColour();
-    }
-
-    public static BlockBehaviour.BlockColourType GetBlockColor(GameObject block)
-    {
-        BlockBehaviour script = block.GetComponent<BlockBehaviour>();
-        return script.GetBlockColour();
     }
 
     #region combo_logic
@@ -388,7 +297,7 @@ public class BlockManager
             if (readyCombo)
             {
                 Debug.Log("Ready for combo");
-                ComboInfo comboInfo = CombolFrom(comboLowerBound);
+                ComboInfo comboInfo = ComboFrom(comboLowerBound);
                 if (!comboInfo.combo_achieved)//combo already fail, end of all
                 {
                     canCombo = false;
@@ -414,7 +323,6 @@ public class BlockManager
         return false;
     }
 
-    
     private void MarkBlockForDestroy(int lower_index)
     {
         if (lower_index < 0)
@@ -504,7 +412,7 @@ public class BlockManager
      * @CombolFrom
      * return true if combo is achieved
      */
-    public ComboInfo CombolFrom(int lower_index)
+    public ComboInfo ComboFrom(int lower_index)
     {
         ComboInfo comboInfo = new ComboInfo();
         Debug.Log("combo start");
