@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using UnityEngine.Rendering;
+using Cinemachine;
+using Unity.VisualScripting;
 
-public class BlockManager
+public class BlockManager : MonoBehaviour 
 {
     public const int kInitalBlockCount = 0;
     private int mComboBound = 3;//more than x blocks in a row will be destroyed, x is mComboBound
@@ -42,26 +44,39 @@ public class BlockManager
     private bool mCanBuild = true;
     private float SpawnYAxis = 15f;
 
-    public void SetInitPos(Vector2 pos)
+
+    public CinemachineImpulseSource impulseSource;
+
+    private void Start()
     {
+        impulseSource = GameObject.Find("VirtualCamera").GetComponent<CinemachineImpulseSource>();
+    }
+    public void SetInitPos(Vector2 pos) {
+
         mPlayerInitPos = pos;
         mBlockInitPos = pos;
         mBlockInitPos.y = 18f;
     }
 
+
     public BlockManager()
     {
+
         InitializeBlocks();
     }
 
     private void SpawnNewBlock(bool p1Turn, bool isHit, int index, int color = -1, int init = 0)
+
         //if init == 0, then spawn at the top of the screen
     {
         if (color == -1)
         {
             color = Random.Range(0, 2);
         }
+
         GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
+        PlayerManager.mTargetGroup.AddMember(p.transform, 1f, 3f);
+
         GameObject p1 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1();
         GameObject p2 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2();
         Vector3 p1Pos = p1.transform.position;
@@ -141,6 +156,7 @@ public class BlockManager
         //if init == 0, then spawn at the top of the screen
     {
         GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
+        PlayerManager.mTargetGroup.AddMember(p.transform, 1f, 3f);
         BlockBehaviour script = p.GetComponent<BlockBehaviour>();
         SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
         mBlocks.Add(p);
@@ -294,6 +310,7 @@ public class BlockManager
         else
         {
             int temp = index;
+
             while (index > 0 && SameColor(mBlocks[index], mBlocks[index - 1]))
             {
                 index--;
@@ -312,6 +329,7 @@ public class BlockManager
                 DestroyOneBlock(startDeleteIndex);
             }
         }
+
         
         Debug.Log("Entering combo -----------------------------------------------------");
         test_ExecuteCombol(startDeleteIndex - 1);
