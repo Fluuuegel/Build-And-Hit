@@ -81,12 +81,16 @@ public class BlockManager
                     p.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
                 } else {
                     p.transform.position = new Vector3(p1Pos.x, p1Pos.y - 0.4f, 0f);
+                    script.mParticle = script.GetComponent<ParticleSystem>();
+                    script.mParticle.Play();
                 }
             } else {
                 if (isHit) {
                     p.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
                 } else {
                     p.transform.position = new Vector3(p2Pos.x, p2Pos.y - 0.4f, 0f);
+                    script.mParticle = script.GetComponent<ParticleSystem>();
+                    script.mParticle.Play();
                 }
             }
         }
