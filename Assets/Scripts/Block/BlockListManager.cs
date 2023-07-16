@@ -4,6 +4,7 @@ using UnityEngine;
 using Cinemachine;
 public class BlockListManager : MonoBehaviour
 {
+
     
     private void ModifyTargetWeight(string targetName, float weight)
     {
@@ -17,6 +18,7 @@ public class BlockListManager : MonoBehaviour
         }
     }
     private enum BlockState {
+
         eIdle,
         eWait,
         eInitHit,
@@ -269,6 +271,28 @@ public class BlockListManager : MonoBehaviour
             }
             //todo: fix here so the next state is combo
             mBlockState = BlockState.eCombo;
+            isHit = false;
+            time = 0;
+        }
+    }
+    
+    public BlockManager activeManager;
+    public void ServiceComboState()
+    {
+        Debug.Log("Combo in block list");
+        if (p1Turn)
+        {
+            activeManager = mP2BlockManager;
+        }
+        else
+        {
+            activeManager = mP1BlockManager;
+        }
+
+        if (activeManager.UpdateComboState())//combo is done!
+        {
+            Debug.Log("Combo done");
+            mBlockState = BlockState.eIdle;
             p1Turn = !p1Turn;
             isHit = false;
             time = 0;
@@ -295,11 +319,7 @@ public class BlockListManager : MonoBehaviour
         p1Turn = !p1Turn;
     }
 
-    public void ServiceComboState()
-    {
-        
-        mBlockState = BlockState.eIdle;
-    }
+    
 
     // Update is called once per frame
     void Update()

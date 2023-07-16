@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Security.Cryptography;
+using Unity.VisualScripting;
 using UnityEngine;
 using DG.Tweening;
 
@@ -66,8 +67,15 @@ public class BlockBehaviour : MonoBehaviour
         {
             string collidedObjectName = collision.gameObject.name;
             isCollision = true;
-//            Debug.Log("Name: " + collidedObjectName);
+            Debug.Log("Name: " + collidedObjectName);
         }
+
+        if (mBlockManager.IsTargetBlock(this.gameObject, collision.gameObject))
+        {
+            mBlockManager.TargetBlockCollided();
+            Debug.Log("2 target collided");
+        }
+        
     }
 
     public bool isColli() { return isCollision; }
