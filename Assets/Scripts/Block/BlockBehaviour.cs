@@ -17,7 +17,7 @@ public class BlockBehaviour : MonoBehaviour
     }
     private BlockManager mBlockManager = null;
     public BlockColourType mMyColour;
-    private int mIndex;
+    public int mIndex;
     public void SetBlockManager(BlockManager blockManager)
     {
         mBlockManager = blockManager;
@@ -65,7 +65,7 @@ public class BlockBehaviour : MonoBehaviour
         {
             string collidedObjectName = collision.gameObject.name;
             isCollision = true;
-            Debug.Log("Name: " + collidedObjectName);
+//            Debug.Log("Name: " + collidedObjectName);
         }
     }
 
