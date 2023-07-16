@@ -44,7 +44,7 @@ public class BlockManager : MonoBehaviour
     private bool mCanBuild = true;
     private float SpawnYAxis = 15f;
 
-<<<<<<< HEAD
+
     public CinemachineImpulseSource impulseSource;
 
     private void Start()
@@ -52,85 +52,67 @@ public class BlockManager : MonoBehaviour
         impulseSource = GameObject.Find("VirtualCamera").GetComponent<CinemachineImpulseSource>();
     }
     public void SetInitPos(Vector2 pos) {
-=======
-    public void SetInitPos(Vector2 pos)
-    {
->>>>>>> d5eb1b7bd912b173b90c344d20f3086293c0870f
+
         mPlayerInitPos = pos;
         mBlockInitPos = pos;
         mBlockInitPos.y = 18f;
     }
-<<<<<<< HEAD
-    
-    
 
-    public BlockManager() {
-=======
 
     public BlockManager()
     {
->>>>>>> d5eb1b7bd912b173b90c344d20f3086293c0870f
+
         InitializeBlocks();
     }
 
     private void SpawnNewBlock(bool p1Turn, bool isHit, int index, int color = -1, int init = 0)
-<<<<<<< HEAD
-    //if init == 0, then spawn at the top of the screen
-    {   
-        GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
-        PlayerManager.mTargetGroup.AddMember(p.transform, 1f, 3f);
-=======
+
         //if init == 0, then spawn at the top of the screen
     {
         if (color == -1)
         {
             color = Random.Range(0, 2);
         }
-        GameObject newBlock = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
->>>>>>> d5eb1b7bd912b173b90c344d20f3086293c0870f
+
+        GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
+        PlayerManager.mTargetGroup.AddMember(p.transform, 1f, 3f);
+
         GameObject p1 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1();
         GameObject p2 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2();
         Vector3 p1Pos = p1.transform.position;
         Vector3 p2Pos = p2.transform.position;
-        BlockBehaviour script = newBlock.GetComponent<BlockBehaviour>();
-        SpriteRenderer spriteRenderer = newBlock.GetComponent<SpriteRenderer>();
-        SortingGroup blockSortingGroup = newBlock.GetComponent<SortingGroup>();
+        BlockBehaviour script = p.GetComponent<BlockBehaviour>();
+        SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
+        SortingGroup blockSortingGroup = p.GetComponent<SortingGroup>();
 
         // Set the sorting layer of the block
         // Set the position of the players in game
         
 
-        mBlocks.Add(newBlock);
+        mBlocks.Add(p);
         /*--------------set new block----------------*/
         if (init > 0)
-        {//now is in the gameplay
-            if (p1Turn)
-            {
-                // Change the position of the block
-                if (isHit)
-                {
-                    newBlock.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
+        {   if(p1Turn) { // Change the position of the block
+                if(isHit) {
+                    p.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
+                } else {
+                    p.transform.position = new Vector3(p1Pos.x, p1Pos.y - 0.4f, 0f);
+                    script.mParticle = script.GetComponent<ParticleSystem>();
+                    script.mParticle.Play();
                 }
-                else
-                {
-                    newBlock.transform.position = new Vector3(p1Pos.x, p1Pos.y - 0.4f, 0f);
-                }
-            }
-            else
-            {
-                if (isHit)
-                {
-                    newBlock.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
-                }
-                else
-                {
-                    newBlock.transform.position = new Vector3(p2Pos.x, p2Pos.y - 0.4f, 0f);
+            } else {
+                if (isHit) {
+                    p.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
+                } else {
+                    p.transform.position = new Vector3(p2Pos.x, p2Pos.y - 0.4f, 0f);
+                    script.mParticle = script.GetComponent<ParticleSystem>();
+                    script.mParticle.Play();
                 }
             }
         }
         else//now is the initialization process
         {
-            newBlock.transform.position = new Vector3(mBlockInitPos.x, SpawnYAxis + 0.5f * GetHeight(), 0f);
+            p.transform.position = new Vector3(mBlockInitPos.x, SpawnYAxis + 0.5f * GetHeight(), 0f);
         }
         /*-----------------player change------------------*/
         if (init > 0)
@@ -328,12 +310,8 @@ public class BlockManager : MonoBehaviour
         else
         {
             int temp = index;
-<<<<<<< HEAD
-            
-            while(index > 0 && SameColor(mBlocks[index], mBlocks[index - 1]))
-=======
+
             while (index > 0 && SameColor(mBlocks[index], mBlocks[index - 1]))
->>>>>>> d5eb1b7bd912b173b90c344d20f3086293c0870f
             {
                 index--;
                 blocksToDestroyCnt++;
@@ -351,16 +329,10 @@ public class BlockManager : MonoBehaviour
                 DestroyOneBlock(startDeleteIndex);
             }
         }
-<<<<<<< HEAD
-        for(int i = 0; i < blocksToDestroyCnt; i++)
-        {
-            DestroyOneBlock(startDeleteIndex); 
-        }
-=======
+
         
         Debug.Log("Entering combo -----------------------------------------------------");
         test_ExecuteCombol(startDeleteIndex - 1);
->>>>>>> d5eb1b7bd912b173b90c344d20f3086293c0870f
     }
 
     public void test_shoot(int hitBlock_index = 0)
