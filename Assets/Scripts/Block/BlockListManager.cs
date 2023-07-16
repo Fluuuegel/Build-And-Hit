@@ -2,9 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.UI;
 public class BlockListManager : MonoBehaviour
 {
+    private GameObject mEndCanvas = null;
+    public Text mEndText = null;
 
+    private GameObject textObj = null;
     
     private void ModifyTargetWeight(string targetName, float weight)
     {
@@ -52,7 +56,7 @@ public class BlockListManager : MonoBehaviour
 
     private int mTargetBlockIndex = 0;
 
-    private int mInitBlockIndex = 8;
+    private int mInitBlockIndex = 6;
     
     private BlockManager mP1BlockManager;
     private BlockManager mP2BlockManager;
@@ -79,7 +83,28 @@ public class BlockListManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        // UI
+
+        mEndCanvas = GameObject.Find("EndCanvas");
+        if (mEndCanvas == null) {
+            Debug.LogError("EndCanvas not found");
+            return;
+        }
+
+        textObj = GameObject.Find("EndCanvas/Panel/EndText");
+        if (textObj == null) {
+            Debug.LogError("EndText not found");
+            return;
+        }
+
+        mEndText = textObj.GetComponent<Text>();
+        if (mEndText == null) {
+            Debug.LogError("Text component not found on EndText");
+            return;
+        }
+
+        mEndCanvas.SetActive(false);
+
         mP1BlockManager = new BlockManager();
         mP2BlockManager = new BlockManager();
         mP1BlockManager.SetInitPos(GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1Pos());
@@ -140,6 +165,7 @@ public class BlockListManager : MonoBehaviour
         float randomSkill = Random.Range(0f, 1f);
         if (randomSkill > 0.2f)
         {
+            // TODO: Add UI
             mBlockSkills = BlockSkills.Normal;
         }
         else
@@ -334,7 +360,8 @@ public class BlockListManager : MonoBehaviour
     }
 
     public void ServiceEndState() {
-        
+        mEndCanvas.SetActive(true);
+        mEndText.text =  "P " + (p1Turn ? "2" : "1") + " Win!";
     }
 
     void Update()
