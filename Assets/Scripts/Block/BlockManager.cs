@@ -156,19 +156,21 @@ public class BlockManager
     {
         if (mBlocks.Count == 0 || index >= mBlocks.Count)
         {
+            Debug.Log("DestroyOneBlock::No block to destroy!");
             return -1;
         }
         GameObject p = mBlocks[index];
         BlockBehaviour BlockScript = p.GetComponent<BlockBehaviour>();
-        Debug.Log(GetBlockColorAt(index));
+        /*Debug.Log("正在被摧毁的方块颜色：");
+        Debug.Log(GetBlockColorAt(index));*/
         //delete from list
         mBlocks.RemoveAt(index);
         //delete the instance
         BlockScript.SelfDestroy();
-        mCurLayerCount--;
+        //mCurLayerCount--;
         for(int i = 0; i < mBlocks.Count; i++) {
             SpriteRenderer spriteRenderer = mBlocks[i].GetComponent<SpriteRenderer>();
-            spriteRenderer.sortingOrder = i + 1;
+            //spriteRenderer.sortingOrder = i + 1;
             BlockScript = mBlocks[i].GetComponent<BlockBehaviour>();
             BlockScript.SetBlockIndex(i);
         }
@@ -176,7 +178,7 @@ public class BlockManager
     }
     public int GetHeight()
     {
-        Debug.Log("GetHeight: " + mBlocks.Count);
+        //Debug.Log("GetHeight: " + mBlocks.Count);
         return mBlocks.Count;
     }
 
@@ -219,14 +221,18 @@ public class BlockManager
         return b1.GetBlockColour() == b2.GetBlockColour();
     }
     
-    public void CheckColor(GameObject hitBlock, int index = 0)
+    public void BeingHitBlockDestroy(GameObject hitBlock, int index = 0)
     {
         Debug.Log("Check color");
+        Debug.Log("被丢过来的block的颜色是：");
+        Debug.Log(hitBlock.GetComponent<BlockBehaviour>().GetBlockColour());
         if(index >= mBlocks.Count || !hitBlock ) {
             return;
         }
         // List<int> toDestroy = new List<int>();
         // toDestroy.Add(index);
+        /*Debug.Log("打中的颜色是");
+        Debug.Log(mBlocks[index].GetComponent<BlockBehaviour>().GetBlockColour());*/
         int startDeleteIndex = index;
         int blocksToDestroyCnt = 1;
         if(!BlockManager.SameColor(hitBlock, mBlocks[index]))
@@ -261,6 +267,12 @@ public class BlockManager
         DestroyOneBlock(hitBlock_index);
     }
     public BlockBehaviour.BlockColourType test_GetBlockColor(GameObject block)
+    {
+        BlockBehaviour script = block.GetComponent<BlockBehaviour>();
+        return script.GetBlockColour();
+    }
+    
+    public static BlockBehaviour.BlockColourType GetBlockColor(GameObject block)
     {
         BlockBehaviour script = block.GetComponent<BlockBehaviour>();
         return script.GetBlockColour();

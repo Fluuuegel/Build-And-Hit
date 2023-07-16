@@ -12,7 +12,8 @@ public class BlockBehaviour : MonoBehaviour
     {
         red,
         green,
-        blue
+        blue,
+        invalid_colour,
     }
     private BlockManager mBlockManager = null;
     public BlockColourType mMyColour;

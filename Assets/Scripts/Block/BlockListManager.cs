@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class BlockListManager : MonoBehaviour
 {
     private enum BlockState {
@@ -171,11 +170,19 @@ public class BlockListManager : MonoBehaviour
         bool isDestroy = HitBlockScript.isColli();
         if (isDestroy) {
             if(p1Turn) {
-                mP1BlockManager.DestroyOneBlock(mP1BlockManager.GetHeight() - 1);
-                mP2BlockManager.DestroyOneBlock(mP2BlockManager.GetHeight() - mTargetBlockIndex);
+                GameObject bullet = mP1BlockManager.GetBlockAt(mP1BlockManager.GetHeight() - 1);
+                /*Debug.Log("玩家1丢出去的");
+                Debug.Log(bullet.GetComponent<BlockBehaviour>().GetBlockColour());*/
+                mP2BlockManager.BeingHitBlockDestroy(bullet, mP2BlockManager.GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
+                mP1BlockManager.DestroyOneBlock(mP1BlockManager.GetHeight() - 1);//player 1: 当前的玩家
+                
             } else {
-                mP2BlockManager.DestroyOneBlock(mP2BlockManager.GetHeight() - 1);
-                mP1BlockManager.DestroyOneBlock(mP1BlockManager.GetHeight() - mTargetBlockIndex);
+                GameObject bullet = mP2BlockManager.GetBlockAt(mP2BlockManager.GetHeight() - 1);
+                /*Debug.Log("玩家2丢出去的");
+                Debug.Log(bullet.GetComponent<BlockBehaviour>().GetBlockColour());*/
+                mP1BlockManager.BeingHitBlockDestroy(bullet,mP1BlockManager.GetHeight() - mTargetBlockIndex);//player 1
+                mP2BlockManager.DestroyOneBlock(mP2BlockManager.GetHeight() - 1);//player 2: 当前的玩家
+                
             }
 
             mBlockState = BlockState.eIdle;
@@ -196,7 +203,7 @@ public class BlockListManager : MonoBehaviour
         }
         if (isHit) {
             mBlockState = BlockState.eInitHit;
-            Debug.Log("isHit == true");
+            //Debug.Log("isHit == true");
             return ;
         }
         mBlockState = BlockState.eIdle;
