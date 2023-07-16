@@ -169,7 +169,7 @@ public class BlockManager
     }
 
     // Set the color of the block
-    private int buildcnt = 0;
+    //private int buildcnt = 0;
     public int BuildOneBlock(bool p1Turn, bool isHit, int color = -1)
     {
         TriggerBuild();
