@@ -23,6 +23,7 @@ public class BlockListManager : MonoBehaviour
         eSelectHit,
         eHit,
         eBuild,
+        eCombo
     }
 
     private enum BlockColor {
@@ -31,9 +32,18 @@ public class BlockListManager : MonoBehaviour
         eBlue
     };
 
+    //For Skills
+    private enum BlockSkills
+    {
+        Normal,
+        Skills
+    };
+
     private BlockState mBlockState = BlockState.eIdle;
 
     private BlockColor mBlockColor = BlockColor.eRed;
+
+    private BlockSkills mBlockSkills = BlockSkills.Normal;
 
     public float hitSpeed = 2f;
     public bool isLocked = true;
@@ -58,6 +68,10 @@ public class BlockListManager : MonoBehaviour
     private bool isHit = false;
     private float time;
 
+    private AudioBehaviour AudioBehaviour;
+    private GameObject AudioObject = null;
+    private AudioSource music = null;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -69,6 +83,8 @@ public class BlockListManager : MonoBehaviour
         p1 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1();
         p2 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2();
         time = 0;
+        AudioObject = GameObject.Find("AudioObject");
+        music = AudioObject.GetComponent<AudioSource>();
     }
 
     private void UpdateFSM() {
@@ -92,11 +108,24 @@ public class BlockListManager : MonoBehaviour
             case BlockState.eHit:
                 ServiceHitState();
                 break;
+            case BlockState.eCombo:
+                ServiceComboState();
+                break;
         }
     }
 
     private void ServiceIdleState() {
         mBlockColor = (BlockColor)Random.Range(0, 3);
+        float randomSkill = Random.Range(0f, 1f);
+        if (randomSkill > 0.2f)
+        {
+            mBlockSkills = BlockSkills.Normal;
+        }
+        else
+        {
+            mBlockSkills = BlockSkills.Skills;
+            Debug.Log("Find Skill Block!");
+        }
         p1Animator = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1().GetComponent<PlayerBehaviour>().animator;
         p2Animator = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2().GetComponent<PlayerBehaviour>().animator;
         if(UIOfPlayer1 == null || UIOfPlayer2 == null)
@@ -139,6 +168,35 @@ public class BlockListManager : MonoBehaviour
             mBlockState = BlockState.eSelectHit;
             Debug.Log("SelectHit");
             return ;
+        }
+
+
+        //Use skills
+        if (Input.GetKeyDown(KeyCode.P) && (mBlockSkills == BlockSkills.Skills))
+        {
+            Debug.Log("It's skill time!");
+            //temporarily: Destroy the first Block of enemy
+            {
+                mTargetBlockIndex = 1;
+                beHitBlock = mP1BlockManager.GetBlockAt(mP1BlockManager.GetHeight() - mTargetBlockIndex);
+                beHitBlockPos = beHitBlock.transform.position;
+                if (p1Turn)
+                {
+                    GameObject bullet = mP1BlockManager.GetBlockAt(mP1BlockManager.GetHeight() - 1);
+                    mP2BlockManager.BeingHitBlockDestroy(bullet, mP2BlockManager.GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
+                    //mP1BlockManager.DestroyOneBlock(mP1BlockManager.GetHeight() - 1);//player 1: 当前的玩家
+                }
+                else
+                {
+                    GameObject bullet = mP2BlockManager.GetBlockAt(mP2BlockManager.GetHeight() - 1);
+                    mP1BlockManager.BeingHitBlockDestroy(bullet, mP1BlockManager.GetHeight() - mTargetBlockIndex);//player 1
+                    //mP2BlockManager.DestroyOneBlock(mP2BlockManager.GetHeight() - 1);//player 2: 当前的玩家
+                }
+                music.clip = Resources.Load<AudioClip>("music/Audio_Debuff");
+                music.Play();
+            }
+            mBlockSkills = BlockSkills.Normal;//Skills just use once
+            return;
         }
     }
 
@@ -197,23 +255,20 @@ public class BlockListManager : MonoBehaviour
         HitBlockScript.targetCollisionObject = beHitBlock;
         bool isDestroy = HitBlockScript.isColli();
         if (isDestroy) {
-            if(p1Turn) {
+            music.clip = Resources.Load<AudioClip>("music/Audio_Hit");
+            music.Play();
+            if (p1Turn) {
                 GameObject bullet = mP1BlockManager.GetBlockAt(mP1BlockManager.GetHeight() - 1);
-                /*Debug.Log("玩家1丢出去的");
-                Debug.Log(bullet.GetComponent<BlockBehaviour>().GetBlockColour());*/
                 mP2BlockManager.BeingHitBlockDestroy(bullet, mP2BlockManager.GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
                 mP1BlockManager.DestroyOneBlock(mP1BlockManager.GetHeight() - 1);//player 1: 当前的玩家
                 
             } else {
                 GameObject bullet = mP2BlockManager.GetBlockAt(mP2BlockManager.GetHeight() - 1);
-                /*Debug.Log("玩家2丢出去的");
-                Debug.Log(bullet.GetComponent<BlockBehaviour>().GetBlockColour());*/
                 mP1BlockManager.BeingHitBlockDestroy(bullet,mP1BlockManager.GetHeight() - mTargetBlockIndex);//player 1
                 mP2BlockManager.DestroyOneBlock(mP2BlockManager.GetHeight() - 1);//player 2: 当前的玩家
-                
             }
-
-            mBlockState = BlockState.eIdle;
+            //todo: fix here so the next state is combo
+            mBlockState = BlockState.eCombo;
             p1Turn = !p1Turn;
             isHit = false;
             time = 0;
@@ -234,8 +289,16 @@ public class BlockListManager : MonoBehaviour
             //Debug.Log("isHit == true");
             return ;
         }
+        music.clip = Resources.Load<AudioClip>("music/Audio_Build");
+        music.Play();
         mBlockState = BlockState.eIdle;
         p1Turn = !p1Turn;
+    }
+
+    public void ServiceComboState()
+    {
+        
+        mBlockState = BlockState.eIdle;
     }
 
     // Update is called once per frame
