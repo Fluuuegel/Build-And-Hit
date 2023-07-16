@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using UnityEngine.Rendering;
+using Cinemachine;
+using Unity.VisualScripting;
 
 public class BlockManager
 {
@@ -40,15 +42,24 @@ public class BlockManager
     private int mCurLayerCount = 1;
     private float SpawnYAxis = 15f;
 
-    public void SetInitPos(Vector2 pos)
+
+    public CinemachineImpulseSource impulseSource;
+
+    private void Start()
     {
+        impulseSource = GameObject.Find("VirtualCamera").GetComponent<CinemachineImpulseSource>();
+    }
+    public void SetInitPos(Vector2 pos) {
+
         mPlayerInitPos = pos;
         mBlockInitPos = pos;
         mBlockInitPos.y = 18f;
     }
 
+
     public BlockManager()
     {
+
         InitializeBlocks();
     }
 
@@ -70,7 +81,10 @@ public class BlockManager
         {
             color = Random.Range(0, 3);
         }
+
         GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
+        PlayerManager.mTargetGroup.AddMember(p.transform, 1f, 3f);
+
         GameObject p1 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1();
         GameObject p2 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2();
         Vector3 p1Pos = p1.transform.position;
@@ -220,6 +234,7 @@ public class BlockManager
         else
         {
             int temp = index;
+
             while (index > 0 && SameColor(mBlocks[index], mBlocks[index - 1]))
             {
                 index--;
@@ -238,6 +253,7 @@ public class BlockManager
                 DestroyOneBlock(startDeleteIndex);
             }
         }
+
         
         Debug.Log("Entering combo -----------------------------------------------------");
 
