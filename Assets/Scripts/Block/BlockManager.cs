@@ -440,7 +440,6 @@ public class BlockManager
      */
     private bool TriggerReadyForCombo()
     {
-        //todo: add count down
         if(Time.time - collisionTimer > setUpTimeBetweenCollisionAndCombo)
         {
             readyCombo = true;
