@@ -45,6 +45,10 @@ public class BlockListManager : MonoBehaviour
     private bool isHit = false;
     private float time;
 
+    private AudioBehaviour AudioBehaviour;
+    private GameObject AudioObject = null;
+    private AudioSource music = null;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -55,6 +59,8 @@ public class BlockListManager : MonoBehaviour
         p1 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1();
         p2 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2();
         time = 0;
+        AudioObject = GameObject.Find("AudioObject");
+        music = AudioObject.GetComponent<AudioSource>();
     }
 
     private void UpdateFSM() {
@@ -206,6 +212,8 @@ public class BlockListManager : MonoBehaviour
             //Debug.Log("isHit == true");
             return ;
         }
+        music.clip = Resources.Load<AudioClip>("music/Audio_Build");
+        music.Play();
         mBlockState = BlockState.eIdle;
         p1Turn = !p1Turn;
     }
