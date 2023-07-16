@@ -321,7 +321,10 @@ public class BlockManager
         }
         
         Debug.Log("Entering combo -----------------------------------------------------");
-        test_ExecuteCombol(startDeleteIndex - 1);
+        //CombolFrom(startDeleteIndex - 1);
+        targetBlock1 = GetBlockAt(startDeleteIndex - 1);
+        targetBlock2 = GetBlockAt(startDeleteIndex);
+        setComboLowerBound(startDeleteIndex -1);
     }
 
     public void test_shoot(int hitBlock_index = 0)
@@ -342,7 +345,112 @@ public class BlockManager
     }
 
     #region combo_logic
+    
+    public bool canCombo = true;                // the next combo is possible to happen
+    public bool targetBlockCollided = false;    // the target block is collided
+    public bool readyCombo = false;             // the next combo is ready to happen (0.5s after collision)
+    public int comboLowerBound;                 // the lower bound of combo
+    public GameObject targetBlock1 = null, targetBlock2 = null; // the 2 blocks that are about to collide after last elimination(both hit and combo)
+    private float setUpTimeBetweenCollisionAndCombo = 0.5f;     // the time between collision and combo elimination
+    private float collisionTimer = 0.0f;                        //fixme: this is not used yet
 
+    public void SetTargetBlock(GameObject block1, GameObject block2)
+    {
+        targetBlock1 = block1;
+        targetBlock2 = block2;
+    }
+    public bool IsTargetBlock(GameObject block1, GameObject block2){
+        return (block1 == targetBlock1 && block2 == targetBlock2) || (block2 == targetBlock1 && block1 == targetBlock2);
+    }
+    public void setComboLowerBound(int lower_bound)
+    {
+        comboLowerBound = lower_bound;
+    }
+
+    /* @UpdateComboState
+     * return true means that combo is achieved!
+     */
+    private void resetCombo()
+    {
+        canCombo = true;
+        targetBlockCollided = false;
+        readyCombo = false;
+        targetBlock1 = targetBlock2 = null;
+    }
+    public bool UpdateComboState()
+    {
+        Debug.Log("Entering UpdateComboState");
+        if(canCombo == false || (!targetBlock1) || (!targetBlock2))// no more combo from now!
+        {
+            Debug.Log("Combo is not possible anymore!");
+            resetCombo();
+            return true;
+        }
+        //fixme: block collision ignore first
+        if (targetBlockCollided)
+        {
+            Debug.Log("Target Block Collided");
+            TriggerReadyForCombo();
+            if (readyCombo)
+            {
+                Debug.Log("Ready for combo");
+                ComboInfo comboInfo = CombolFrom(comboLowerBound);
+                if (!comboInfo.combo_achieved)//combo already fail, end of all
+                {
+                    canCombo = false;
+                }
+                else // combo is success, prepare for next combo
+                {
+                    comboLowerBound = comboInfo.lower_bound - 1;
+                    if (comboLowerBound < 0)
+                    {
+                        canCombo = false;
+                    }
+                    targetBlock1 = GetBlockAt(comboLowerBound);
+                    targetBlock2 = GetBlockAt(comboLowerBound + 1);
+                    if(!targetBlock1 || !targetBlock2)
+                    {
+                        canCombo = false;
+                    }
+                    targetBlockCollided = false;
+                    readyCombo = false;
+                }
+            }
+        }
+        return false;
+    }
+
+    /*
+     * @TargetBlockCollided
+     * for blocks to call when they collided
+     */
+    public bool TargetBlockCollided()
+    {
+        Debug.Log("TargetBlockCollided");
+        if (targetBlockCollided == false)
+        {
+            collisionTimer = Time.time;//record the collision time
+        }
+        targetBlockCollided = true;
+        return targetBlockCollided;
+    }
+    
+    /*
+     * 
+     */
+    private bool TriggerReadyForCombo()
+    {
+        //todo: add count down
+        if(Time.time - collisionTimer > setUpTimeBetweenCollisionAndCombo)
+        {
+            readyCombo = true;
+        }
+        return readyCombo;
+    }
+    /*
+     * @CombolBlockInRange
+     * destroy blocks in range [lower_bound, lower_bound + num)
+     */
     private void CombolBlockInRange(int lower_bound, int num)
     {
         for(int i = 0; i < num; i++)
@@ -356,22 +464,32 @@ public class BlockManager
     {
         public bool combo_achieved;
         public int lower_bound;
-        public int combo_cnt;
     }
 
-    public bool test_ExecuteCombol(int lower_index)
+    /*
+     * @CombolFrom
+     * return true if combo is achieved
+     */
+    public ComboInfo CombolFrom(int lower_index)
     {
+        ComboInfo comboInfo = new ComboInfo();
         Debug.Log("combo start");
         if (lower_index < 0)
         {
-            return false;
+            comboInfo.combo_achieved = false;
+            return comboInfo;
         }
 
         int combo_cnt = 0;
         if (GetBlockColorAt(lower_index) != GetBlockColorAt(lower_index + 1))
         {
             Debug.Log("2 edge block has different color");
-            return false;
+            Debug.Log(GetBlockColorAt(lower_index));
+            Debug.Log(GetBlockColorAt(lower_index + 1));
+            Debug.Log("lower_index: " + lower_index);
+            Debug.Log("combo fail");
+            comboInfo.combo_achieved = false;
+            return comboInfo;
         }
         else
         {
@@ -394,11 +512,16 @@ public class BlockManager
         if (combo_cnt >= mComboBound)
         {
             CombolBlockInRange(low_bound, combo_cnt);
-            test_ExecuteCombol(low_bound);
+            comboInfo.combo_achieved = true;
+            comboInfo.lower_bound = low_bound;
         }
-        string combo_info = "combo_cnt: " + combo_cnt + " lower_bound: " + low_bound + "color: " + GetBlockColorAt(low_bound);
-        Debug.Log(combo_info);
-        return true;
+        else
+        {
+            comboInfo.combo_achieved = false;
+        }
+        
+        
+        return comboInfo;
 
     }
     

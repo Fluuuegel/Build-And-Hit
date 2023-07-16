@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class BlockListManager : MonoBehaviour
 {
-    private enum BlockState {
+    public enum BlockState {
         eIdle,
         eWait,
         eInitHit,
@@ -19,7 +19,7 @@ public class BlockListManager : MonoBehaviour
         eBlue
     };
 
-    private BlockState mBlockState = BlockState.eIdle;
+    public BlockState mBlockState = BlockState.eIdle;
 
     private BlockColor mBlockColor = BlockColor.eRed;
 
@@ -185,12 +185,33 @@ public class BlockListManager : MonoBehaviour
             }
             //todo: fix here so the next state is combo
             mBlockState = BlockState.eCombo;
+            isHit = false;
+            time = 0;
+        }
+    }
+    
+    public BlockManager activeManager;
+    public void ServiceComboState()
+    {
+        Debug.Log("Combo in block list");
+        if (p1Turn)
+        {
+            activeManager = mP2BlockManager;
+        }
+        else
+        {
+            activeManager = mP1BlockManager;
+        }
+
+        if (activeManager.UpdateComboState())//combo is done!
+        {
+            Debug.Log("Combo done");
+            mBlockState = BlockState.eIdle;
             p1Turn = !p1Turn;
             isHit = false;
             time = 0;
         }
     }
-
     public void ServiceBuildState() {
         // TODO: Spawn a block
         if (p1Turn) {
@@ -209,11 +230,7 @@ public class BlockListManager : MonoBehaviour
         p1Turn = !p1Turn;
     }
 
-    public void ServiceComboState()
-    {
-        
-        mBlockState = BlockState.eIdle;
-    }
+    
 
     // Update is called once per frame
     void Update()
