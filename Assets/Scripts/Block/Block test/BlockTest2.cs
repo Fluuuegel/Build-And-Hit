@@ -7,14 +7,14 @@
 
 // public class BlockTest2 : MonoBehaviour
 // {
-//     public float HitSpeed = 2f;//?˜˜˜?˜
+//     public float HitSpeed = 2f;//?˜˜??
 
-//     private bool isHit = false;//˜?˜??˜˜
-//     private bool isHitIniti = true;//˜?˜?˜˜˜˜?˜˜
-//     private bool isCollision = false;//˜?˜˜˜?˜˜˜˜˜˜˜
-//     private int BlockNum;//˜˜˜?˜˜?˜˜˜˜
-//     private int BeHitColor;//˜˜˜?˜˜(˜˜˜˜?˜˜)˜˜˜˜˜˜˜?
-//     private int HitColor;//˜˜˜˜˜˜ç˜˜˜˜˜˜?
+//     private bool isHit = false;//???˜˜
+//     private bool isHitIniti = true;//??˜˜˜˜?˜˜
+//     private bool isCollision = false;//?˜˜?˜˜˜˜˜˜?
+//     private int BlockNum;//˜˜?˜˜?˜˜˜˜
+//     private int BeHitColor;//˜˜?˜˜(˜˜˜˜?˜˜)˜˜˜˜˜˜?
+//     private int HitColor;//˜˜˜˜˜˜ç˜˜˜˜˜?
 
 //     private BlockManager mTest;//˜˜˜Block list
 //     private BlockManager mTestEnemy;//˜˜˜˜Block list
@@ -49,10 +49,10 @@
 //         KeyControl();//˜˜˜˜
 
 
-//         //˜˜˜˜˜??˜˜
+//         //˜˜˜˜??˜˜
 //         if (isHit)
 //         {
-//             //˜˜˜?˜˜˜˜?˜˜
+//             //˜˜?˜˜˜˜?˜˜
 //             if (isHitIniti)
 //             {
 //                 Debug.Log("isNull: " + mTest.GetBlockAt(2));
@@ -69,26 +69,26 @@
 //                 isHitIniti = false;//?˜˜˜˜?˜˜??˜˜?˜˜
 //             }
 
-//             //˜˜˜˜˜?˜˜?˜˜?
+//             //˜˜˜˜?˜˜?˜˜?
 //             if (!isCollision)
 //             {
 //                 if(HitBlock && BeHitBlock) 
-//                     HitBehaviour(HitBlockPos, BeHitBlockPos, HitBlock, BeHitBlock);//8. ?˜˜Hit˜˜˜é˜˜˜
+//                     HitBehaviour(HitBlockPos, BeHitBlockPos, HitBlock, BeHitBlock);//8. ?˜˜Hit˜˜˜é˜˜?
 //             }
 //         }
 //     }
 
-//     //Hit˜?˜˜é˜˜˜(˜˜˜˜Blocks˜˜??˜?˜˜˜˜˜GameObject)
+//     //Hit?˜˜é˜˜˜(˜˜˜˜Blocks˜˜???˜˜˜˜˜GameObject)
 //     private void HitBehaviour(Vector3 HitBlockPos, Vector3 BeHitBlockPos, GameObject HitBlock, GameObject BeHitBlock)
 //     {
 //         time += HitSpeed * Time.smoothDeltaTime;
 //         Debug.Log("Hit: " + HitBlock.transform.position);
-//         //˜?˜?˜˜
+//         //??˜˜
 //         float x = Mathf.LerpUnclamped(HitBlockPos.x, BeHitBlockPos.x, time);
 //         float y = Mathf.LerpUnclamped(HitBlockPos.y, BeHitBlockPos.y, time);
 //         HitBlock.transform.position = new Vector3(x,y,0);
         
-//         //˜˜˜HitBlock˜?˜˜˜˜˜˜?
+//         //˜˜˜HitBlock?˜˜˜˜˜˜?
 //         BlockBehaviour HitBlockScript = HitBlock.GetComponent<BlockBehaviour>();
 //         HitBlockScript.targetCollisionObject = BeHitBlock;
 //         //Collision2D BeHitColli = BeHitBlock.GetComponent<Collision2D>();
@@ -97,7 +97,7 @@
 //         if (isDestroy) {
 //             //mTest.DestroyOneBlock(1);
 //             //mTestEnemy.DestroyOneBlock(0);
-//             //yield return new WaitForSeconds(0.5f); Bug: Ý˜???˜˜˜
+//             //yield return new WaitForSeconds(0.5f); Bug: Ý˜???˜˜?
 //             //Destroy(HitBlock);//˜˜˜˜HitBlock
 //             mTest.DestroyOneBlock(mTest.GetHeight() - 1);
 //             //Destroy(BeHitBlock);//˜˜˜˜BeHitBlock
@@ -128,11 +128,11 @@
 //     //˜˜˜˜˜˜˜˜
 //     private void KeyControl()
 //     {
-//         if (Input.GetKeyDown(KeyCode.Q))//Hero˜˜˜˜?˜˜˜˜˜˜˜?block
+//         if (Input.GetKeyDown(KeyCode.Q))//Hero˜˜˜˜?˜˜˜˜˜˜?block
 //         {
 //             mTest.BuildOneBlock();
 //         }
-//         if (Input.GetKeyDown(KeyCode.W))//Enemy˜˜˜˜?˜˜˜˜˜˜˜?˜˜block
+//         if (Input.GetKeyDown(KeyCode.W))//Enemy˜˜˜˜?˜˜˜˜˜˜?˜˜block
 //         {
 //             mTestEnemy.BuildOneBlock();
 //         }

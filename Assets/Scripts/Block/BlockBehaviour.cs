@@ -4,10 +4,12 @@ using System.Dynamic;
 using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
+using DG.Tweening;
 
 public class BlockBehaviour : MonoBehaviour
 {
-
+    public ParticleSystem mParticle = null;
+    public Material _material = null;
     public GameObject targetCollisionObject;
     public enum BlockColourType
     {
@@ -44,19 +46,18 @@ public class BlockBehaviour : MonoBehaviour
         return mIndex;
     }
     private bool isCollision = false;
-    // Start is called before the first frame update
+
     void Start()
-    {
-        
+    {   
     }
-    // Update is called once per frame
+
     void Update()
     {
         
     }
 
     public void SelfDestroy()
-    {
+    {   
         Destroy(this.gameObject);
     }
 
@@ -78,14 +79,4 @@ public class BlockBehaviour : MonoBehaviour
     }
 
     public bool isColli() { return isCollision; }
-/*    {
-        if (isCollision)
-        {
-            return isCollision;
-        }else
-        {
-            return false;
-        }
-    }*/
-
 }
