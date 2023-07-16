@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Security.Cryptography;
 using UnityEngine;
+using DG.Tweening;
 
 public class BlockBehaviour : MonoBehaviour
 {
 
+    public ParticleSystem mParticle = null;
+
+    public Material _material = null;
     public GameObject targetCollisionObject;
     public enum BlockColourType
     {
@@ -45,7 +49,7 @@ public class BlockBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        _material = GetComponent<Renderer>().material;
     }
     // Update is called once per frame
     void Update()

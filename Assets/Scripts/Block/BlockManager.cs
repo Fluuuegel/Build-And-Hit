@@ -165,10 +165,7 @@ public class BlockManager
         mBlocks.RemoveAt(index);
         //delete the instance
         BlockScript.SelfDestroy();
-        mCurLayerCount--;
         for(int i = 0; i < mBlocks.Count; i++) {
-            SpriteRenderer spriteRenderer = mBlocks[i].GetComponent<SpriteRenderer>();
-            spriteRenderer.sortingOrder = i + 1;
             BlockScript = mBlocks[i].GetComponent<BlockBehaviour>();
             BlockScript.SetBlockIndex(i);
         }
