@@ -351,7 +351,7 @@ public class BlockManager
     public bool readyCombo = false;             // the next combo is ready to happen (0.5s after collision)
     public int comboLowerBound;                 // the lower bound of combo
     public GameObject targetBlock1 = null, targetBlock2 = null; // the 2 blocks that are about to collide after last elimination(both hit and combo)
-    private float setUpTimeBetweenCollisionAndCombo = 0.5f;     // the time between collision and combo elimination
+    private float setUpTimeBetweenCollisionAndCombo = 0.3f;     // the time between collision and combo elimination
     private float collisionTimer = 0.0f;                        //fixme: this is not used yet
 
     public void SetTargetBlock(GameObject block1, GameObject block2)
@@ -390,6 +390,7 @@ public class BlockManager
         if (targetBlockCollided)
         {
             Debug.Log("Target Block Collided");
+            MarkBlockForDestroy(comboLowerBound);
             TriggerReadyForCombo();
             if (readyCombo)
             {
@@ -420,6 +421,46 @@ public class BlockManager
         return false;
     }
 
+    
+    private void MarkBlockForDestroy(int lower_index)
+    {
+        if (lower_index < 0)
+        {
+            return;
+        }
+
+        int combo_cnt = 0;
+        if (GetBlockColorAt(lower_index) != GetBlockColorAt(lower_index + 1))
+        {
+            Debug.Log("2 edge block has different color");
+            Debug.Log("precombo fail");
+            return;
+        }
+        else
+        {
+            combo_cnt = 1;
+        }
+        
+        int up_bound = lower_index, low_bound = lower_index;
+        while (up_bound < mBlocks.Count - 1 && GetBlockColorAt(up_bound) == GetBlockColorAt(up_bound + 1))
+        {
+            up_bound++;
+            combo_cnt++;
+        }
+
+        while (low_bound > 0 && GetBlockColorAt(low_bound) == GetBlockColorAt(low_bound - 1))
+        {
+            low_bound--;
+            combo_cnt++;
+        }
+
+        if (combo_cnt < mComboBound)//not enough combo
+            return;
+        for(int i = low_bound; i <= up_bound; i++)
+        {
+            SetTransparent(mBlocks[i],0.3f);
+        }
+    }
     /*
      * @TargetBlockCollided
      * for blocks to call when they collided
@@ -525,6 +566,12 @@ public class BlockManager
 
     }
     
-    
+    private void SetTransparent(GameObject block, float alpha)
+    {
+        SpriteRenderer sr = block.GetComponent<SpriteRenderer>();
+        Color color = sr.color;
+        color.a = alpha;
+        sr.color = color;
+    }
     #endregion
 }
