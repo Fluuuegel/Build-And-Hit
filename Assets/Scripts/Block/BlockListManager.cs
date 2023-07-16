@@ -10,7 +10,8 @@ public class BlockListManager : MonoBehaviour
         eSelectHit,
         eHit,
         eBuild,
-        eCombo
+        eCombo,
+        eEnd
     }
 
     private enum BlockColor {
@@ -102,10 +103,23 @@ public class BlockListManager : MonoBehaviour
             case BlockState.eCombo:
                 ServiceComboState();
                 break;
+            case BlockState.eEnd:
+                ServiceEndState();
+                break;
         }
     }
 
     private void ServiceIdleState() {
+        if (p1Turn && mP1BlockManager.GetHeight() == 0) {
+            Debug.Log("Player 2 Win!");
+            mBlockState = BlockState.eEnd;
+            return ;
+        } else if (!p1Turn && mP2BlockManager.GetHeight() == 0) {
+            Debug.Log("Player 1 Win!");
+            mBlockState = BlockState.eEnd;
+            return ;
+        }
+
         mBlockColor = (BlockColor)Random.Range(0, 3);
         float randomSkill = Random.Range(0f, 1f);
         if (randomSkill > 0.2f)
@@ -287,6 +301,10 @@ public class BlockListManager : MonoBehaviour
         music.Play();
         mBlockState = BlockState.eIdle;
         p1Turn = !p1Turn;
+    }
+
+    public void ServiceEndState() {
+        
     }
 
     void Update()

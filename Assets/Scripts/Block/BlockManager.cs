@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 public class BlockManager
 {
     public const int kInitalBlockCount = 0;
-    private int mComboBound = 3;//more than x blocks in a row will be destroyed, x is mComboBound
+    private int mComboBound = 3; //more than x blocks in a row will be destroyed, x is mComboBound
     private static GameObject[] mBlockPrefabs = new GameObject[3];
     private List<GameObject> mBlocks = new List<GameObject>();
 
