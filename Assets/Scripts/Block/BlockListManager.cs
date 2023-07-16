@@ -1,8 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 public class BlockListManager : MonoBehaviour
 {
+    
+    private void ModifyTargetWeight(string targetName, float weight)
+    {
+        CinemachineTargetGroup.Target[] targets = PlayerManager.mTargetGroup.m_Targets;
+        for (int i = 0; i < targets.Length; i++)
+        {
+            if (targets[i].target != null && targets[i].target.name == targetName)
+            {
+                targets[i].weight = weight;
+            }
+        }
+    }
     private enum BlockState {
         eIdle,
         eWait,
@@ -38,7 +51,7 @@ public class BlockListManager : MonoBehaviour
 
     private GameObject p1;
     private GameObject p2;
-
+    private GameObject UIOfPlayer1, UIOfPlayer2;
 
     private bool p1Turn = true;
 
@@ -48,6 +61,7 @@ public class BlockListManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         mP1BlockManager = new BlockManager();
         mP2BlockManager = new BlockManager();
         mP1BlockManager.SetInitPos(GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1Pos());
@@ -85,16 +99,30 @@ public class BlockListManager : MonoBehaviour
         mBlockColor = (BlockColor)Random.Range(0, 3);
         p1Animator = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1().GetComponent<PlayerBehaviour>().animator;
         p2Animator = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2().GetComponent<PlayerBehaviour>().animator;
+        if(UIOfPlayer1 == null || UIOfPlayer2 == null)
+        {
+            UIOfPlayer1 = GameObject.Find("UIOfPlayer1");
+            UIOfPlayer2 = GameObject.Find("UIOfPlayer2");
+        }
         if (p1Turn) {
+            UIOfPlayer1.SetActive(true);
+            UIOfPlayer2.SetActive(false);
             p1Animator.SetBool("IsHolding", true);
             p2Animator.SetBool("IsHolding", false);
 
+            ModifyTargetWeight("Player1", 10f);
+            ModifyTargetWeight("Player2", 3f);
             // BlockColor : 0 - Green, 1 - Red, 2 - Blue
             p1Animator.SetInteger("BlockColor", (int)mBlockColor);
         } else {
+            UIOfPlayer1.SetActive(false);
+            UIOfPlayer2.SetActive(true);
             p1Animator.SetBool("IsHolding", false);
             p2Animator.SetBool("IsHolding", true);
             p2Animator.SetInteger("BlockColor", (int)mBlockColor);
+
+            ModifyTargetWeight("Player1", 3f);
+            ModifyTargetWeight("Player2", 10f);
         }
         mBlockState = BlockState.eWait;
     }

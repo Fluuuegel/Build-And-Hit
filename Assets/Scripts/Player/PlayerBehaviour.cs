@@ -151,33 +151,33 @@ public class PlayerBehaviour : MonoBehaviour
 
     }
 
-    private void BindUI()
-    {
-        if(gameObject.name == "Player1")
-        {
-            mPlayerUI = GameObject.Find("UIOfPlayer1");
-        }
-        if(gameObject.name == "Player2")
-        {
-            mPlayerUI = GameObject.Find("UIOfPlayer2");
-        }
-    }
+    //private void BindUI()
+    //{
+    //    if(gameObject.name == "Player1")
+    //    {
+    //        mPlayerUI = GameObject.Find("UIOfPlayer1");
+    //    }
+    //    if(gameObject.name == "Player2")
+    //    {
+    //        mPlayerUI = GameObject.Find("UIOfPlayer2");
+    //    }
+    //}
 
-    private void BindButton()
-    {
-        mBuildButton = mPlayerUI.transform.Find("Action").transform.Find("BuildButton").GetComponent<Button>();
-        mBuildButton.onClick.AddListener(BuildButtonClick);
-        mHitButton = mPlayerUI.transform.Find("Action").transform.Find("HitButton").GetComponent<Button>();
-        mHitButton.onClick.AddListener(HitButtonClick);
-    }
+    //private void BindButton()
+    //{
+    //    mBuildButton = mPlayerUI.transform.Find("Action").transform.Find("BuildButton").GetComponent<Button>();
+    //    mBuildButton.onClick.AddListener(BuildButtonClick);
+    //    mHitButton = mPlayerUI.transform.Find("Action").transform.Find("HitButton").GetComponent<Button>();
+    //    mHitButton.onClick.AddListener(HitButtonClick);
+    //}
 
-    private void BuildButtonClick()
-    {
-        isBuildButtonClick = true;
-    }
+    //private void BuildButtonClick()
+    //{
+    //    isBuildButtonClick = true;
+    //}
 
-    private void HitButtonClick()
-    {
-        isHitButtonClick = true;
-    }
+    //private void HitButtonClick()
+    //{
+    //    isHitButtonClick = true;
+    //}
 }

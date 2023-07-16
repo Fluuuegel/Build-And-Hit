@@ -35,8 +35,8 @@ public class TurnManager : MonoBehaviour
         playerUI[1] = GameObject.Find("UIOfPlayer2");
         
         
-        playerBehaviour[1].Lock();
-        playerBehaviour[0].unLock();
+        //playerBehaviour[1].Lock();
+        //playerBehaviour[0].unLock();
         playerUI[0].SetActive(true);
         playerUI[1].SetActive(false);
         currentPlayer = playerBehaviour[0];
@@ -47,20 +47,20 @@ public class TurnManager : MonoBehaviour
 
     private void Update()
     {
-        if (currentPlayer.isLocked == true)
-        {
-            TurnChange();
-        }
+        //if (currentPlayer.isLocked == true)
+        //{
+        //    TurnChange();
+        //}
     }
 
-    private void TurnChange()
-    {
-        playerUI[playerIndex].SetActive(false);
-        playerIndex = (playerIndex + 1) % 2;
-        currentPlayer = playerBehaviour[playerIndex];
-        currentPlayer.unLock();
-        playerUI[playerIndex].SetActive(true);
-        Debug.Log($"P{playerIndex + 1}, now it's your turn !");
-    }
+    //private void TurnChange()
+    //{
+    //    playerUI[playerIndex].SetActive(false);
+    //    playerIndex = (playerIndex + 1) % 2;
+    //    currentPlayer = playerBehaviour[playerIndex];
+    //    currentPlayer.unLock();
+    //    playerUI[playerIndex].SetActive(true);
+    //    Debug.Log($"P{playerIndex + 1}, now it's your turn !");
+    //}
 }
 
