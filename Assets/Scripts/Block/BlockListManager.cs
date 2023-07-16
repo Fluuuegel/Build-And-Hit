@@ -8,6 +8,9 @@ public class BlockListManager : MonoBehaviour
     private GameObject mEndCanvas = null;
     public Text mEndText = null;
 
+    public GameObject mSkillButton1 = null;
+    public GameObject mSkillButton2 = null;
+    
     private GameObject textObj = null;
     
     private void ModifyTargetWeight(string targetName, float weight)
@@ -105,6 +108,11 @@ public class BlockListManager : MonoBehaviour
 
         mEndCanvas.SetActive(false);
 
+        mSkillButton1 = GameObject.Find("Canvas/UIOfPlayer1/Action/SkillButton");
+        mSkillButton2 = GameObject.Find("Canvas/UIOfPlayer2/Action/SkillButton");
+        mSkillButton1.SetActive(false);
+        mSkillButton2.SetActive(false);
+
         mP1BlockManager = new BlockManager();
         mP2BlockManager = new BlockManager();
         mP1BlockManager.SetInitPos(GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1Pos());
@@ -163,6 +171,10 @@ public class BlockListManager : MonoBehaviour
 
         mBlockColor = (BlockColor)Random.Range(0, 3);
         float randomSkill = Random.Range(0f, 1f);
+
+        mSkillButton1.SetActive(false);
+        mSkillButton2.SetActive(false);
+
         if (randomSkill > 0.2f)
         {
             // TODO: Add UI
@@ -170,6 +182,14 @@ public class BlockListManager : MonoBehaviour
         }
         else
         {
+            if (p1Turn)
+            {
+                mSkillButton1.SetActive(true);
+            }
+            else
+            {
+                mSkillButton2.SetActive(true);
+            }
             mBlockSkills = BlockSkills.Skills;
             Debug.Log("Find Skill Block!");
         }
