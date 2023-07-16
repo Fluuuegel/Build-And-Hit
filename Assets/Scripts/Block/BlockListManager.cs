@@ -179,7 +179,9 @@ public class BlockListManager : MonoBehaviour
         HitBlockScript.targetCollisionObject = beHitBlock;
         bool isDestroy = HitBlockScript.isColli();
         if (isDestroy) {
-            if(p1Turn) {
+            music.clip = Resources.Load<AudioClip>("music/Audio_Hit");
+            music.Play();
+            if (p1Turn) {
                 GameObject bullet = mP1BlockManager.GetBlockAt(mP1BlockManager.GetHeight() - 1);
                 mP2BlockManager.BeingHitBlockDestroy(bullet, mP2BlockManager.GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
                 mP1BlockManager.DestroyOneBlock(mP1BlockManager.GetHeight() - 1);//player 1: 当前的玩家
