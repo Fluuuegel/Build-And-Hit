@@ -1,0 +1,28 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class AudioBehaviour : MonoBehaviour
+{
+    public AudioSource music;
+
+    private void Awake()
+    {
+        music = gameObject.AddComponent<AudioSource>();
+        music.playOnAwake = false;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+}

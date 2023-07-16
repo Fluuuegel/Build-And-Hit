@@ -61,50 +61,43 @@ public class BlockManager
         {
             color = Random.Range(0, 2);
         }
-        GameObject newBlock = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
+        GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
         GameObject p1 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1();
         GameObject p2 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2();
         Vector3 p1Pos = p1.transform.position;
         Vector3 p2Pos = p2.transform.position;
-        BlockBehaviour script = newBlock.GetComponent<BlockBehaviour>();
-        SpriteRenderer spriteRenderer = newBlock.GetComponent<SpriteRenderer>();
-        SortingGroup blockSortingGroup = newBlock.GetComponent<SortingGroup>();
+        BlockBehaviour script = p.GetComponent<BlockBehaviour>();
+        SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
+        SortingGroup blockSortingGroup = p.GetComponent<SortingGroup>();
 
         // Set the sorting layer of the block
         // Set the position of the players in game
         
 
-        mBlocks.Add(newBlock);
+        mBlocks.Add(p);
         /*--------------set new block----------------*/
         if (init > 0)
-        {//now is in the gameplay
-            if (p1Turn)
-            {
-                // Change the position of the block
-                if (isHit)
-                {
-                    newBlock.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
+        {   if(p1Turn) { // Change the position of the block
+                if(isHit) {
+                    p.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
+                } else {
+                    p.transform.position = new Vector3(p1Pos.x, p1Pos.y - 0.4f, 0f);
+                    script.mParticle = script.GetComponent<ParticleSystem>();
+                    script.mParticle.Play();
                 }
-                else
-                {
-                    newBlock.transform.position = new Vector3(p1Pos.x, p1Pos.y - 0.4f, 0f);
-                }
-            }
-            else
-            {
-                if (isHit)
-                {
-                    newBlock.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
-                }
-                else
-                {
-                    newBlock.transform.position = new Vector3(p2Pos.x, p2Pos.y - 0.4f, 0f);
+            } else {
+                if (isHit) {
+                    p.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
+                } else {
+                    p.transform.position = new Vector3(p2Pos.x, p2Pos.y - 0.4f, 0f);
+                    script.mParticle = script.GetComponent<ParticleSystem>();
+                    script.mParticle.Play();
                 }
             }
         }
         else//now is the initialization process
         {
-            newBlock.transform.position = new Vector3(mBlockInitPos.x, SpawnYAxis + 0.5f * GetHeight(), 0f);
+            p.transform.position = new Vector3(mBlockInitPos.x, SpawnYAxis + 0.5f * GetHeight(), 0f);
         }
         /*-----------------player change------------------*/
         if (init > 0)
