@@ -9,13 +9,11 @@ public class ModeSelectMenu : MonoBehaviour
 
     public void PVPGameStart()
     {
-        Debug.Log("PVP select started!");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public void PVEGameStart()
     {
-        Debug.Log("PVE select started!");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
     }
     // Start is called before the first frame update

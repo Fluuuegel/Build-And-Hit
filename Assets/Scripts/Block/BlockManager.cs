@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
+using UnityEngine.Rendering;
 
 public class BlockManager
 {
@@ -48,13 +48,62 @@ public class BlockManager
         InitializeBlocks();
     }
 
+    private void SpawnNewBlock(bool p1Turn, bool isHit, int index, int color = -1, int init = 0)
+    //if init == 0, then spawn at the top of the screen
+    {   
+        GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
+        GameObject p1 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1();
+        GameObject p2 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2();
+        Vector3 p1Pos = p1.transform.position;
+        Vector3 p2Pos = p2.transform.position;
+
+        BlockBehaviour script = p.GetComponent<BlockBehaviour>();
+        SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
+        SortingGroup sortingGroup = p.GetComponent<SortingGroup>();
+
+        // Set the sorting layer of the block
+        if (p1Turn && !isHit) {
+            sortingGroup.sortingLayerName = "PlayerCube";
+            sortingGroup.sortingOrder = mCurLayerCount;
+            p1.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
+        }
+        else if(!p1Turn && !isHit){
+            sortingGroup.sortingLayerName = "EnemyCube";
+            sortingGroup.sortingOrder = mCurLayerCount;
+            p2.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
+        }
+
+        mBlocks.Add(p);
+
+        if (init > 0)
+        {   if(p1Turn) { // Change the position of the block
+                if(isHit) {
+                    p.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
+                } else {
+                    p.transform.position = new Vector3(p1Pos.x, p1Pos.y - 0.4f, 0f);
+                }
+            } else {
+                if (isHit) {
+                    p.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
+                } else {
+                    p.transform.position = new Vector3(p2Pos.x, p2Pos.y - 0.4f, 0f);
+                }
+            }
+        }
+        else
+        {
+            p.transform.position = new Vector3(mBlockInitPos.x, SpawnYAxis, 0f);
+        }
+        spriteRenderer.sortingOrder = mCurLayerCount;
+        script.SetBlockManager(this);
+        script.SetBlockIndex(index);
+        SetBlockColor(color, script);
+        mCurLayerCount++;
+    }
+
     private void SpawnNewBlock(int index, int color = -1, int init = 0)
     //if init == 0, then spawn at the top of the screen
     {
-        if (color == -1)
-        {
-            color = Random.Range(0, 3);
-        }
         GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
         BlockBehaviour script = p.GetComponent<BlockBehaviour>();
         SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
@@ -72,58 +121,33 @@ public class BlockManager
         script.SetBlockIndex(index);
         SetBlockColor(color, script);
         mCurLayerCount++;
-        
     }
+
     public void InitializeBlocks() {
-        int randomInt;
         mBlockPrefabs[0] = Resources.Load<GameObject>("Prefabs/RedCube");
         mBlockPrefabs[1] = Resources.Load<GameObject>("Prefabs/GreenCube");
         mBlockPrefabs[2] = Resources.Load<GameObject>("Prefabs/BlueCube");
-
-        for(int i = 0; i < kInitalBlockCount; i++) {
-            /*randomInt = Random.Range(0, 3);
-            GameObject p = GameObject.Instantiate(mBlockPrefabs[randomInt]) as GameObject;
-            p.transform.position = new Vector3(mPlayerInitPos.x, mPlayerInitPos.y + 0.5f * i, 0f);
-            SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
-            spriteRenderer.sortingOrder = mCurLayerCount;
-            mBlocks.Add(p);
-            //fixme: set p's manager
-            BlockBehaviour script = p.GetComponent<BlockBehaviour>();
-            script.SetBlockManager(this);
-            SetBlockColor(randomInt, script);
-            mCurLayerCount++;*/
-            SpawnNewBlock(i,-1,1);
-        }
     }
 
-    //use color to define the block color, -1 means random
+    // Set the color of the block
+    public int BuildOneBlock(bool p1Turn, bool isHit, int color = -1)
+    {
+        TriggerBuild();
+        if(mCanBuild == false) {
+            return -1;
+        }
+        SpawnNewBlock(p1Turn, isHit, GetHeight(), color, 1);
+        mCanBuild = false;
+        return 1;
+    }
+
     public int BuildOneBlock(int color = -1)
     {
         TriggerBuild();
         if(mCanBuild == false) {
             return -1;
         }
-        GameObject p;
-        /*if (color == -1)
-        {
-            int randonInt = Random.Range(0, 3);
-            p = GameObject.Instantiate(mBlockPrefabs[randonInt]) as GameObject;
-            color = randonInt;
-        }
-        else
-        {
-            p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
-        }
-        p.transform.position = new Vector3(mBlockInitPos.x,mBlockInitPos.y, 0f);
-        SpriteRenderer spriteRenderer = p.GetComponent<SpriteRenderer>();
-        spriteRenderer.sortingOrder = mCurLayerCount;
-        mBlocks.Add(p);
-        mCurLayerCount++;
-        BlockBehaviour script = p.GetComponent<BlockBehaviour>();
-        script.SetBlockManager(this);
-        SetBlockColor(color, script);
-        mLastTimeBuild = Time.time;*/
-        SpawnNewBlock(GetHeight(),-1,0);
+        SpawnNewBlock(GetHeight(), color, 0);
         mCanBuild = false;
         return 1;
     }
@@ -132,19 +156,21 @@ public class BlockManager
     {
         if (mBlocks.Count == 0 || index >= mBlocks.Count)
         {
+            Debug.Log("DestroyOneBlock::No block to destroy!");
             return -1;
         }
         GameObject p = mBlocks[index];
         BlockBehaviour BlockScript = p.GetComponent<BlockBehaviour>();
-        Debug.Log(GetBlockColorAt(index));
+        /*Debug.Log("正在被摧毁的方块颜色：");
+        Debug.Log(GetBlockColorAt(index));*/
         //delete from list
         mBlocks.RemoveAt(index);
         //delete the instance
         BlockScript.SelfDestroy();
-        mCurLayerCount--;
+        //mCurLayerCount--;
         for(int i = 0; i < mBlocks.Count; i++) {
             SpriteRenderer spriteRenderer = mBlocks[i].GetComponent<SpriteRenderer>();
-            spriteRenderer.sortingOrder = i + 1;
+            //spriteRenderer.sortingOrder = i + 1;
             BlockScript = mBlocks[i].GetComponent<BlockBehaviour>();
             BlockScript.SetBlockIndex(i);
         }
@@ -152,6 +178,7 @@ public class BlockManager
     }
     public int GetHeight()
     {
+        //Debug.Log("GetHeight: " + mBlocks.Count);
         return mBlocks.Count;
     }
 
@@ -183,61 +210,69 @@ public class BlockManager
         }
         else
         {
-            Debug.Log("SetBlockColor: color error!!!");
+            Debug.Log("SetBlockColor: Wrong color!");
         }
     }
     
     public static bool SameColor(GameObject block1, GameObject block2)
     {
-        BlockBehaviour script1 = block1.GetComponent<BlockBehaviour>();
-        BlockBehaviour script2 = block2.GetComponent<BlockBehaviour>();
-        return script1.GetBlockColour() == script2.GetBlockColour();
+        BlockBehaviour b1 = block1.GetComponent<BlockBehaviour>();
+        BlockBehaviour b2 = block2.GetComponent<BlockBehaviour>();
+        return b1.GetBlockColour() == b2.GetBlockColour();
     }
-    public void test_collision(GameObject bullet, int index = 0)
+    
+    public void BeingHitBlockDestroy(GameObject hitBlock, int index = 0)
     {
-        Debug.Log("test_collision_start");
-        if(index >= mBlocks.Count || !bullet )
-        {
+        Debug.Log("Check color");
+        Debug.Log("被丢过来的block的颜色是：");
+        Debug.Log(hitBlock.GetComponent<BlockBehaviour>().GetBlockColour());
+        if(index >= mBlocks.Count || !hitBlock ) {
             return;
         }
-        List<int> toDestroy = new List<int>();
-        toDestroy.Add(index);
-        int start_from = index;
-        int destroy_cnt = 1;
-        if(!BlockManager.SameColor(bullet, mBlocks[index]))
+        // List<int> toDestroy = new List<int>();
+        // toDestroy.Add(index);
+        /*Debug.Log("打中的颜色是");
+        Debug.Log(mBlocks[index].GetComponent<BlockBehaviour>().GetBlockColour());*/
+        int startDeleteIndex = index;
+        int blocksToDestroyCnt = 1;
+        if(!BlockManager.SameColor(hitBlock, mBlocks[index]))
         {
             DestroyOneBlock(index);
             return;
         }
-        else
-        {
-            
+        else {
             int temp = index;
             while(index > 0 && SameColor(mBlocks[index], mBlocks[index - 1]))
             {
                 index--;
-                destroy_cnt++;
+                blocksToDestroyCnt++;
             }
 
-            start_from = index;
+            startDeleteIndex = index;
             index = temp;
             while(index <= mBlocks.Count - 2 && SameColor(mBlocks[index], mBlocks[index + 1]))
             {
                 index++;
-                destroy_cnt++;
+                blocksToDestroyCnt++;
             }
         }
-        for(int i = 0; i < destroy_cnt; i++)
+        for(int i = 0; i < blocksToDestroyCnt; i++)
         {
-            DestroyOneBlock(start_from);
+            DestroyOneBlock(startDeleteIndex);
         }
-        Debug.Log("test_collision_end");
     }
-    public void test_shoot(int bullet_index = 0)
+
+    public void test_shoot(int hitBlock_index = 0)
     {
-        DestroyOneBlock(bullet_index);
+        DestroyOneBlock(hitBlock_index);
     }
     public BlockBehaviour.BlockColourType test_GetBlockColor(GameObject block)
+    {
+        BlockBehaviour script = block.GetComponent<BlockBehaviour>();
+        return script.GetBlockColour();
+    }
+    
+    public static BlockBehaviour.BlockColourType GetBlockColor(GameObject block)
     {
         BlockBehaviour script = block.GetComponent<BlockBehaviour>();
         return script.GetBlockColour();

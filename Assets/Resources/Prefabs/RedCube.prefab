@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7859783850875297972}
   - component: {fileID: 6470113591412946508}
   - component: {fileID: 7079580992452881452}
+  - component: {fileID: 1263287401277436714}
   m_Layer: 0
   m_Name: RedCube
   m_TagString: Untagged
@@ -73,8 +74,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1412147193
-  m_SortingLayer: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b35b2a3aef04645219df85d664fae49f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -148,3 +149,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetCollisionObject: {fileID: 0}
   mMyColour: 0
+--- !u!210 &1263287401277436714
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6382026336823861372}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0

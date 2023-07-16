@@ -23,3 +23,7 @@
 *.sln
 
 **/obj
+
+**/Build-And-Hit.sln.DotSettings.user
+
+**/.idea

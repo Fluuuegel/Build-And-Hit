@@ -11,13 +11,11 @@ public class Player2Select : MonoBehaviour
     public Button BackToPlayer1Select;
     public void PVPGameActive()
     {
-        Debug.Log("PVP game is now active!");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
     }
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Player2Select");
     }
 
     public void SelectChar1()
