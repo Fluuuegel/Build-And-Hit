@@ -4,25 +4,14 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
 public class BlockListManager : MonoBehaviour
-{
-    private GameObject mEndCanvas = null;
-    public Text mEndText = null;
+{   
 
+    // UI
+    private GameObject mEndCanvas = null;
+    private GameObject mTextObj = null;
+    public Text mEndText = null;
     public GameObject[] mSkillButtons = new GameObject[2];
     
-    private GameObject textObj = null;
-    
-    private void ModifyTargetWeight(string targetName, float weight)
-    {
-        CinemachineTargetGroup.Target[] targets = PlayerManager.mTargetGroup.m_Targets;
-        for (int i = 0; i < targets.Length; i++)
-        {
-            if (targets[i].target != null && targets[i].target.name == targetName)
-            {
-                targets[i].weight = weight;
-            }
-        }
-    }
     private enum BlockState {
 
         eIdle,
@@ -48,24 +37,22 @@ public class BlockListManager : MonoBehaviour
     };
 
     private BlockState mBlockState = BlockState.eIdle;
-
     private BlockColor mBlockColor = BlockColor.eRed;
-
     private BlockSkills mBlockSkills = BlockSkills.eNormal;
 
-    public float hitSpeed = 2f;
+    // Constants
+    private const int kInitBlockIndex = 6;
+    private const int kPlayerNum = 2;
 
     private int mTargetBlockIndex = 0;
-
-    private int mInitBlockIndex = 6;
-
-    private int mPlayerNum = 2;
+    private int mPlayerIndex = 0;
+    private bool mIsHitState = false;
+    public float mHitSpeed = 2f;
+    private float mTime = 0f;
     
     private BlockManager[] mBlockManagers = new BlockManager[2];
-    private GameObject hitBlock;
-    private GameObject beHitBlock;
-    private Vector3 hitBlockPos;
-    private Vector3 beHitBlockPos;
+
+    public BlockManager mActiveManager;
 
     private Animator[] mPlayerAnimators = new Animator[2];
 
@@ -73,43 +60,49 @@ public class BlockListManager : MonoBehaviour
 
     private GameObject[] mUIOfPlayers = new GameObject[2];
 
-    private int mPlayerIndex = 0;
-    private bool isHit = false;
-    private float time = 0f;
+    // Audio
+    private GameObject mAudioObj = null;
+    private AudioSource mMusic = null;
 
-    private AudioBehaviour AudioBehaviour;
-    private GameObject AudioObject = null;
-    private AudioSource music = null;
+    // Hit
+    private GameObject mHitBlock;
+    private GameObject mTargetBlock;
+    private Vector3 mHitBlockPos;
+    private Vector3 mTargetBlockPos;
 
     // Start is called before the first frame update
     void Start()
     {
         // UI
         mEndCanvas = GameObject.Find("EndCanvas");
-        textObj = GameObject.Find("EndCanvas/Panel/EndText");
-        mEndText = textObj.GetComponent<Text>();
+        mTextObj = GameObject.Find("EndCanvas/Panel/EndText");
+        mEndText = mTextObj.GetComponent<Text>();
         mEndCanvas.SetActive(false);
 
-        for (int i = 0; i < mPlayerNum; i++) {
+        for (int i = 0; i < kPlayerNum; i++) {
             mSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton");
             mSkillButtons[i].SetActive(false);
         }
         
-        for (int i = 0; i < mPlayerNum; i++) {
+        for (int i = 0; i < kPlayerNum; i++) {
             mBlockManagers[i] = new BlockManager();
             mBlockManagers[i].SetInitPos(GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayerPos(i));
             mPlayers[i] = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer(i);
+            Debug.Log("Here");
+            if (mPlayers[i] == null) {
+                Debug.Log("Player " + i + " is null");
+            }
         }
 
-        for (int i = 0; i < mInitBlockIndex; i++) {
+        for (int i = 0; i < kInitBlockIndex; i++) {
             // TODO: edit true / false
             mBlockManagers[0].BuildOneBlock(0, false, -1);
             mBlockManagers[1].BuildOneBlock(1, false, -1);
         }
 
         // Audio
-        AudioObject = GameObject.Find("AudioObject");
-        music = AudioObject.GetComponent<AudioSource>();
+        mAudioObj = GameObject.Find("AudioObject");
+        mMusic = mAudioObj.GetComponent<AudioSource>();
     }
 
     private void UpdateFSM() {
@@ -143,12 +136,24 @@ public class BlockListManager : MonoBehaviour
     }
 
     private void JudgeVectory() {
-        for (int i = 0; i < mPlayerNum; i++) {
+        for (int i = 0; i < kPlayerNum; i++) {
             if (mBlockManagers[i].GetHeight() == 0) {
                 mEndCanvas.SetActive(true);
                 mEndText.text = "Player " + (i + 1) + " Win!";
                 mBlockState = BlockState.eEnd;
                 return ;
+            }
+        }
+    }
+
+    private void ModifyTargetWeight(string targetName, float weight)
+    {
+        CinemachineTargetGroup.Target[] targets = PlayerManager.mTargetGroup.m_Targets;
+        for (int i = 0; i < targets.Length; i++)
+        {
+            if (targets[i].target != null && targets[i].target.name == targetName)
+            {
+                targets[i].weight = weight;
             }
         }
     }
@@ -161,7 +166,7 @@ public class BlockListManager : MonoBehaviour
         mBlockColor = (BlockColor)Random.Range(0, 3);
         float randomSkill = Random.Range(0f, 1f);
 
-        for (int i = 0; i < mPlayerNum; i++) {
+        for (int i = 0; i < kPlayerNum; i++) {
             mSkillButtons[i].SetActive(false);
         }
 
@@ -176,7 +181,7 @@ public class BlockListManager : MonoBehaviour
             mBlockSkills = BlockSkills.eSkills;
         }
 
-        for (int i = 0; i < mPlayerNum; i++) {
+        for (int i = 0; i < kPlayerNum; i++) {
             mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
             if (mUIOfPlayers[i] == null) {
                 mUIOfPlayers[i] = GameObject.Find("UIOfPlayer" + (i + 1));
@@ -187,7 +192,7 @@ public class BlockListManager : MonoBehaviour
         mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
         mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
         ModifyTargetWeight("Player" + mPlayerIndex, 10f);
-        for (int i = 0; i < mPlayerNum; i++) {
+        for (int i = 0; i < kPlayerNum; i++) {
             if (i != mPlayerIndex) {
                 mUIOfPlayers[i].SetActive(false);
                 mPlayerAnimators[i].SetBool("IsHolding", false);
@@ -218,8 +223,8 @@ public class BlockListManager : MonoBehaviour
             // Destroy the first Block of the enemy
             {
                 mTargetBlockIndex = 1;
-                beHitBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
-                beHitBlockPos = beHitBlock.transform.position;
+                mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+                mTargetBlockPos = mTargetBlock.transform.position;
 
                 if (mPlayerIndex == 0)
                 {
@@ -231,8 +236,8 @@ public class BlockListManager : MonoBehaviour
                     GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
                     mBlockManagers[0].BeingHitBlockDestroy(bullet, mBlockManagers[0].GetHeight() - mTargetBlockIndex);
                 }
-                music.clip = Resources.Load<AudioClip>("music/Audio_Debuff");
-                music.Play();
+                mMusic.clip = Resources.Load<AudioClip>("music/Audio_Debuff");
+                mMusic.Play();
             }
             mBlockSkills = BlockSkills.eNormal;
             return;
@@ -248,19 +253,19 @@ public class BlockListManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 1) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 1))) {
             mTargetBlockIndex = 1;
 
-            isHit = true;
+            mIsHitState = true;
             mBlockState = BlockState.eBuild;
         }
         if (Input.GetKeyDown(KeyCode.W) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 2) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 2))) {
             mTargetBlockIndex = 2;
 
-            isHit = true;
+            mIsHitState = true;
             mBlockState = BlockState.eBuild;
         }
         if (Input.GetKeyDown(KeyCode.E) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 3) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 3))) {
             mTargetBlockIndex = 3;
             
-            isHit = true;
+            mIsHitState = true;
             mBlockState = BlockState.eBuild;
         }
 
@@ -274,30 +279,30 @@ public class BlockListManager : MonoBehaviour
 
         // TODO: Think about what if mPlayerIndex == 2 ?
         if (mPlayerIndex == 0) {
-            hitBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
-            beHitBlock = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - mTargetBlockIndex);
+            mHitBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
+            mTargetBlock = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - mTargetBlockIndex);
         } else {
-            hitBlock = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
-            beHitBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+            mHitBlock = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
+            mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
         }
-        hitBlockPos = hitBlock.transform.position;
-        beHitBlockPos = beHitBlock.transform.position;
+        mHitBlockPos = mHitBlock.transform.position;
+        mTargetBlockPos = mTargetBlock.transform.position;
     }
 
     public void ServiceHitState() {
 
-        time += hitSpeed * Time.smoothDeltaTime;
+        mTime += mHitSpeed * Time.smoothDeltaTime;
 
-        float x = Mathf.LerpUnclamped(hitBlockPos.x, beHitBlockPos.x, time);
-        float y = Mathf.LerpUnclamped(hitBlockPos.y, beHitBlockPos.y, time);
-        hitBlock.transform.position = new Vector3(x, y, 0);
+        float x = Mathf.LerpUnclamped(mHitBlockPos.x, mTargetBlockPos.x, mTime);
+        float y = Mathf.LerpUnclamped(mHitBlockPos.y, mTargetBlockPos.y, mTime);
+        mHitBlock.transform.position = new Vector3(x, y, 0);
         
-        BlockBehaviour HitBlockScript = hitBlock.GetComponent<BlockBehaviour>();
-        HitBlockScript.targetCollisionObject = beHitBlock;
+        BlockBehaviour HitBlockScript = mHitBlock.GetComponent<BlockBehaviour>();
+        HitBlockScript.targetCollisionObject = mTargetBlock;
         bool isDestroy = HitBlockScript.isColli();
         if (isDestroy) {
-            music.clip = Resources.Load<AudioClip>("music/Audio_Hit");
-            music.Play();
+            mMusic.clip = Resources.Load<AudioClip>("music/Audio_Hit");
+            mMusic.Play();
             if (mPlayerIndex == 0) {
                 GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
                 mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
@@ -310,45 +315,44 @@ public class BlockListManager : MonoBehaviour
             }
             
             mBlockState = BlockState.eCombo;
-            isHit = false;
-            time = 0;
+            mIsHitState = false;
+            mTime = 0;
         }
     }
     
-    public BlockManager activeManager;
     public void ServiceComboState()
     {
         Debug.Log("Combo in block list");
         // TODO: Think about what if mPlayerIndex == 2 ?
         if (mPlayerIndex == 0)
         {
-            activeManager = mBlockManagers[1];
+            mActiveManager = mBlockManagers[1];
         }
         else
         {
-            activeManager = mBlockManagers[0];
+            mActiveManager = mBlockManagers[0];
         }
 
-        if (activeManager.UpdateComboState())
+        if (mActiveManager.UpdateComboState())
         {
             Debug.Log("Combo done");
             mBlockState = BlockState.eIdle;
             mPlayerIndex = (mPlayerIndex + 1) % 2;
-            isHit = false;
-            time = 0;
+            mIsHitState = false;
+            mTime = 0;
         }
     }
 
     public void ServiceBuildState() {
 
-        mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, isHit, (int)mBlockColor);
+        mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, (int)mBlockColor);
         mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", false);
-        if (isHit) {
+        if (mIsHitState) {
             mBlockState = BlockState.eInitHit;
             return ;
         }
-        music.clip = Resources.Load<AudioClip>("music/Audio_Build");
-        music.Play();
+        mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
+        mMusic.Play();
         mBlockState = BlockState.eIdle;
         mPlayerIndex = (mPlayerIndex + 1) % 2;
     }
