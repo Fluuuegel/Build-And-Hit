@@ -71,6 +71,7 @@ public class BlockListManager : MonoBehaviour
     private GameObject mTargetBlock;
     private Vector3 mHitBlockPos;
     private Vector3 mTargetBlockPos;
+    private CameraControll mCameraControll = null;
 
     // Start is called before the first frame update
     void Start()
@@ -149,17 +150,6 @@ public class BlockListManager : MonoBehaviour
         }
     }
 
-    private void ModifyTargetWeight(string targetName, float weight)
-    {
-        CinemachineTargetGroup.Target[] targets = PlayerManager.mTargetGroup.m_Targets;
-        for (int i = 0; i < targets.Length; i++)
-        {
-            if (targets[i].target != null && targets[i].target.name == targetName)
-            {
-                targets[i].weight = weight;
-            }
-        }
-    }
 
     private void ServiceIdleState() {
 
@@ -184,19 +174,19 @@ public class BlockListManager : MonoBehaviour
             mBlockSkills = BlockSkills.eSkills;
         }
 
-        //     mCameraControll.ModifyTarget("Player1", 10f, 5f);
-        //     mCameraControll.ModifyTarget("Player2", 3f, 5f);
+        //mCameraControll.ModifyTarget("Player1", 10f, 5f);
+        //mCameraControll.ModifyTarget("Player2", 3f, 5f);
         //     // BlockColor : 0 - Green, 1 - Red, 2 - Blue
         //     p1Animator.SetInteger("BlockColor", (int)mBlockColor);
         // } else {
-        //     UIOfPlayer1.SetActive(false);
-        //     UIOfPlayer2.SetActive(true);
+        //UIOfPlayer1.SetActive(false);
+        //UIOfPlayer2.SetActive(true);
         //     p1Animator.SetBool("IsHolding", false);
         //     p2Animator.SetBool("IsHolding", true);
         //     p2Animator.SetInteger("BlockColor", (int)mBlockColor);
 
-        //     mCameraControll.ModifyTarget("Player2", 10f, 5f);
-        //     mCameraControll.ModifyTarget("Player1", 3f, 5f);
+        //mCameraControll.ModifyTarget("Player2", 10f, 5f);
+        //mCameraControll.ModifyTarget("Player1", 3f, 5f);
         for (int i = 0; i < kPlayerNum; i++) {
             mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
             if (mUIOfPlayers[i] == null) {
@@ -207,12 +197,12 @@ public class BlockListManager : MonoBehaviour
         mUIOfPlayers[mPlayerIndex].SetActive(true);
         mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
         mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
-        ModifyTargetWeight("Player" + mPlayerIndex, 10f);
+        mCameraControll.ModifyTarget("Player" + mPlayerIndex, 10f, 5f);
         for (int i = 0; i < kPlayerNum; i++) {
             if (i != mPlayerIndex) {
                 mUIOfPlayers[i].SetActive(false);
                 mPlayerAnimators[i].SetBool("IsHolding", false);
-                ModifyTargetWeight("Player" + i, 3f);
+                mCameraControll.ModifyTarget("Player" + i, 3f, 5f);
             }
         }
 
@@ -323,11 +313,13 @@ public class BlockListManager : MonoBehaviour
                 GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
                 mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
                 mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1);//player 1: 当前的玩家
+                mCameraControll.CameraFocusOnPlayer(mPlayers[1]);
                 
             } else {
                 GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
                 mBlockManagers[0].BeingHitBlockDestroy(bullet,mBlockManagers[0].GetHeight() - mTargetBlockIndex);//player 1
                 mBlockManagers[1].DestroyOneBlock(mBlockManagers[1].GetHeight() - 1);//player 2: 当前的玩家
+                mCameraControll.CameraFocusOnPlayer(mPlayers[0]);
             }
             
             mBlockState = BlockState.eCombo;
