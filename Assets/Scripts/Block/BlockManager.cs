@@ -70,12 +70,12 @@ public class BlockManager
         mBlockPrefabs[2] = Resources.Load<GameObject>("Prefabs/BlueCube");
     }
 
-    public void BuildOneBlock(bool p1Turn, bool isHit, int color = -1, bool init = false)
+    public void BuildOneBlock(int playerIndex, bool isHit, int color = -1, bool init = false)
     {
-        SpawnNewBlock(p1Turn, isHit, GetHeight(), color, init);
+        SpawnNewBlock(playerIndex, isHit, GetHeight(), color, init);
     }
 
-    private void SpawnNewBlock(bool p1Turn, bool isHit, int index, int color = -1, bool init = false)
+    private void SpawnNewBlock(int playerIndex, bool isHit, int index, int color = -1, bool init = false)
     {
         if (color == -1)
         {
@@ -85,8 +85,8 @@ public class BlockManager
         GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
         PlayerManager.mTargetGroup.AddMember(p.transform, 1f, 3f);
 
-        GameObject p1 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1();
-        GameObject p2 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2();
+        GameObject p1 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer(0);
+        GameObject p2 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer(1);
         Vector3 p1Pos = p1.transform.position;
         Vector3 p2Pos = p2.transform.position;
         BlockBehaviour script = p.GetComponent<BlockBehaviour>();
@@ -101,7 +101,7 @@ public class BlockManager
         // Set block
         if (!init)
         {   
-            if(p1Turn) { // Change the position of the block
+            if(playerIndex == 0) { // Change the position of the block
                 if(isHit) {
                     p.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
                 } else {
@@ -124,23 +124,23 @@ public class BlockManager
 
         // Set sorting layer of the block
         if (!init) {
-            if (p1Turn && !isHit) {
+            if (playerIndex == 0 && !isHit) {
                 blockSortingGroup.sortingLayerName = "PlayerCube";
                 blockSortingGroup.sortingOrder = mCurLayerCount;
                 p1.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
             }
-            else if (!p1Turn && !isHit) {
+            else if (playerIndex == 1 && !isHit) {
                 blockSortingGroup.sortingLayerName = "EnemyCube";
                 blockSortingGroup.sortingOrder = mCurLayerCount;
                 p2.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
             }
         } else { 
-            if (p1Turn && !isHit) {
+            if (playerIndex == 0 && !isHit) {
                 blockSortingGroup.sortingLayerName = "PlayerCube";
                 blockSortingGroup.sortingOrder = mCurLayerCount;
                 p1.transform.position = new Vector3(p1Pos.x, SpawnYAxis , 0f);
             }
-            else if (!p1Turn && !isHit) {
+            else if (playerIndex == 1 && !isHit) {
                 blockSortingGroup.sortingLayerName = "EnemyCube";
                 blockSortingGroup.sortingOrder = mCurLayerCount;
                 p2.transform.position = new Vector3(p2Pos.x, SpawnYAxis + 1.0f, 0f);
