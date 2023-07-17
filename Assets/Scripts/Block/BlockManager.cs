@@ -42,13 +42,6 @@ public class BlockManager
     private int mCurLayerCount = 1;
     private float SpawnYAxis = 15f;
 
-
-    public CinemachineImpulseSource impulseSource;
-
-    private void Start()
-    {
-        impulseSource = GameObject.Find("VirtualCamera").GetComponent<CinemachineImpulseSource>();
-    }
     public void SetInitPos(Vector2 pos) {
 
         mPlayerInitPos = pos;
@@ -377,6 +370,13 @@ public class BlockManager
         {
             SetTransparent(mBlocks[i],0.3f);
         }
+        
+    }
+
+    private void CameraShake()
+    {
+        CinemachineImpulseSource mShakeSource = GameObject.Find("VirtualCamera").GetComponent<CinemachineImpulseSource>();
+        mShakeSource.GenerateImpulse();
     }
     /*
      * @TargetBlockCollided
@@ -470,6 +470,7 @@ public class BlockManager
         if (combo_cnt >= mComboBound)
         {
             CombolBlockInRange(low_bound, combo_cnt);
+            CameraShake();
             comboInfo.combo_achieved = true;
             comboInfo.lower_bound = low_bound;
         }
