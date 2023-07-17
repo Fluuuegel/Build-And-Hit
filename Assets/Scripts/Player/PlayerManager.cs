@@ -6,21 +6,13 @@ using Cinemachine;
 public class PlayerManager : MonoBehaviour
 {
     public GameObject[] mPlayerPrefab;
-
     public Vector2[] mPlayerInitPos;
-
     public Vector2 mPlayer1InitPos = new Vector2(-3f, 0f);
-
     public Vector2 mPlayer2InitPos = new Vector2(3f, 0f);
-
     private GameObject[] mPlayers = null;
-
     private int mPlayerNum = 2;
-
     static public CinemachineVirtualCamera mCamera = null;
     static public CinemachineTargetGroup mTargetGroup = null;
-
-
 
     public void InitializePlayer() {
 
@@ -30,23 +22,12 @@ public class PlayerManager : MonoBehaviour
 
         mCamera = GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
         mTargetGroup = GameObject.Find("TargetGroup").GetComponent<CinemachineTargetGroup>();
-        //mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/{Player1Select.player1Select}");
-        //mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/{Player2Select.player2Select}");
-        //GameObject p1, p2;
 
+        mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/{Player1Select.player1Select}");
+        mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/{Player2Select.player2Select}");
 
-        //p1 = GameObject.Instantiate(mPlayerPrefab[0]) as GameObject;
-        //p1.name = "Player1";
-
-
-        //p2 = GameObject.Instantiate(mPlayerPrefab[1]) as GameObject;
-        //p2.name = "Player2";
-
-        //mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/{Player1Select.player1Select}");
-        //mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/{Player2Select.player2Select}");
-
-        mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/Char1");
-        mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/Char1R");
+        // mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/Char1");
+        // mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/Char1R");
 
         for (int i = 0; i < mPlayerNum; i++) {
             mPlayers[i] = GameObject.Instantiate(mPlayerPrefab[i]) as GameObject;
