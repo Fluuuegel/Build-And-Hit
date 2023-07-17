@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
+using Unity.VisualScripting;
+
 public class BlockListManager : MonoBehaviour
 {
     private GameObject mEndCanvas = null;
@@ -12,18 +14,10 @@ public class BlockListManager : MonoBehaviour
     public GameObject mSkillButton2 = null;
     
     private GameObject textObj = null;
+    //private float mShakeDelay = 0.3f;
+    //private float mCameraBackDelay = 1f;
     
-    private void ModifyTargetWeight(string targetName, float weight)
-    {
-        CinemachineTargetGroup.Target[] targets = PlayerManager.mTargetGroup.m_Targets;
-        for (int i = 0; i < targets.Length; i++)
-        {
-            if (targets[i].target != null && targets[i].target.name == targetName)
-            {
-                targets[i].weight = weight;
-            }
-        }
-    }
+    
     private enum BlockState {
 
         eIdle,
@@ -82,12 +76,13 @@ public class BlockListManager : MonoBehaviour
     private AudioBehaviour AudioBehaviour;
     private GameObject AudioObject = null;
     private AudioSource music = null;
+    private CameraControll mCameraControll = null;
 
     // Start is called before the first frame update
     void Start()
     {
         // UI
-
+        mCameraControll = FindObjectOfType<CameraControll>();
         mEndCanvas = GameObject.Find("EndCanvas");
         if (mEndCanvas == null) {
             Debug.LogError("EndCanvas not found");
@@ -206,8 +201,8 @@ public class BlockListManager : MonoBehaviour
             p1Animator.SetBool("IsHolding", true);
             p2Animator.SetBool("IsHolding", false);
 
-            ModifyTargetWeight("Player1", 10f);
-            ModifyTargetWeight("Player2", 3f);
+            mCameraControll.ModifyTarget("Player1", 10f, 5f);
+            mCameraControll.ModifyTarget("Player2", 3f, 5f);
             // BlockColor : 0 - Green, 1 - Red, 2 - Blue
             p1Animator.SetInteger("BlockColor", (int)mBlockColor);
         } else {
@@ -217,8 +212,8 @@ public class BlockListManager : MonoBehaviour
             p2Animator.SetBool("IsHolding", true);
             p2Animator.SetInteger("BlockColor", (int)mBlockColor);
 
-            ModifyTargetWeight("Player1", 3f);
-            ModifyTargetWeight("Player2", 10f);
+            mCameraControll.ModifyTarget("Player2", 10f, 5f);
+            mCameraControll.ModifyTarget("Player1", 3f, 5f);
         }
         mBlockState = BlockState.eWait;
     }
@@ -336,7 +331,39 @@ public class BlockListManager : MonoBehaviour
             time = 0;
         }
     }
-    
+    #region CameraEffect
+    public void CameraEffect(GameObject player)
+    {
+        
+        if (mCameraControll != null)
+        {
+            mCameraControll.CameraFocusOnPlayer(player);
+            //StartCoroutine(DelayToShake(mShakeDelay));
+            //StartCoroutine(DelayToFocusBack(mCameraBackDelay,player));
+        }
+        else
+        {
+            Debug.Log("No CameraControll Found");
+        }
+    }
+
+    //private IEnumerator DelayToFocusBack(float delayTime, GameObject player)
+    //{
+    //    yield return new WaitForSeconds(delayTime);
+    //    FocusBack(player);
+    //}
+
+    //private IEnumerator DelayToShake(float delayTime)
+    //{
+    //    yield return new WaitForSeconds(delayTime);
+    //    mCameraControll.CameraShake();
+    //}
+    //private void FocusBack(GameObject player)
+    //{
+    //    mCameraControll.CameraUnfocusOnPlayer(player);
+    //}
+    #endregion CameraEffect
+
     public BlockManager activeManager;
     public void ServiceComboState()
     {
@@ -344,10 +371,12 @@ public class BlockListManager : MonoBehaviour
         if (p1Turn)
         {
             activeManager = mP2BlockManager;
+            CameraEffect(p2);
         }
         else
         {
             activeManager = mP1BlockManager;
+            CameraEffect(p1);
         }
 
         if (activeManager.UpdateComboState())
