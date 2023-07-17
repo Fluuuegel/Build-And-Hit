@@ -6,17 +6,13 @@ using UnityEngine.UI;
 using Unity.VisualScripting;
 
 public class BlockListManager : MonoBehaviour
-{
-    private GameObject mEndCanvas = null;
-    public Text mEndText = null;
+{   
 
-    public GameObject mSkillButton1 = null;
-    public GameObject mSkillButton2 = null;
-    
-    private GameObject textObj = null;
-    //private float mShakeDelay = 0.3f;
-    //private float mCameraBackDelay = 1f;
-    
+    // UI
+    private GameObject mEndCanvas = null;
+    private GameObject mTextObj = null;
+    public Text mEndText = null;
+    public GameObject[] mSkillButtons = new GameObject[2];
     
     private enum BlockState {
 
@@ -37,46 +33,44 @@ public class BlockListManager : MonoBehaviour
     };
 
     //For Skills
-    private enum BlockSkills
-    {
-        Normal,
-        Skills
+    private enum BlockSkills {
+        eNormal,
+        eSkills
     };
 
     private BlockState mBlockState = BlockState.eIdle;
-
     private BlockColor mBlockColor = BlockColor.eRed;
+    private BlockSkills mBlockSkills = BlockSkills.eNormal;
 
-    private BlockSkills mBlockSkills = BlockSkills.Normal;
-
-    public float hitSpeed = 2f;
+    // Constants
+    private const int kInitBlockIndex = 6;
+    private const int kPlayerNum = 2;
 
     private int mTargetBlockIndex = 0;
-
-    private int mInitBlockIndex = 6;
+    private int mPlayerIndex = 0;
+    private bool mIsHitState = false;
+    public float mHitSpeed = 2f;
+    private float mTime = 0f;
     
-    private BlockManager mP1BlockManager;
-    private BlockManager mP2BlockManager;
-    private GameObject hitBlock;
-    private GameObject beHitBlock;
-    private Vector3 hitBlockPos;
-    private Vector3 beHitBlockPos;
+    private BlockManager[] mBlockManagers = new BlockManager[2];
 
-    private Animator p1Animator = null;
-    private Animator p2Animator = null;
+    public BlockManager mActiveManager;
 
-    private GameObject p1;
-    private GameObject p2;
-    private GameObject UIOfPlayer1, UIOfPlayer2;
+    private Animator[] mPlayerAnimators = new Animator[2];
 
-    private bool p1Turn = true;
-    private bool isHit = false;
-    private float time = 0f;
+    private GameObject[] mPlayers = new GameObject[2];
 
-    private AudioBehaviour AudioBehaviour;
-    private GameObject AudioObject = null;
-    private AudioSource music = null;
-    private CameraControll mCameraControll = null;
+    private GameObject[] mUIOfPlayers = new GameObject[2];
+
+    // Audio
+    private GameObject mAudioObj = null;
+    private AudioSource mMusic = null;
+
+    // Hit
+    private GameObject mHitBlock;
+    private GameObject mTargetBlock;
+    private Vector3 mHitBlockPos;
+    private Vector3 mTargetBlockPos;
 
     // Start is called before the first frame update
     void Start()
@@ -84,43 +78,34 @@ public class BlockListManager : MonoBehaviour
         // UI
         mCameraControll = FindObjectOfType<CameraControll>();
         mEndCanvas = GameObject.Find("EndCanvas");
-        if (mEndCanvas == null) {
-            Debug.LogError("EndCanvas not found");
-            return;
-        }
-
-        textObj = GameObject.Find("EndCanvas/Panel/EndText");
-        if (textObj == null) {
-            Debug.LogError("EndText not found");
-            return;
-        }
-
-        mEndText = textObj.GetComponent<Text>();
-        if (mEndText == null) {
-            Debug.LogError("Text component not found on EndText");
-            return;
-        }
-
+        mTextObj = GameObject.Find("EndCanvas/Panel/EndText");
+        mEndText = mTextObj.GetComponent<Text>();
         mEndCanvas.SetActive(false);
 
-        mSkillButton1 = GameObject.Find("Canvas/UIOfPlayer1/Action/SkillButton");
-        mSkillButton2 = GameObject.Find("Canvas/UIOfPlayer2/Action/SkillButton");
-        mSkillButton1.SetActive(false);
-        mSkillButton2.SetActive(false);
-
-        mP1BlockManager = new BlockManager();
-        mP2BlockManager = new BlockManager();
-        mP1BlockManager.SetInitPos(GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1Pos());
-        mP2BlockManager.SetInitPos(GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2Pos());
-        p1 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1();
-        p2 = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2();
-
-        for (int i = 0; i < mInitBlockIndex; i++) {
-            mP1BlockManager.BuildOneBlock(true, false, -1);
-            mP2BlockManager.BuildOneBlock(false, false, -1);
+        for (int i = 0; i < kPlayerNum; i++) {
+            mSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton");
+            mSkillButtons[i].SetActive(false);
         }
-        AudioObject = GameObject.Find("AudioObject");
-        music = AudioObject.GetComponent<AudioSource>();
+        
+        for (int i = 0; i < kPlayerNum; i++) {
+            mBlockManagers[i] = new BlockManager();
+            mBlockManagers[i].SetInitPos(GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayerPos(i));
+            mPlayers[i] = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer(i);
+            Debug.Log("Here");
+            if (mPlayers[i] == null) {
+                Debug.Log("Player " + i + " is null");
+            }
+        }
+
+        for (int i = 0; i < kInitBlockIndex; i++) {
+            // TODO: edit true / false
+            mBlockManagers[0].BuildOneBlock(0, false, -1);
+            mBlockManagers[1].BuildOneBlock(1, false, -1);
+        }
+
+        // Audio
+        mAudioObj = GameObject.Find("AudioObject");
+        mMusic = mAudioObj.GetComponent<AudioSource>();
     }
 
     private void UpdateFSM() {
@@ -153,68 +138,84 @@ public class BlockListManager : MonoBehaviour
         }
     }
 
-    private void ServiceIdleState() {
-        if (p1Turn && mP1BlockManager.GetHeight() == 0) {
-            Debug.Log("Player 2 Win!");
-            mBlockState = BlockState.eEnd;
-            return ;
-        } else if (!p1Turn && mP2BlockManager.GetHeight() == 0) {
-            Debug.Log("Player 1 Win!");
-            mBlockState = BlockState.eEnd;
-            return ;
+    private void JudgeVectory() {
+        for (int i = 0; i < kPlayerNum; i++) {
+            if (mBlockManagers[i].GetHeight() == 0) {
+                mEndCanvas.SetActive(true);
+                mEndText.text = "Player " + (i + 1) + " Win!";
+                mBlockState = BlockState.eEnd;
+                return ;
+            }
         }
+    }
+
+    private void ModifyTargetWeight(string targetName, float weight)
+    {
+        CinemachineTargetGroup.Target[] targets = PlayerManager.mTargetGroup.m_Targets;
+        for (int i = 0; i < targets.Length; i++)
+        {
+            if (targets[i].target != null && targets[i].target.name == targetName)
+            {
+                targets[i].weight = weight;
+            }
+        }
+    }
+
+    private void ServiceIdleState() {
+
+        // Judge vectory in idle state
+        JudgeVectory();
 
         mBlockColor = (BlockColor)Random.Range(0, 3);
         float randomSkill = Random.Range(0f, 1f);
 
-        mSkillButton1.SetActive(false);
-        mSkillButton2.SetActive(false);
+        for (int i = 0; i < kPlayerNum; i++) {
+            mSkillButtons[i].SetActive(false);
+        }
 
         if (randomSkill > 0.2f)
         {
             // TODO: Add UI
-            mBlockSkills = BlockSkills.Normal;
+            mBlockSkills = BlockSkills.eNormal;
         }
         else
         {
-            if (p1Turn)
-            {
-                mSkillButton1.SetActive(true);
-            }
-            else
-            {
-                mSkillButton2.SetActive(true);
-            }
-            mBlockSkills = BlockSkills.Skills;
-            Debug.Log("Find Skill Block!");
+            mSkillButtons[mPlayerIndex].SetActive(true);
+            mBlockSkills = BlockSkills.eSkills;
         }
-        p1Animator = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer1().GetComponent<PlayerBehaviour>().animator;
-        p2Animator = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer2().GetComponent<PlayerBehaviour>().animator;
-        if(UIOfPlayer1 == null || UIOfPlayer2 == null)
-        {
-            UIOfPlayer1 = GameObject.Find("UIOfPlayer1");
-            UIOfPlayer2 = GameObject.Find("UIOfPlayer2");
-        }
-        if (p1Turn) {
-            UIOfPlayer1.SetActive(true);
-            UIOfPlayer2.SetActive(false);
-            p1Animator.SetBool("IsHolding", true);
-            p2Animator.SetBool("IsHolding", false);
 
-            mCameraControll.ModifyTarget("Player1", 10f, 5f);
-            mCameraControll.ModifyTarget("Player2", 3f, 5f);
-            // BlockColor : 0 - Green, 1 - Red, 2 - Blue
-            p1Animator.SetInteger("BlockColor", (int)mBlockColor);
-        } else {
-            UIOfPlayer1.SetActive(false);
-            UIOfPlayer2.SetActive(true);
-            p1Animator.SetBool("IsHolding", false);
-            p2Animator.SetBool("IsHolding", true);
-            p2Animator.SetInteger("BlockColor", (int)mBlockColor);
+        //     mCameraControll.ModifyTarget("Player1", 10f, 5f);
+        //     mCameraControll.ModifyTarget("Player2", 3f, 5f);
+        //     // BlockColor : 0 - Green, 1 - Red, 2 - Blue
+        //     p1Animator.SetInteger("BlockColor", (int)mBlockColor);
+        // } else {
+        //     UIOfPlayer1.SetActive(false);
+        //     UIOfPlayer2.SetActive(true);
+        //     p1Animator.SetBool("IsHolding", false);
+        //     p2Animator.SetBool("IsHolding", true);
+        //     p2Animator.SetInteger("BlockColor", (int)mBlockColor);
 
-            mCameraControll.ModifyTarget("Player2", 10f, 5f);
-            mCameraControll.ModifyTarget("Player1", 3f, 5f);
+        //     mCameraControll.ModifyTarget("Player2", 10f, 5f);
+        //     mCameraControll.ModifyTarget("Player1", 3f, 5f);
+        for (int i = 0; i < kPlayerNum; i++) {
+            mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
+            if (mUIOfPlayers[i] == null) {
+                mUIOfPlayers[i] = GameObject.Find("UIOfPlayer" + (i + 1));
+            }
         }
+
+        mUIOfPlayers[mPlayerIndex].SetActive(true);
+        mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
+        mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
+        ModifyTargetWeight("Player" + mPlayerIndex, 10f);
+        for (int i = 0; i < kPlayerNum; i++) {
+            if (i != mPlayerIndex) {
+                mUIOfPlayers[i].SetActive(false);
+                mPlayerAnimators[i].SetBool("IsHolding", false);
+                ModifyTargetWeight("Player" + i, 3f);
+            }
+        }
+
         mBlockState = BlockState.eWait;
     }
     
@@ -226,34 +227,35 @@ public class BlockListManager : MonoBehaviour
         } 
 
         // Only if the player has blocks, can he be hit
-        if (Input.GetKeyDown(KeyCode.H) && ((p1Turn && mP2BlockManager.GetHeight() > 0) || (!p1Turn && mP1BlockManager.GetHeight() > 0))) {
+        if (Input.GetKeyDown(KeyCode.H) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() > 0) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() > 0))) {
             mBlockState = BlockState.eSelectHit;
             return ;
         }
 
 
         //Use skills
-        if (Input.GetKeyDown(KeyCode.P) && (mBlockSkills == BlockSkills.Skills))
+        if (Input.GetKeyDown(KeyCode.P) && (mBlockSkills == BlockSkills.eSkills))
         {
             // Destroy the first Block of the enemy
             {
                 mTargetBlockIndex = 1;
-                beHitBlock = mP1BlockManager.GetBlockAt(mP1BlockManager.GetHeight() - mTargetBlockIndex);
-                beHitBlockPos = beHitBlock.transform.position;
-                if (p1Turn)
+                mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+                mTargetBlockPos = mTargetBlock.transform.position;
+
+                if (mPlayerIndex == 0)
                 {
-                    GameObject bullet = mP1BlockManager.GetBlockAt(mP1BlockManager.GetHeight() - 1);
-                    mP2BlockManager.BeingHitBlockDestroy(bullet, mP2BlockManager.GetHeight() - mTargetBlockIndex);
+                    GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
+                    mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);
                 }
                 else
                 {
-                    GameObject bullet = mP2BlockManager.GetBlockAt(mP2BlockManager.GetHeight() - 1);
-                    mP1BlockManager.BeingHitBlockDestroy(bullet, mP1BlockManager.GetHeight() - mTargetBlockIndex);
+                    GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
+                    mBlockManagers[0].BeingHitBlockDestroy(bullet, mBlockManagers[0].GetHeight() - mTargetBlockIndex);
                 }
-                music.clip = Resources.Load<AudioClip>("music/Audio_Debuff");
-                music.Play();
+                mMusic.clip = Resources.Load<AudioClip>("music/Audio_Debuff");
+                mMusic.Play();
             }
-            mBlockSkills = BlockSkills.Normal;
+            mBlockSkills = BlockSkills.eNormal;
             return;
         }
     }
@@ -264,22 +266,22 @@ public class BlockListManager : MonoBehaviour
     }
 
     private void ServiceSelectHitState() {
-        if (Input.GetKeyDown(KeyCode.Q) && ((p1Turn && mP2BlockManager.GetHeight() >= 1) || (!p1Turn && mP1BlockManager.GetHeight() >= 1))) {
+        if (Input.GetKeyDown(KeyCode.Q) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 1) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 1))) {
             mTargetBlockIndex = 1;
 
-            isHit = true;
+            mIsHitState = true;
             mBlockState = BlockState.eBuild;
         }
-        if (Input.GetKeyDown(KeyCode.W) && ((p1Turn && mP2BlockManager.GetHeight() >= 2) || (!p1Turn && mP1BlockManager.GetHeight() >= 2))) {
+        if (Input.GetKeyDown(KeyCode.W) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 2) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 2))) {
             mTargetBlockIndex = 2;
 
-            isHit = true;
+            mIsHitState = true;
             mBlockState = BlockState.eBuild;
         }
-        if (Input.GetKeyDown(KeyCode.E) && ((p1Turn && mP2BlockManager.GetHeight() >= 3) || (!p1Turn && mP1BlockManager.GetHeight() >= 3))) {
+        if (Input.GetKeyDown(KeyCode.E) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 3) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 3))) {
             mTargetBlockIndex = 3;
             
-            isHit = true;
+            mIsHitState = true;
             mBlockState = BlockState.eBuild;
         }
 
@@ -290,45 +292,47 @@ public class BlockListManager : MonoBehaviour
     }
 
     public void InitializeHit() {
-        if (p1Turn) {
-            hitBlock = mP1BlockManager.GetBlockAt(mP1BlockManager.GetHeight() - 1);
-            beHitBlock = mP2BlockManager.GetBlockAt(mP2BlockManager.GetHeight() - mTargetBlockIndex);
+
+        // TODO: Think about what if mPlayerIndex == 2 ?
+        if (mPlayerIndex == 0) {
+            mHitBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
+            mTargetBlock = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - mTargetBlockIndex);
         } else {
-            hitBlock = mP2BlockManager.GetBlockAt(mP2BlockManager.GetHeight() - 1);
-            beHitBlock = mP1BlockManager.GetBlockAt(mP1BlockManager.GetHeight() - mTargetBlockIndex);
+            mHitBlock = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
+            mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
         }
-        hitBlockPos = hitBlock.transform.position;
-        beHitBlockPos = beHitBlock.transform.position;
+        mHitBlockPos = mHitBlock.transform.position;
+        mTargetBlockPos = mTargetBlock.transform.position;
     }
 
     public void ServiceHitState() {
 
-        time += hitSpeed * Time.smoothDeltaTime;
+        mTime += mHitSpeed * Time.smoothDeltaTime;
 
-        float x = Mathf.LerpUnclamped(hitBlockPos.x, beHitBlockPos.x, time);
-        float y = Mathf.LerpUnclamped(hitBlockPos.y, beHitBlockPos.y, time);
-        hitBlock.transform.position = new Vector3(x, y, 0);
+        float x = Mathf.LerpUnclamped(mHitBlockPos.x, mTargetBlockPos.x, mTime);
+        float y = Mathf.LerpUnclamped(mHitBlockPos.y, mTargetBlockPos.y, mTime);
+        mHitBlock.transform.position = new Vector3(x, y, 0);
         
-        BlockBehaviour HitBlockScript = hitBlock.GetComponent<BlockBehaviour>();
-        HitBlockScript.targetCollisionObject = beHitBlock;
+        BlockBehaviour HitBlockScript = mHitBlock.GetComponent<BlockBehaviour>();
+        HitBlockScript.targetCollisionObject = mTargetBlock;
         bool isDestroy = HitBlockScript.isColli();
         if (isDestroy) {
-            music.clip = Resources.Load<AudioClip>("music/Audio_Hit");
-            music.Play();
-            if (p1Turn) {
-                GameObject bullet = mP1BlockManager.GetBlockAt(mP1BlockManager.GetHeight() - 1);
-                mP2BlockManager.BeingHitBlockDestroy(bullet, mP2BlockManager.GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
-                mP1BlockManager.DestroyOneBlock(mP1BlockManager.GetHeight() - 1);//player 1: 当前的玩家
+            mMusic.clip = Resources.Load<AudioClip>("music/Audio_Hit");
+            mMusic.Play();
+            if (mPlayerIndex == 0) {
+                GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
+                mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
+                mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1);//player 1: 当前的玩家
                 
             } else {
-                GameObject bullet = mP2BlockManager.GetBlockAt(mP2BlockManager.GetHeight() - 1);
-                mP1BlockManager.BeingHitBlockDestroy(bullet,mP1BlockManager.GetHeight() - mTargetBlockIndex);//player 1
-                mP2BlockManager.DestroyOneBlock(mP2BlockManager.GetHeight() - 1);//player 2: 当前的玩家
+                GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
+                mBlockManagers[0].BeingHitBlockDestroy(bullet,mBlockManagers[0].GetHeight() - mTargetBlockIndex);//player 1
+                mBlockManagers[1].DestroyOneBlock(mBlockManagers[1].GetHeight() - 1);//player 2: 当前的玩家
             }
             
             mBlockState = BlockState.eCombo;
-            isHit = false;
-            time = 0;
+            mIsHitState = false;
+            mTime = 0;
         }
     }
     #region CameraEffect
@@ -364,53 +368,46 @@ public class BlockListManager : MonoBehaviour
     //}
     #endregion CameraEffect
 
-    public BlockManager activeManager;
     public void ServiceComboState()
     {
         Debug.Log("Combo in block list");
-        if (p1Turn)
+        // TODO: Think about what if mPlayerIndex == 2 ?
+        if (mPlayerIndex == 0)
         {
-            activeManager = mP2BlockManager;
-            CameraEffect(p2);
+            mActiveManager = mBlockManagers[1];
         }
         else
         {
-            activeManager = mP1BlockManager;
-            CameraEffect(p1);
+            mActiveManager = mBlockManagers[0];
         }
 
-        if (activeManager.UpdateComboState())
+        if (mActiveManager.UpdateComboState())
         {
             Debug.Log("Combo done");
             mBlockState = BlockState.eIdle;
-            p1Turn = !p1Turn;
-            isHit = false;
-            time = 0;
+            mPlayerIndex = (mPlayerIndex + 1) % 2;
+            mIsHitState = false;
+            mTime = 0;
         }
     }
 
     public void ServiceBuildState() {
-        // TODO: Spawn a block
-        if (p1Turn) {
-            mP1BlockManager.BuildOneBlock(p1Turn, isHit, (int)mBlockColor);
-            p1Animator.SetBool("IsHolding", false);
-        } else {
-            mP2BlockManager.BuildOneBlock(p1Turn, isHit, (int)mBlockColor);
-            p2Animator.SetBool("IsHolding", false);
-        }
-        if (isHit) {
+
+        mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, (int)mBlockColor);
+        mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", false);
+        if (mIsHitState) {
             mBlockState = BlockState.eInitHit;
             return ;
         }
-        music.clip = Resources.Load<AudioClip>("music/Audio_Build");
-        music.Play();
+        mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
+        mMusic.Play();
         mBlockState = BlockState.eIdle;
-        p1Turn = !p1Turn;
+        mPlayerIndex = (mPlayerIndex + 1) % 2;
     }
 
     public void ServiceEndState() {
         mEndCanvas.SetActive(true);
-        mEndText.text =  "P " + (p1Turn ? "2" : "1") + " Win!";
+        mEndText.text =  "P " + (mPlayerIndex + 1) + " Win!";
     }
 
     void Update()
