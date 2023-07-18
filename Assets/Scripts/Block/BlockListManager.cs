@@ -252,7 +252,7 @@ public class BlockListManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P) && (mBlockSkills == BlockSkills.eSkills))
         {
             float skillsChoose = Random.Range(0f, 1f);
-            if (true/*skillsChoose <= 0.5f*/)
+            if (skillsChoose <= 0.5f)
             {
                 //Build the first Block of the Hero
                 Debug.Log("Build different Skills");
