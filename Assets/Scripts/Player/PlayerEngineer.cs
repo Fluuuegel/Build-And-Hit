@@ -13,7 +13,7 @@ namespace Player
                 BlockListManager blockListManager = skillInfo.GolbalBlockListManager;
                 Debug.Log("Engineer Skill Casted");
                 blockListManager.ServiceBuildState(false);
-                blockListManager.ServiceBuildState(false);
+                // blockListManager.ServiceBuildState(false);
                 Debug.Log("Engineer Skill End");
             }
             else

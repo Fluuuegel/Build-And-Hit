@@ -50,7 +50,7 @@ public class BlockListManager : MonoBehaviour
     private BlockSkills mBlockSkills = BlockSkills.eNormal;
 
     // Constants
-    private const int kInitBlockIndex = 6;
+    private const int kInitBlockIndex = 10;
     private const int kPlayerNum = 2;
 
     private int mTargetBlockIndex = 0;
