@@ -76,7 +76,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1414164971
-  m_SortingLayer: 3
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: c0f6a314268224c84997ba3c36e2865b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -170,6 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayer1: 1
+  mPlayerIndex: 1
   animator: {fileID: 9076616461026041102}
 --- !u!210 &3448173681806111997
 SortingGroup:
@@ -179,6 +180,6 @@ SortingGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8161313973472817176}
   m_Enabled: 1
-  m_SortingLayerID: -1414164971
+  m_SortingLayerID: -960357275
   m_SortingLayer: 3
   m_SortingOrder: 0

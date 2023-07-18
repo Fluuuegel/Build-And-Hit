@@ -170,7 +170,7 @@ public class BlockListManager : MonoBehaviour
             mSkillButtons[i].SetActive(false);
         }
 
-        if (randomSkill > 0.2f)
+        if (randomSkill > 0.3f)
         {
             // TODO: Add UI
             mBlockSkills = BlockSkills.eNormal;
@@ -179,6 +179,8 @@ public class BlockListManager : MonoBehaviour
         {
             mSkillButtons[mPlayerIndex].SetActive(true);
             mBlockSkills = BlockSkills.eSkills;
+            mMusic.clip = Resources.Load<AudioClip>("music/Audio_Button2");
+            mMusic.Play();
         }
 
         for (int i = 0; i < kPlayerNum; i++) {
@@ -220,8 +222,20 @@ public class BlockListManager : MonoBehaviour
         //Use skills
         if (Input.GetKeyDown(KeyCode.P) && (mBlockSkills == BlockSkills.eSkills))
         {
-            // Destroy the first Block of the enemy
+            float skillsChoose = Random.Range(0f, 1f);
+            if (0 >= skillsChoose && skillsChoose <= 0.5f)
             {
+
+            }
+            else
+            {
+
+            }
+
+
+            
+            {
+                // Destroy the first Block of the enemy
                 mTargetBlockIndex = 1;
                 mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
                 mTargetBlockPos = mTargetBlock.transform.position;
