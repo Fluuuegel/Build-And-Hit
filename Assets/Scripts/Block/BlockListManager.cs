@@ -76,7 +76,6 @@ public class BlockListManager : MonoBehaviour
     private Vector3 mTargetBlockPos;
     private CameraControll mCameraControll = null;
 
-    // Start is called before the first frame update
     void Start()
     {
         // UI
@@ -116,7 +115,8 @@ public class BlockListManager : MonoBehaviour
         switch (mBlockState)
         {
             case BlockState.eIdle:
-                StartCoroutine(ServiceIdleState());
+                StartCoroutine(TurnInterval());
+                ServiceIdleState();
                 break;
             case BlockState.eSkill:
                 ServiceSkillState();
@@ -158,10 +158,11 @@ public class BlockListManager : MonoBehaviour
         return false;
     }
 
-
-    private IEnumerator ServiceIdleState() {
-
+    private IEnumerator TurnInterval() {
         yield return new WaitForSeconds(0.3f);
+    }
+
+    private void ServiceIdleState() {
 
         // Judge vectory in idle state
         if (JudgeVictory()) {
@@ -202,7 +203,6 @@ public class BlockListManager : MonoBehaviour
         }
 
         if (rand > 0.2f) {
-            // TODO: Add UI
             mBlockSkills = BlockSkills.eNormal;
         }
         else {
@@ -301,25 +301,6 @@ public class BlockListManager : MonoBehaviour
             return ;
         }
 
-        // if (Input.GetKeyDown(KeyCode.Q) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 1) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 1))) {
-        //     mTargetBlockIndex = 1;
-
-        //     mIsHitState = true;
-        //     mBlockState = BlockState.eBuild;
-        // }
-        // if (Input.GetKeyDown(KeyCode.W) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 2) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 2))) {
-        //     mTargetBlockIndex = 2;
-
-        //     mIsHitState = true;
-        //     mBlockState = BlockState.eBuild;
-        // }
-        // if (Input.GetKeyDown(KeyCode.E) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 3) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 3))) {
-        //     mTargetBlockIndex = 3;
-            
-        //     mIsHitState = true;
-        //     mBlockState = BlockState.eBuild;
-        // }
-
         // You can retract the selection
         if (Input.GetKeyDown(KeyCode.B)) {
             mBlockAnimator.SetBool("IsSelected", false);
@@ -373,6 +354,7 @@ public class BlockListManager : MonoBehaviour
             mTime = 0;
         }
     }
+    
     #region CameraEffect
     public void CameraEffect(GameObject player)
     {
@@ -380,8 +362,6 @@ public class BlockListManager : MonoBehaviour
         if (mCameraControll != null)
         {
             mCameraControll.CameraFocusOnPlayer(player);
-            //StartCoroutine(DelayToShake(mShakeDelay));
-            //StartCoroutine(DelayToFocusBack(mCameraBackDelay,player));
         }
         else
         {
@@ -399,21 +379,6 @@ public class BlockListManager : MonoBehaviour
             mCameraControll.ModifyTarget(playerWin.name, 40f, 0.1f);
         }
     }
-    //private IEnumerator DelayToFocusBack(float delayTime, GameObject player)
-    //{
-    //    yield return new WaitForSeconds(delayTime);
-    //    FocusBack(player);
-    //}
-
-    //private IEnumerator DelayToShake(float delayTime)
-    //{
-    //    yield return new WaitForSeconds(delayTime);
-    //    mCameraControll.CameraShake();
-    //}
-    //private void FocusBack(GameObject player)
-    //{
-    //    mCameraControll.CameraUnfocusOnPlayer(player);
-    //}
     #endregion CameraEffect
 
     public void ServiceComboState()
