@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 337932270017663489}
   - component: {fileID: 337932270017663488}
-  - component: {fileID: 337932270017663551}
+  - component: {fileID: -7874082609019649064}
   m_Layer: 0
   m_Name: BGM
   m_TagString: Untagged
@@ -129,7 +129,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &337932270017663551
+--- !u!114 &-7874082609019649064
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
