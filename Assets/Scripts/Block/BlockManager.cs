@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using UnityEngine.Rendering;
@@ -34,7 +35,6 @@ public class BlockManager
         BlockBehaviour script = p.GetComponent<BlockBehaviour>();
         return script.GetBlockColour();
     }
-
     private Vector2 mPlayerInitPos;
     private Vector2 mBlockInitPos;
     private int mCurLayerCount = 1;
@@ -61,10 +61,17 @@ public class BlockManager
         mBlockPrefabs[2] = Resources.Load<GameObject>("Prefabs/BlueCube");
     }
 
-    public void BuildOneBlock(int playerIndex, bool isHit, int color = -1, bool init = false)
+    public void BuildOneBlock(int playerIndex = -1, bool isHit = false, int color = -1, bool init = false)
     {
+        if (playerIndex == -1)
+        {
+            return;
+        }
+        string msg = "block colour " + color + " ";
+        Debug.Log(msg);
         SpawnNewBlock(playerIndex, isHit, GetHeight(), color, init);
     }
+    
 
     private void SpawnNewBlock(int playerIndex, bool isHit, int index, int color = -1, bool init = false)
     {

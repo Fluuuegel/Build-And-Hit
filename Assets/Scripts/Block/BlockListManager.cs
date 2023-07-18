@@ -14,7 +14,7 @@ public class BlockListManager : MonoBehaviour
     public Text mEndText = null;
     public GameObject[] mSkillButtons = new GameObject[2];
     
-    private enum BlockState {
+    public enum BlockState {
 
         eIdle,
         eSkill,
@@ -24,7 +24,8 @@ public class BlockListManager : MonoBehaviour
         eHit,
         eBuild,
         eCombo,
-        eEnd
+        eEnd,
+        eInvalid
     }
 
     private enum BlockColor {
@@ -163,21 +164,62 @@ public class BlockListManager : MonoBehaviour
     }
 
     private void ServiceIdleState() {
+
+        // Judge vectory in idle state
         if (JudgeVictory())
         {
             CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
         }
+        else
+        {
 
-        mBlockColor = (BlockColor)Random.Range(0, 3);
+            mBlockColor = (BlockColor)Random.Range(0, 3);
+            string msg = "Idle: the newly spawn block color is" + mBlockColor;
+            Debug.Log(msg);
+            float randomSkill = Random.Range(0f, 1f);
 
-        for (int i = 0; i < kPlayerNum; i++) {
-            mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
-            if (mUIOfPlayers[i] == null) {
-                mUIOfPlayers[i] = GameObject.Find("UIOfPlayer" + (i + 1));
+            for (int i = 0; i < kPlayerNum; i++)
+            {
+                mSkillButtons[i].SetActive(false);
             }
-        }
+            const float SkillRate = 1.0f;
+            if (randomSkill > SkillRate)
+            {
+                // TODO: Add UI
+                mBlockSkills = BlockSkills.eNormal;
+            }
+            else
+            {
+                mSkillButtons[mPlayerIndex].SetActive(true);
+                mBlockSkills = BlockSkills.eSkills;
+                //mMusic.clip = Resources.Load<AudioClip>("music/Audio_Button2");
+                //mMusic.Play();
+            }
 
-        mUIOfPlayers[mPlayerIndex].SetActive(true);
+            //mCameraControll.ModifyTarget("Player1", 10f, 5f);
+            //mCameraControll.ModifyTarget("Player2", 3f, 5f);
+            //     // BlockColor : 0 - Green, 1 - Red, 2 - Blue
+            //     p1Animator.SetInteger("BlockColor", (int)mBlockColor);
+            // } else {
+            //UIOfPlayer1.SetActive(false);
+            //UIOfPlayer2.SetActive(true);
+            //     p1Animator.SetBool("IsHolding", false);
+            //     p2Animator.SetBool("IsHolding", true);
+            //     p2Animator.SetInteger("BlockColor", (int)mBlockColor);
+
+            //mCameraControll.ModifyTarget("Player2", 10f, 5f);
+            //mCameraControll.ModifyTarget("Player1", 3f, 5f);
+            for (int i = 0; i < kPlayerNum; i++)
+            {
+                mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
+                Debug.Log("load animator");
+                if (mUIOfPlayers[i] == null)
+                {
+                    mUIOfPlayers[i] = GameObject.Find("UIOfPlayer" + (i + 1));
+                }
+            }
+
+            mUIOfPlayers[mPlayerIndex].SetActive(true);
             mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
             mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
             mCameraControll.ModifyTarget("Player" + mPlayerIndex, 10f, 5f);
@@ -191,7 +233,8 @@ public class BlockListManager : MonoBehaviour
                 }
             }
 
-        mBlockState = BlockState.eSkill;
+            mBlockState = BlockState.eSkill;
+        }
     }
     
     private void ServiceSkillState() {
@@ -236,33 +279,34 @@ public class BlockListManager : MonoBehaviour
         //Use skills
         if (Input.GetKeyDown(KeyCode.P) && (mBlockSkills == BlockSkills.eSkills))
         {
-            // Destroy the first Block of the enemy
-            {
-                mTargetBlockIndex = 1;
-                mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
-                mTargetBlockPos = mTargetBlock.transform.position;
-
-                if (mPlayerIndex == 0)
-                {
-                    GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
-                    mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);
-                }
-                else
-                {
-                    GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
-                    mBlockManagers[0].BeingHitBlockDestroy(bullet, mBlockManagers[0].GetHeight() - mTargetBlockIndex);
-                }
-                mMusic.clip = Resources.Load<AudioClip>("music/Audio_Debuff");
-                mMusic.Play();
-            }
+            Debug.Log(mPlayerIndex);
+            CastPlayerSkill(mPlayers[mPlayerIndex]);
             mBlockSkills = BlockSkills.eNormal;
-            return;
         }
     }
+    
+    private void CastPlayerSkill(GameObject player)
+    {
+        PlayerBehaviour script = player.GetComponent<PlayerBehaviour>();
+        SkillInfo skillInfo = WriteCurrentSkillInfo();
+        script.SkillCast(skillInfo);
+    }
 
+    private SkillInfo WriteCurrentSkillInfo()
+    {
+        SkillInfo cur = new SkillInfo();
+        cur.PlayerBlockManager = mBlockManagers[mPlayerIndex];
+        cur.TargetBlockManager = mBlockManagers[1 - mPlayerIndex];
+        cur.CurrentState = mBlockState;
+        cur.WillCast = true;
+        cur.curPlayerIndex = mPlayerIndex;
+        cur.GolbalBlockListManager = this;
+        return cur;
+    }
     private void ServiceInitHitState() {
         InitializeHit();
         mBlockState = BlockState.eHit;
+        
     }
 
     private void ServiceSelectHitState() {
@@ -334,6 +378,7 @@ public class BlockListManager : MonoBehaviour
         bool isDestroy = HitBlockScript.isColli();
         if (isDestroy) {
             mMusic.clip = Resources.Load<AudioClip>("music/Audio_Hit");
+            mMusic.volume = 0.9f;
             mMusic.Play();
             if (mPlayerIndex == 0) {
                 GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
@@ -403,18 +448,30 @@ public class BlockListManager : MonoBehaviour
         }
     }
 
-    public void ServiceBuildState() {
+    public void ServiceBuildState(bool InFSM = true) {
+        if (InFSM)
+        {
+            string msg = "Build: the newly spawn block color is" + mBlockColor;
+            Debug.Log(msg);
+            mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, (int)mBlockColor);
+            mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", false);
+            if (mIsHitState)
+            {
+                mBlockState = BlockState.eInitHit;
+                return;
+            }
 
-        mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, (int)mBlockColor);
-        mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", false);
-        if (mIsHitState) {
-            mBlockState = BlockState.eInitHit;
-            return ;
+            mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
+            mMusic.Play();
+            mBlockState = BlockState.eIdle;
+            mPlayerIndex = (mPlayerIndex + 1) % 2;
         }
-        mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
-        mMusic.Play();
-        mBlockState = BlockState.eIdle;
-        mPlayerIndex = (mPlayerIndex + 1) % 2;
+        else
+        {
+            mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, -1);
+            mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
+            mMusic.Play();
+        }
     }
 
     public void ServiceEndState() {
