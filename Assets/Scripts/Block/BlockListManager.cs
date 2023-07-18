@@ -116,7 +116,7 @@ public class BlockListManager : MonoBehaviour
         switch (mBlockState)
         {
             case BlockState.eIdle:
-                ServiceIdleState();
+                StartCoroutine(ServiceIdleState());
                 break;
             case BlockState.eSkill:
                 ServiceSkillState();
@@ -148,6 +148,7 @@ public class BlockListManager : MonoBehaviour
     private bool JudgeVictory() {
         for (int i = 0; i < kPlayerNum; i++) {
             if (mBlockManagers[i].GetHeight() == 0) {
+                
                 mEndCanvas.SetActive(true);
                 mEndText.text = "Player " + (2 - i)  + " Win!";
                 mBlockState = BlockState.eEnd;
@@ -158,10 +159,14 @@ public class BlockListManager : MonoBehaviour
     }
 
 
-    private void ServiceIdleState() {
+    private IEnumerator ServiceIdleState() {
+
+        yield return new WaitForSeconds(0.3f);
 
         // Judge vectory in idle state
-        if (JudgeVictory()) return;
+        if (JudgeVictory()) {
+            CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
+        }
 
         mBlockColor = (BlockColor)Random.Range(0, 3);
 
@@ -173,16 +178,18 @@ public class BlockListManager : MonoBehaviour
         }
 
         mUIOfPlayers[mPlayerIndex].SetActive(true);
-        mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
-        mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
-        mCameraControll.ModifyTarget("Player" + mPlayerIndex, 10f, 5f);
-        for (int i = 0; i < kPlayerNum; i++) {
-            if (i != mPlayerIndex) {
-                mUIOfPlayers[i].SetActive(false);
-                mPlayerAnimators[i].SetBool("IsHolding", false);
-                mCameraControll.ModifyTarget("Player" + i, 3f, 5f);
+            mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
+            mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
+            mCameraControll.ModifyTarget("Player" + mPlayerIndex, 10f, 5f);
+            for (int i = 0; i < kPlayerNum; i++)
+            {
+                if (i != mPlayerIndex)
+                {
+                    mUIOfPlayers[i].SetActive(false);
+                    mPlayerAnimators[i].SetBool("IsHolding", false);
+                    mCameraControll.ModifyTarget("Player" + i, 3f, 5f);
+                }
             }
-        }
 
         mBlockState = BlockState.eSkill;
     }
@@ -382,6 +389,16 @@ public class BlockListManager : MonoBehaviour
         }
     }
 
+    public void CameraEnd(GameObject playerWin, GameObject playerLose)
+    {
+        Debug.Log("CameraEnd!");
+        if(mCameraControll != null)
+        {
+            Debug.Log($"focus on {playerWin.name}");
+            mCameraControll.ModifyTarget(playerLose.name, 3f, 5f);
+            mCameraControll.ModifyTarget(playerWin.name, 40f, 0.1f);
+        }
+    }
     //private IEnumerator DelayToFocusBack(float delayTime, GameObject player)
     //{
     //    yield return new WaitForSeconds(delayTime);
@@ -437,7 +454,6 @@ public class BlockListManager : MonoBehaviour
     }
 
     public void ServiceEndState() {
-
     }
 
     void Update()
