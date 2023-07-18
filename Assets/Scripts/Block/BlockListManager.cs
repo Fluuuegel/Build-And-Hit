@@ -76,10 +76,12 @@ public class BlockListManager : MonoBehaviour
     private Vector3 mHitBlockPos;
     private Vector3 mTargetBlockPos;
     private CameraControll mCameraControll = null;
+    CinemachineTargetGroup.Target[] targets = null;
 
     void Start()
     {
         // UI
+        
         mCameraControll = FindObjectOfType<CameraControll>();
         mEndCanvas = GameObject.Find("EndCanvas");
         mTextObj = GameObject.Find("EndCanvas/Panel/EndText");
@@ -160,7 +162,8 @@ public class BlockListManager : MonoBehaviour
     }
 
     private IEnumerator TurnInterval() {
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("turn interval");
     }
 
     private void ServiceIdleState() {
@@ -222,6 +225,12 @@ public class BlockListManager : MonoBehaviour
             mUIOfPlayers[mPlayerIndex].SetActive(true);
             mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
             mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
+            targets = PlayerManager.mTargetGroup.m_Targets;
+            for (int i = 0; i < targets.Length; i++)
+            {
+                targets[i].weight = 1f;
+                targets[i].radius = 3f;
+            }
             mCameraControll.ModifyTarget("Player" + mPlayerIndex, 10f, 5f);
             for (int i = 0; i < kPlayerNum; i++)
             {
@@ -268,6 +277,7 @@ public class BlockListManager : MonoBehaviour
 
             // Initialize block blink
             mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
             mBlockAnimator = mTargetBlock.GetComponent<Animator>();
             mBlockAnimator.SetBool("IsSelected", true);
 
@@ -316,11 +326,12 @@ public class BlockListManager : MonoBehaviour
             mBlockAnimator.SetBool("IsSelected", false);
 
             mTargetBlockIndex += 1;
-
-            mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            mCameraControll.ModifyTarget(mTargetBlock, 1f, 3f);
+            mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex); 
             mBlockAnimator = mTargetBlock.GetComponent<Animator>();
             mBlockAnimator.SetBool("IsSelected", true);
 
+            mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
             Debug.Log(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
             return ;
         }
@@ -329,11 +340,12 @@ public class BlockListManager : MonoBehaviour
             mBlockAnimator.SetBool("IsSelected", false);
 
             mTargetBlockIndex -= 1;
-
+            mCameraControll.ModifyTarget(mTargetBlock, 1f, 3f);
             mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
             mBlockAnimator = mTargetBlock.GetComponent<Animator>();
             mBlockAnimator.SetBool("IsSelected", true);
-            
+
+            mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
             Debug.Log(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
             return ;
         }

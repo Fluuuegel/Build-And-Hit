@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using Unity.VisualScripting;
 
 public class CameraControll : MonoBehaviour
 {
@@ -43,5 +44,17 @@ public class CameraControll : MonoBehaviour
         }
     }
 
+    public void ModifyTarget(GameObject target, float weight, float radius)
+    {
+        CinemachineTargetGroup.Target[] targets = PlayerManager.mTargetGroup.m_Targets;
+        for(int i =  0; i < targets.Length; i++)
+        {
+            if (targets[i].target != null && targets[i].target.gameObject == target)
+            {
+                targets[i].weight = weight;
+                targets[i].radius = radius;
+            }
+        }
+    }
     
 }
