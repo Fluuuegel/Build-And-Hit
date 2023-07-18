@@ -215,7 +215,6 @@ public class BlockListManager : MonoBehaviour
                 mEndCanvas.SetActive(true);
                 mWinImages[i] = GameObject.Find("EndCanvas/Panel/P" + (i + 1) + "Win");
                 mWinImages[1 - i] = GameObject.Find("EndCanvas/Panel/P" + (2 - i) + "Win");
-                Debug.Log("P" + (i + 1) + "Win");
                 for (int j = 0; j < kPlayerNum; j++) {
                     mHitButtons[j].SetActive(false);
                     mBuildButtons[j].SetActive(false);
@@ -223,6 +222,19 @@ public class BlockListManager : MonoBehaviour
                 }
                 mWinImages[i].SetActive(false);
                 mWinImages[1 - i].SetActive(true);
+                mBlockState = BlockState.eEnd;
+                return true;
+            } else if (mBlockManagers[i].GetHeight() >= 20) {
+                mEndCanvas.SetActive(true);
+                mWinImages[i] = GameObject.Find("EndCanvas/Panel/P" + (i + 1) + "Win");
+                mWinImages[1 - i] = GameObject.Find("EndCanvas/Panel/P" + (2 - i) + "Win");
+                for (int j = 0; j < kPlayerNum; j++) {
+                    mHitButtons[j].SetActive(false);
+                    mBuildButtons[j].SetActive(false);
+                    mSkillButtons[j].SetActive(false);
+                }
+                mWinImages[i].SetActive(true);
+                mWinImages[1 - i].SetActive(false);
                 mBlockState = BlockState.eEnd;
                 return true;
             }
@@ -475,13 +487,13 @@ public class BlockListManager : MonoBehaviour
                 GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
                 mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
                 mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1);//player 1: 当前的玩家
-                mCameraControll.CameraFocusOnPlayer(mPlayers[1]);
+                mCameraControll.CameraFocusOnBlock(mTargetBlock);
                 
             } else {
                 GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
                 mBlockManagers[0].BeingHitBlockDestroy(bullet,mBlockManagers[0].GetHeight() - mTargetBlockIndex);//player 1
                 mBlockManagers[1].DestroyOneBlock(mBlockManagers[1].GetHeight() - 1);//player 2: 当前的玩家
-                mCameraControll.CameraFocusOnPlayer(mPlayers[0]);
+                mCameraControll.CameraFocusOnBlock(mTargetBlock);
             }
             
             mBlockState = BlockState.eCombo;
