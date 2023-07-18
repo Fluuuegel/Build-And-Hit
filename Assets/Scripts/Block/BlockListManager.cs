@@ -295,6 +295,7 @@ public class BlockListManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.H)) {
             mIsHitState = true;
+            mBlockAnimator.SetBool("IsSelected", false);
             mBlockState = BlockState.eBuild;
             return ;
         }
