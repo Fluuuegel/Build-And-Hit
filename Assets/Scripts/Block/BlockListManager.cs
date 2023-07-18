@@ -10,9 +10,14 @@ public class BlockListManager : MonoBehaviour
 
     // UI
     private GameObject mEndCanvas = null;
-    private GameObject mTextObj = null;
-    public Text mEndText = null;
+
     public GameObject[] mSkillButtons = new GameObject[2];
+
+    public GameObject[] mBuildButtons = new GameObject[2];
+
+    public GameObject[] mHitButtons = new GameObject[2];
+
+    public GameObject[] mWinImages = new GameObject[2];
     
     public enum BlockState {
 
@@ -82,12 +87,12 @@ public class BlockListManager : MonoBehaviour
         // UI
         mCameraControll = FindObjectOfType<CameraControll>();
         mEndCanvas = GameObject.Find("EndCanvas");
-        mTextObj = GameObject.Find("EndCanvas/Panel/EndText");
-        mEndText = mTextObj.GetComponent<Text>();
         mEndCanvas.SetActive(false);
 
         for (int i = 0; i < kPlayerNum; i++) {
             mSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton");
+            mBuildButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/BuildButton");
+            mHitButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/HitButton");
             mSkillButtons[i].SetActive(false);
         }
         
@@ -151,7 +156,16 @@ public class BlockListManager : MonoBehaviour
             if (mBlockManagers[i].GetHeight() == 0) {
                 
                 mEndCanvas.SetActive(true);
-                mEndText.text = "Player " + (2 - i)  + " Win!";
+                mWinImages[i] = GameObject.Find("EndCanvas/Panel/P" + (i + 1) + "Win");
+                mWinImages[1 - i] = GameObject.Find("EndCanvas/Panel/P" + (2 - i) + "Win");
+                Debug.Log("P" + (i + 1) + "Win");
+                for (int j = 0; j < kPlayerNum; j++) {
+                    mHitButtons[j].SetActive(false);
+                    mBuildButtons[j].SetActive(false);
+                    mSkillButtons[j].SetActive(false);
+                }
+                mWinImages[i].SetActive(false);
+                mWinImages[1 - i].SetActive(true);
                 mBlockState = BlockState.eEnd;
                 return true;
             }
@@ -378,8 +392,9 @@ public class BlockListManager : MonoBehaviour
         bool isDestroy = HitBlockScript.isColli();
         if (isDestroy) {
             mMusic.clip = Resources.Load<AudioClip>("music/Audio_Hit");
-            mMusic.volume = 0.9f;
+            mMusic.volume = 3.0f;
             mMusic.Play();
+            Debug.Log("Hit");
             if (mPlayerIndex == 0) {
                 GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
                 mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
