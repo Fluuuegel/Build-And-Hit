@@ -238,19 +238,33 @@ public class BlockListManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P) && (mBlockSkills == BlockSkills.eSkills))
         {
             float skillsChoose = Random.Range(0f, 1f);
-            if (0 >= skillsChoose && skillsChoose <= 0.5f)
+            if (true/*skillsChoose <= 0.5f*/)
             {
-
+                //Build the first Block of the Hero
+                Debug.Log("Build different Skills");
+                bool isSameColor = true;
+                BlockColor SkillBuildColor = BlockColor.eRed;
+                while (isSameColor)
+                {
+                    SkillBuildColor = (BlockColor)Random.Range(0, 3);
+                    if (SkillBuildColor == mBlockColor)
+                    {
+                        isSameColor = true;
+                        SkillBuildColor = (BlockColor)Random.Range(0, 3);
+                    }
+                    else
+                    {
+                        isSameColor = false;
+                    }
+                }
+                mTargetBlockIndex = 1;
+                //mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+                mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, (int)SkillBuildColor);
             }
             else
             {
-
-            }
-
-
-            
-            {
                 // Destroy the first Block of the enemy
+                Debug.Log("Hit Skills, Prob:" + skillsChoose);
                 mTargetBlockIndex = 1;
                 mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
                 mTargetBlockPos = mTargetBlock.transform.position;
@@ -268,6 +282,7 @@ public class BlockListManager : MonoBehaviour
                 mMusic.clip = Resources.Load<AudioClip>("music/Audio_Debuff");
                 mMusic.Play();
             }
+
             mBlockSkills = BlockSkills.eNormal;
             return;
         }
