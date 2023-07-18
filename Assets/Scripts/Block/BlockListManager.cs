@@ -159,7 +159,7 @@ public class BlockListManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.3f);
 
-        // Judge vectory in idle state
+        // Judge victory in idle state
         if (JudgeVictory())
         {
             CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
