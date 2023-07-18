@@ -115,7 +115,7 @@ public class BlockListManager : MonoBehaviour
         switch (mBlockState)
         {
             case BlockState.eIdle:
-                ServiceIdleState();
+                StartCoroutine(ServiceIdleState());
                 break;
             case BlockState.eWait:
                 ServiceWaitState();
@@ -141,29 +141,38 @@ public class BlockListManager : MonoBehaviour
         }
     }
 
-    private void JudgeVectory() {
+    private bool JudgeVictory() {
         for (int i = 0; i < kPlayerNum; i++) {
             if (mBlockManagers[i].GetHeight() == 0) {
+                
                 mEndCanvas.SetActive(true);
-                mEndText.text = "Player " + (i + 1) + " Win!";
+                mEndText.text = "Player " + (2 - mPlayerIndex) + " Win!";
                 mBlockState = BlockState.eEnd;
-                return ;
+                return true;
             }
         }
+        return false;
     }
 
 
-    private void ServiceIdleState() {
+    private IEnumerator ServiceIdleState() {
+
+        yield return new WaitForSeconds(0.3f);
 
         // Judge vectory in idle state
-        JudgeVectory();
-
-        mBlockColor = (BlockColor)Random.Range(0, 3);
-        float randomSkill = Random.Range(0f, 1f);
-
-        for (int i = 0; i < kPlayerNum; i++) {
-            mSkillButtons[i].SetActive(false);
+        if (JudgeVictory())
+        {
+            CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
         }
+        else
+        {
+            mBlockColor = (BlockColor)Random.Range(0, 3);
+            float randomSkill = Random.Range(0f, 1f);
+
+            for (int i = 0; i < kPlayerNum; i++)
+            {
+                mSkillButtons[i].SetActive(false);
+            }
 
         if (randomSkill > 0.3f)
         {
@@ -178,39 +187,44 @@ public class BlockListManager : MonoBehaviour
             mMusic.Play();
         }
 
-        //mCameraControll.ModifyTarget("Player1", 10f, 5f);
-        //mCameraControll.ModifyTarget("Player2", 3f, 5f);
-        //     // BlockColor : 0 - Green, 1 - Red, 2 - Blue
-        //     p1Animator.SetInteger("BlockColor", (int)mBlockColor);
-        // } else {
-        //UIOfPlayer1.SetActive(false);
-        //UIOfPlayer2.SetActive(true);
-        //     p1Animator.SetBool("IsHolding", false);
-        //     p2Animator.SetBool("IsHolding", true);
-        //     p2Animator.SetInteger("BlockColor", (int)mBlockColor);
+            //mCameraControll.ModifyTarget("Player1", 10f, 5f);
+            //mCameraControll.ModifyTarget("Player2", 3f, 5f);
+            //     // BlockColor : 0 - Green, 1 - Red, 2 - Blue
+            //     p1Animator.SetInteger("BlockColor", (int)mBlockColor);
+            // } else {
+            //UIOfPlayer1.SetActive(false);
+            //UIOfPlayer2.SetActive(true);
+            //     p1Animator.SetBool("IsHolding", false);
+            //     p2Animator.SetBool("IsHolding", true);
+            //     p2Animator.SetInteger("BlockColor", (int)mBlockColor);
 
-        //mCameraControll.ModifyTarget("Player2", 10f, 5f);
-        //mCameraControll.ModifyTarget("Player1", 3f, 5f);
-        for (int i = 0; i < kPlayerNum; i++) {
-            mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
-            if (mUIOfPlayers[i] == null) {
-                mUIOfPlayers[i] = GameObject.Find("UIOfPlayer" + (i + 1));
+            //mCameraControll.ModifyTarget("Player2", 10f, 5f);
+            //mCameraControll.ModifyTarget("Player1", 3f, 5f);
+            for (int i = 0; i < kPlayerNum; i++)
+            {
+                mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
+                if (mUIOfPlayers[i] == null)
+                {
+                    mUIOfPlayers[i] = GameObject.Find("UIOfPlayer" + (i + 1));
+                }
             }
-        }
 
-        mUIOfPlayers[mPlayerIndex].SetActive(true);
-        mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
-        mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
-        mCameraControll.ModifyTarget("Player" + mPlayerIndex, 10f, 5f);
-        for (int i = 0; i < kPlayerNum; i++) {
-            if (i != mPlayerIndex) {
-                mUIOfPlayers[i].SetActive(false);
-                mPlayerAnimators[i].SetBool("IsHolding", false);
-                mCameraControll.ModifyTarget("Player" + i, 3f, 5f);
+            mUIOfPlayers[mPlayerIndex].SetActive(true);
+            mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
+            mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
+            mCameraControll.ModifyTarget("Player" + mPlayerIndex, 10f, 5f);
+            for (int i = 0; i < kPlayerNum; i++)
+            {
+                if (i != mPlayerIndex)
+                {
+                    mUIOfPlayers[i].SetActive(false);
+                    mPlayerAnimators[i].SetBool("IsHolding", false);
+                    mCameraControll.ModifyTarget("Player" + i, 3f, 5f);
+                }
             }
-        }
 
-        mBlockState = BlockState.eWait;
+            mBlockState = BlockState.eWait;
+        }
     }
     
     private void ServiceWaitState() {
@@ -416,6 +430,16 @@ public class BlockListManager : MonoBehaviour
         }
     }
 
+    public void CameraEnd(GameObject playerWin, GameObject playerLose)
+    {
+        Debug.Log("CameraEnd!");
+        if(mCameraControll != null)
+        {
+            Debug.Log($"focus on {playerWin.name}");
+            mCameraControll.ModifyTarget(playerLose.name, 3f, 5f);
+            mCameraControll.ModifyTarget(playerWin.name, 40f, 0.1f);
+        }
+    }
     //private IEnumerator DelayToFocusBack(float delayTime, GameObject player)
     //{
     //    yield return new WaitForSeconds(delayTime);
@@ -471,8 +495,7 @@ public class BlockListManager : MonoBehaviour
     }
 
     public void ServiceEndState() {
-        mEndCanvas.SetActive(true);
-        mEndText.text =  "P " + (mPlayerIndex + 1) + " Win!";
+        Debug.Log("End!!");
     }
 
     void Update()
