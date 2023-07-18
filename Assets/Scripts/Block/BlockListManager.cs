@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using Unity.VisualScripting;
 
 public class BlockListManager : MonoBehaviour
-{   
+{
 
     // UI
     private GameObject mEndCanvas = null;
@@ -118,7 +118,6 @@ public class BlockListManager : MonoBehaviour
         switch (mBlockState)
         {
             case BlockState.eIdle:
-                StartCoroutine(TurnInterval());
                 ServiceIdleState();
                 break;
             case BlockState.eSkill:
@@ -160,14 +159,21 @@ public class BlockListManager : MonoBehaviour
         }
         return false;
     }
-
-    private IEnumerator TurnInterval() {
-        yield return new WaitForSeconds(0.5f);
-        Debug.Log("turn interval");
+    private float IdelTimer;
+    private float mDelayTime = 0.5f;
+    bool TriggerIdelStateTimer()
+    {
+        if (Time.time - IdelTimer > mDelayTime)
+            return true;
+        return false;
     }
 
     private void ServiceIdleState() {
-
+        //if (!TriggerIdelStateTimer())
+        //{
+        //    return;
+        //}
+        
         // Judge vectory in idle state
         if (JudgeVictory())
         {
@@ -199,19 +205,7 @@ public class BlockListManager : MonoBehaviour
                 //mMusic.Play();
             }
 
-            //mCameraControll.ModifyTarget("Player1", 10f, 5f);
-            //mCameraControll.ModifyTarget("Player2", 3f, 5f);
-            //     // BlockColor : 0 - Green, 1 - Red, 2 - Blue
-            //     p1Animator.SetInteger("BlockColor", (int)mBlockColor);
-            // } else {
-            //UIOfPlayer1.SetActive(false);
-            //UIOfPlayer2.SetActive(true);
-            //     p1Animator.SetBool("IsHolding", false);
-            //     p2Animator.SetBool("IsHolding", true);
-            //     p2Animator.SetInteger("BlockColor", (int)mBlockColor);
-
-            //mCameraControll.ModifyTarget("Player2", 10f, 5f);
-            //mCameraControll.ModifyTarget("Player1", 3f, 5f);
+       
             for (int i = 0; i < kPlayerNum; i++)
             {
                 mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
@@ -265,6 +259,7 @@ public class BlockListManager : MonoBehaviour
     }
 
     private void ServiceWaitState() {
+
 
         if (Input.GetKeyDown(KeyCode.B)) {
             mBlockState = BlockState.eBuild;
@@ -351,6 +346,7 @@ public class BlockListManager : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.H)) {
+            mCameraControll.CameraFocusOnBlock(mTargetBlock);
             mIsHitState = true;
             mBlockState = BlockState.eBuild;
             return ;
@@ -396,13 +392,11 @@ public class BlockListManager : MonoBehaviour
                 GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
                 mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
                 mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1);//player 1: 当前的玩家
-                mCameraControll.CameraFocusOnPlayer(mPlayers[1]);
                 
             } else {
                 GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
                 mBlockManagers[0].BeingHitBlockDestroy(bullet,mBlockManagers[0].GetHeight() - mTargetBlockIndex);//player 1
                 mBlockManagers[1].DestroyOneBlock(mBlockManagers[1].GetHeight() - 1);//player 2: 当前的玩家
-                mCameraControll.CameraFocusOnPlayer(mPlayers[0]);
             }
             
             mBlockState = BlockState.eCombo;
@@ -454,6 +448,7 @@ public class BlockListManager : MonoBehaviour
         {
             Debug.Log("Combo done");
             mBlockState = BlockState.eIdle;
+            IdelTimer = Time.time;
             mPlayerIndex = (mPlayerIndex + 1) % 2;
             mIsHitState = false;
             mTime = 0;
@@ -476,6 +471,7 @@ public class BlockListManager : MonoBehaviour
             mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
             mMusic.Play();
             mBlockState = BlockState.eIdle;
+            IdelTimer = Time.time;
             mPlayerIndex = (mPlayerIndex + 1) % 2;
         }
         else
