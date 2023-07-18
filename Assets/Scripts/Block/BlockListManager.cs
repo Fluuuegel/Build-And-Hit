@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
+using Unity.VisualScripting;
+
 public class BlockListManager : MonoBehaviour
 {   
 
@@ -56,6 +58,8 @@ public class BlockListManager : MonoBehaviour
 
     private Animator[] mPlayerAnimators = new Animator[2];
 
+    private Animator mBlockAnimator = new Animator();
+
     private GameObject[] mPlayers = new GameObject[2];
 
     private GameObject[] mUIOfPlayers = new GameObject[2];
@@ -69,11 +73,13 @@ public class BlockListManager : MonoBehaviour
     private GameObject mTargetBlock;
     private Vector3 mHitBlockPos;
     private Vector3 mTargetBlockPos;
+    private CameraControll mCameraControll = null;
 
     // Start is called before the first frame update
     void Start()
     {
         // UI
+        mCameraControll = FindObjectOfType<CameraControll>();
         mEndCanvas = GameObject.Find("EndCanvas");
         mTextObj = GameObject.Find("EndCanvas/Panel/EndText");
         mEndText = mTextObj.GetComponent<Text>();
@@ -95,9 +101,9 @@ public class BlockListManager : MonoBehaviour
         }
 
         for (int i = 0; i < kInitBlockIndex; i++) {
-            // TODO: edit true / false
-            mBlockManagers[0].BuildOneBlock(0, false, -1);
-            mBlockManagers[1].BuildOneBlock(1, false, -1);
+            for (int j = 0; j < kPlayerNum; j++) {
+                mBlockManagers[j].BuildOneBlock(j, false, -1);
+            }
         }
 
         // Audio
@@ -146,17 +152,6 @@ public class BlockListManager : MonoBehaviour
         }
     }
 
-    private void ModifyTargetWeight(string targetName, float weight)
-    {
-        CinemachineTargetGroup.Target[] targets = PlayerManager.mTargetGroup.m_Targets;
-        for (int i = 0; i < targets.Length; i++)
-        {
-            if (targets[i].target != null && targets[i].target.name == targetName)
-            {
-                targets[i].weight = weight;
-            }
-        }
-    }
 
     private void ServiceIdleState() {
 
@@ -183,6 +178,19 @@ public class BlockListManager : MonoBehaviour
             mMusic.Play();
         }
 
+        //mCameraControll.ModifyTarget("Player1", 10f, 5f);
+        //mCameraControll.ModifyTarget("Player2", 3f, 5f);
+        //     // BlockColor : 0 - Green, 1 - Red, 2 - Blue
+        //     p1Animator.SetInteger("BlockColor", (int)mBlockColor);
+        // } else {
+        //UIOfPlayer1.SetActive(false);
+        //UIOfPlayer2.SetActive(true);
+        //     p1Animator.SetBool("IsHolding", false);
+        //     p2Animator.SetBool("IsHolding", true);
+        //     p2Animator.SetInteger("BlockColor", (int)mBlockColor);
+
+        //mCameraControll.ModifyTarget("Player2", 10f, 5f);
+        //mCameraControll.ModifyTarget("Player1", 3f, 5f);
         for (int i = 0; i < kPlayerNum; i++) {
             mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
             if (mUIOfPlayers[i] == null) {
@@ -193,12 +201,12 @@ public class BlockListManager : MonoBehaviour
         mUIOfPlayers[mPlayerIndex].SetActive(true);
         mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
         mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
-        ModifyTargetWeight("Player" + mPlayerIndex, 10f);
+        mCameraControll.ModifyTarget("Player" + mPlayerIndex, 10f, 5f);
         for (int i = 0; i < kPlayerNum; i++) {
             if (i != mPlayerIndex) {
                 mUIOfPlayers[i].SetActive(false);
                 mPlayerAnimators[i].SetBool("IsHolding", false);
-                ModifyTargetWeight("Player" + i, 3f);
+                mCameraControll.ModifyTarget("Player" + i, 3f, 5f);
             }
         }
 
@@ -214,6 +222,13 @@ public class BlockListManager : MonoBehaviour
 
         // Only if the player has blocks, can he be hit
         if (Input.GetKeyDown(KeyCode.H) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() > 0) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() > 0))) {
+            mTargetBlockIndex = 1;
+
+            // Initialize block blink
+            mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            mBlockAnimator = mTargetBlock.GetComponent<Animator>();
+            mBlockAnimator.SetBool("IsSelected", true);
+
             mBlockState = BlockState.eSelectHit;
             return ;
         }
@@ -264,24 +279,59 @@ public class BlockListManager : MonoBehaviour
     }
 
     private void ServiceSelectHitState() {
-        if (Input.GetKeyDown(KeyCode.Q) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 1) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 1))) {
-            mTargetBlockIndex = 1;
+        // TODO: Up / Down choose
+        if (Input.GetKeyDown(KeyCode.S) && mTargetBlockIndex < mBlockManagers[1 - mPlayerIndex].GetHeight()) {
+            // Block blink effect
+            mBlockAnimator.SetBool("IsSelected", false);
 
-            mIsHitState = true;
-            mBlockState = BlockState.eBuild;
-        }
-        if (Input.GetKeyDown(KeyCode.W) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 2) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 2))) {
-            mTargetBlockIndex = 2;
+            mTargetBlockIndex += 1;
 
-            mIsHitState = true;
-            mBlockState = BlockState.eBuild;
+            mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            mBlockAnimator = mTargetBlock.GetComponent<Animator>();
+            mBlockAnimator.SetBool("IsSelected", true);
+
+            Debug.Log(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            return ;
         }
-        if (Input.GetKeyDown(KeyCode.E) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 3) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 3))) {
-            mTargetBlockIndex = 3;
+
+        if (Input.GetKeyDown(KeyCode.W) && mTargetBlockIndex > 1) {
+            mBlockAnimator.SetBool("IsSelected", false);
+
+            mTargetBlockIndex -= 1;
+
+            mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            mBlockAnimator = mTargetBlock.GetComponent<Animator>();
+            mBlockAnimator.SetBool("IsSelected", true);
             
-            mIsHitState = true;
-            mBlockState = BlockState.eBuild;
+            Debug.Log(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            return ;
         }
+
+        if (Input.GetKeyDown(KeyCode.H)) {
+            mIsHitState = true;
+            mBlockAnimator.SetBool("IsSelected", false);
+            mBlockState = BlockState.eBuild;
+            return ;
+        }
+
+        // if (Input.GetKeyDown(KeyCode.Q) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 1) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 1))) {
+        //     mTargetBlockIndex = 1;
+
+        //     mIsHitState = true;
+        //     mBlockState = BlockState.eBuild;
+        // }
+        // if (Input.GetKeyDown(KeyCode.W) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 2) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 2))) {
+        //     mTargetBlockIndex = 2;
+
+        //     mIsHitState = true;
+        //     mBlockState = BlockState.eBuild;
+        // }
+        // if (Input.GetKeyDown(KeyCode.E) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 3) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 3))) {
+        //     mTargetBlockIndex = 3;
+            
+        //     mIsHitState = true;
+        //     mBlockState = BlockState.eBuild;
+        // }
 
         // You can retract the selection
         if (Input.GetKeyDown(KeyCode.B)) {
@@ -321,11 +371,13 @@ public class BlockListManager : MonoBehaviour
                 GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
                 mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
                 mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1);//player 1: 当前的玩家
+                mCameraControll.CameraFocusOnPlayer(mPlayers[1]);
                 
             } else {
                 GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
                 mBlockManagers[0].BeingHitBlockDestroy(bullet,mBlockManagers[0].GetHeight() - mTargetBlockIndex);//player 1
                 mBlockManagers[1].DestroyOneBlock(mBlockManagers[1].GetHeight() - 1);//player 2: 当前的玩家
+                mCameraControll.CameraFocusOnPlayer(mPlayers[0]);
             }
             
             mBlockState = BlockState.eCombo;
@@ -333,7 +385,39 @@ public class BlockListManager : MonoBehaviour
             mTime = 0;
         }
     }
-    
+    #region CameraEffect
+    public void CameraEffect(GameObject player)
+    {
+        
+        if (mCameraControll != null)
+        {
+            mCameraControll.CameraFocusOnPlayer(player);
+            //StartCoroutine(DelayToShake(mShakeDelay));
+            //StartCoroutine(DelayToFocusBack(mCameraBackDelay,player));
+        }
+        else
+        {
+            Debug.Log("No CameraControll Found");
+        }
+    }
+
+    //private IEnumerator DelayToFocusBack(float delayTime, GameObject player)
+    //{
+    //    yield return new WaitForSeconds(delayTime);
+    //    FocusBack(player);
+    //}
+
+    //private IEnumerator DelayToShake(float delayTime)
+    //{
+    //    yield return new WaitForSeconds(delayTime);
+    //    mCameraControll.CameraShake();
+    //}
+    //private void FocusBack(GameObject player)
+    //{
+    //    mCameraControll.CameraUnfocusOnPlayer(player);
+    //}
+    #endregion CameraEffect
+
     public void ServiceComboState()
     {
         Debug.Log("Combo in block list");

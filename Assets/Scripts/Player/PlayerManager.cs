@@ -23,11 +23,11 @@ public class PlayerManager : MonoBehaviour
         mCamera = GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
         mTargetGroup = GameObject.Find("TargetGroup").GetComponent<CinemachineTargetGroup>();
 
-        mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/{Player1Select.player1Select}");
-        mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/{Player2Select.player2Select}");
+        // mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/{Player1Select.player1Select}");
+        // mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/{Player2Select.player2Select}");
 
-        // mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/Char1");
-        // mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/Char1R");
+        mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/Char1");
+        mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/Char2R");
 
         for (int i = 0; i < mPlayerNum; i++) {
             mPlayers[i] = GameObject.Instantiate(mPlayerPrefab[i]) as GameObject;
