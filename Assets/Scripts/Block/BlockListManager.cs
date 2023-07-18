@@ -59,6 +59,8 @@ public class BlockListManager : MonoBehaviour
 
     private Animator[] mPlayerAnimators = new Animator[2];
 
+    private Animator mBlockAnimator = new Animator();
+
     private GameObject[] mPlayers = new GameObject[2];
 
     private GameObject[] mUIOfPlayers = new GameObject[2];
@@ -100,9 +102,9 @@ public class BlockListManager : MonoBehaviour
         }
 
         for (int i = 0; i < kInitBlockIndex; i++) {
-            // TODO: edit true / false
-            mBlockManagers[0].BuildOneBlock(0, false, -1);
-            mBlockManagers[1].BuildOneBlock(1, false, -1);
+            for (int j = 0; j < kPlayerNum; j++) {
+                mBlockManagers[j].BuildOneBlock(j, false, -1);
+            }
         }
 
         // Audio
@@ -114,7 +116,7 @@ public class BlockListManager : MonoBehaviour
         switch (mBlockState)
         {
             case BlockState.eIdle:
-                ServiceIdleState();
+                StartCoroutine(ServiceIdleState());
                 break;
             case BlockState.eWait:
                 ServiceWaitState();
@@ -140,74 +142,88 @@ public class BlockListManager : MonoBehaviour
         }
     }
 
-    private void JudgeVectory() {
+    private bool JudgeVictory() {
         for (int i = 0; i < kPlayerNum; i++) {
             if (mBlockManagers[i].GetHeight() == 0) {
+                
                 mEndCanvas.SetActive(true);
-                mEndText.text = "Player " + (i + 1) + " Win!";
+                mEndText.text = "Player " + (2 - mPlayerIndex) + " Win!";
                 mBlockState = BlockState.eEnd;
-                return ;
+                return true;
             }
         }
+        return false;
     }
 
 
-    private void ServiceIdleState() {
+    private IEnumerator ServiceIdleState() {
+
+        yield return new WaitForSeconds(0.3f);
 
         // Judge vectory in idle state
-        JudgeVectory();
-
-        mBlockColor = (BlockColor)Random.Range(0, 3);
-        float randomSkill = Random.Range(0f, 1f);
-
-        for (int i = 0; i < kPlayerNum; i++) {
-            mSkillButtons[i].SetActive(false);
-        }
-
-        if (randomSkill > 0.2f)
+        if (JudgeVictory())
         {
-            // TODO: Add UI
-            mBlockSkills = BlockSkills.eNormal;
+            CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
         }
         else
         {
-            mSkillButtons[mPlayerIndex].SetActive(true);
-            mBlockSkills = BlockSkills.eSkills;
-        }
+            mBlockColor = (BlockColor)Random.Range(0, 3);
+            float randomSkill = Random.Range(0f, 1f);
 
-        //mCameraControll.ModifyTarget("Player1", 10f, 5f);
-        //mCameraControll.ModifyTarget("Player2", 3f, 5f);
-        //     // BlockColor : 0 - Green, 1 - Red, 2 - Blue
-        //     p1Animator.SetInteger("BlockColor", (int)mBlockColor);
-        // } else {
-        //UIOfPlayer1.SetActive(false);
-        //UIOfPlayer2.SetActive(true);
-        //     p1Animator.SetBool("IsHolding", false);
-        //     p2Animator.SetBool("IsHolding", true);
-        //     p2Animator.SetInteger("BlockColor", (int)mBlockColor);
-
-        //mCameraControll.ModifyTarget("Player2", 10f, 5f);
-        //mCameraControll.ModifyTarget("Player1", 3f, 5f);
-        for (int i = 0; i < kPlayerNum; i++) {
-            mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
-            if (mUIOfPlayers[i] == null) {
-                mUIOfPlayers[i] = GameObject.Find("UIOfPlayer" + (i + 1));
+            for (int i = 0; i < kPlayerNum; i++)
+            {
+                mSkillButtons[i].SetActive(false);
             }
-        }
 
-        mUIOfPlayers[mPlayerIndex].SetActive(true);
-        mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
-        mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
-        mCameraControll.ModifyTarget("Player" + mPlayerIndex, 10f, 5f);
-        for (int i = 0; i < kPlayerNum; i++) {
-            if (i != mPlayerIndex) {
-                mUIOfPlayers[i].SetActive(false);
-                mPlayerAnimators[i].SetBool("IsHolding", false);
-                mCameraControll.ModifyTarget("Player" + i, 3f, 5f);
+            if (randomSkill > 0.2f)
+            {
+                // TODO: Add UI
+                mBlockSkills = BlockSkills.eNormal;
             }
-        }
+            else
+            {
+                mSkillButtons[mPlayerIndex].SetActive(true);
+                mBlockSkills = BlockSkills.eSkills;
+            }
 
-        mBlockState = BlockState.eWait;
+            //mCameraControll.ModifyTarget("Player1", 10f, 5f);
+            //mCameraControll.ModifyTarget("Player2", 3f, 5f);
+            //     // BlockColor : 0 - Green, 1 - Red, 2 - Blue
+            //     p1Animator.SetInteger("BlockColor", (int)mBlockColor);
+            // } else {
+            //UIOfPlayer1.SetActive(false);
+            //UIOfPlayer2.SetActive(true);
+            //     p1Animator.SetBool("IsHolding", false);
+            //     p2Animator.SetBool("IsHolding", true);
+            //     p2Animator.SetInteger("BlockColor", (int)mBlockColor);
+
+            //mCameraControll.ModifyTarget("Player2", 10f, 5f);
+            //mCameraControll.ModifyTarget("Player1", 3f, 5f);
+            for (int i = 0; i < kPlayerNum; i++)
+            {
+                mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
+                if (mUIOfPlayers[i] == null)
+                {
+                    mUIOfPlayers[i] = GameObject.Find("UIOfPlayer" + (i + 1));
+                }
+            }
+
+            mUIOfPlayers[mPlayerIndex].SetActive(true);
+            mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
+            mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
+            mCameraControll.ModifyTarget("Player" + mPlayerIndex, 10f, 5f);
+            for (int i = 0; i < kPlayerNum; i++)
+            {
+                if (i != mPlayerIndex)
+                {
+                    mUIOfPlayers[i].SetActive(false);
+                    mPlayerAnimators[i].SetBool("IsHolding", false);
+                    mCameraControll.ModifyTarget("Player" + i, 3f, 5f);
+                }
+            }
+
+            mBlockState = BlockState.eWait;
+        }
     }
     
     private void ServiceWaitState() {
@@ -219,6 +235,13 @@ public class BlockListManager : MonoBehaviour
 
         // Only if the player has blocks, can he be hit
         if (Input.GetKeyDown(KeyCode.H) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() > 0) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() > 0))) {
+            mTargetBlockIndex = 1;
+
+            // Initialize block blink
+            mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            mBlockAnimator = mTargetBlock.GetComponent<Animator>();
+            mBlockAnimator.SetBool("IsSelected", true);
+
             mBlockState = BlockState.eSelectHit;
             return ;
         }
@@ -281,27 +304,62 @@ public class BlockListManager : MonoBehaviour
     }
 
     private void ServiceSelectHitState() {
-        if (Input.GetKeyDown(KeyCode.Q) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 1) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 1))) {
-            mTargetBlockIndex = 1;
+        // TODO: Up / Down choose
+        if (Input.GetKeyDown(KeyCode.S) && mTargetBlockIndex < mBlockManagers[1 - mPlayerIndex].GetHeight()) {
+            // Block blink effect
+            mBlockAnimator.SetBool("IsSelected", false);
 
-            mIsHitState = true;
-            mBlockState = BlockState.eBuild;
-        }
-        if (Input.GetKeyDown(KeyCode.W) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 2) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 2))) {
-            mTargetBlockIndex = 2;
+            mTargetBlockIndex += 1;
 
-            mIsHitState = true;
-            mBlockState = BlockState.eBuild;
+            mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            mBlockAnimator = mTargetBlock.GetComponent<Animator>();
+            mBlockAnimator.SetBool("IsSelected", true);
+
+            Debug.Log(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            return ;
         }
-        if (Input.GetKeyDown(KeyCode.E) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 3) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 3))) {
-            mTargetBlockIndex = 3;
+
+        if (Input.GetKeyDown(KeyCode.W) && mTargetBlockIndex > 1) {
+            mBlockAnimator.SetBool("IsSelected", false);
+
+            mTargetBlockIndex -= 1;
+
+            mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            mBlockAnimator = mTargetBlock.GetComponent<Animator>();
+            mBlockAnimator.SetBool("IsSelected", true);
             
+            Debug.Log(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            return ;
+        }
+
+        if (Input.GetKeyDown(KeyCode.H)) {
             mIsHitState = true;
             mBlockState = BlockState.eBuild;
+            return ;
         }
+
+        // if (Input.GetKeyDown(KeyCode.Q) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 1) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 1))) {
+        //     mTargetBlockIndex = 1;
+
+        //     mIsHitState = true;
+        //     mBlockState = BlockState.eBuild;
+        // }
+        // if (Input.GetKeyDown(KeyCode.W) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 2) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 2))) {
+        //     mTargetBlockIndex = 2;
+
+        //     mIsHitState = true;
+        //     mBlockState = BlockState.eBuild;
+        // }
+        // if (Input.GetKeyDown(KeyCode.E) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() >= 3) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() >= 3))) {
+        //     mTargetBlockIndex = 3;
+            
+        //     mIsHitState = true;
+        //     mBlockState = BlockState.eBuild;
+        // }
 
         // You can retract the selection
         if (Input.GetKeyDown(KeyCode.B)) {
+            mBlockAnimator.SetBool("IsSelected", false);
             mBlockState = BlockState.eBuild;
         }
     }
@@ -368,6 +426,16 @@ public class BlockListManager : MonoBehaviour
         }
     }
 
+    public void CameraEnd(GameObject playerWin, GameObject playerLose)
+    {
+        Debug.Log("CameraEnd!");
+        if(mCameraControll != null)
+        {
+            Debug.Log($"focus on {playerWin.name}");
+            mCameraControll.ModifyTarget(playerLose.name, 3f, 5f);
+            mCameraControll.ModifyTarget(playerWin.name, 40f, 0.1f);
+        }
+    }
     //private IEnumerator DelayToFocusBack(float delayTime, GameObject player)
     //{
     //    yield return new WaitForSeconds(delayTime);
@@ -430,8 +498,7 @@ public class BlockListManager : MonoBehaviour
     }
 
     public void ServiceEndState() {
-        mEndCanvas.SetActive(true);
-        mEndText.text =  "P " + (mPlayerIndex + 1) + " Win!";
+        Debug.Log("End!!");
     }
 
     void Update()

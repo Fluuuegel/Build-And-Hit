@@ -18,7 +18,6 @@ public class BlockManager
     {
         if (index >= mBlocks.Count || index < 0)
         {
-            Debug.Log("BlockManager::GetBlockAt: index out of range");
             return null;
         }
 
@@ -29,7 +28,6 @@ public class BlockManager
     {
         if (index >= mBlocks.Count)
         {
-            Debug.Log("BlockBehaviour.BlockColourType index out of range");
             return BlockBehaviour.BlockColourType.red;
         }
 
@@ -157,7 +155,6 @@ public class BlockManager
     {
         if (mBlocks.Count == 0 || index >= mBlocks.Count)
         {
-            Debug.Log("DestroyOneBlock::No block to destroy!");
             return -1;
         }
 
@@ -182,7 +179,6 @@ public class BlockManager
 
     public int GetHeight()
     {
-        //Debug.Log("GetHeight: " + mBlocks.Count);
         return mBlocks.Count;
     }
 
@@ -215,8 +211,6 @@ public class BlockManager
 
     public void BeingHitBlockDestroy(GameObject hitBlock, int index = 0)
     {
-        
-        Debug.Log(hitBlock.GetComponent<BlockBehaviour>().GetBlockColour());
         if (index >= mBlocks.Count || !hitBlock)
         {
             return;
@@ -251,9 +245,6 @@ public class BlockManager
                 DestroyOneBlock(startDeleteIndex);
             }
         }
-
-        
-        Debug.Log("Entering combo -----------------------------------------------------");
 
         targetBlock1 = GetBlockAt(startDeleteIndex - 1);
         targetBlock2 = GetBlockAt(startDeleteIndex);
@@ -295,22 +286,18 @@ public class BlockManager
     }
     public bool UpdateComboState()
     {
-        Debug.Log("Entering UpdateComboState");
         if(canCombo == false || (!targetBlock1) || (!targetBlock2))// no more combo from now!
         {
-            Debug.Log("Combo is not possible anymore!");
             resetCombo();
             return true;
         }
         //fixme: block collision ignore first
         if (targetBlockCollided)
         {
-            Debug.Log("Target Block Collided");
             MarkBlockForDestroy(comboLowerBound);
             TriggerReadyForCombo();
             if (readyCombo)
             {
-                Debug.Log("Ready for combo");
                 ComboInfo comboInfo = ComboFrom(comboLowerBound);
                 if (!comboInfo.combo_achieved)//combo already fail, end of all
                 {
@@ -347,8 +334,6 @@ public class BlockManager
         int combo_cnt = 0;
         if (GetBlockColorAt(lower_index) != GetBlockColorAt(lower_index + 1))
         {
-            Debug.Log("2 edge block has different color");
-            Debug.Log("precombo fail");
             return;
         }
         else
@@ -389,7 +374,6 @@ public class BlockManager
      */
     public bool TargetBlockCollided()
     {
-        Debug.Log("TargetBlockCollided");
         if (targetBlockCollided == false)
         {
             collisionTimer = Time.time;//record the collision time
@@ -436,7 +420,6 @@ public class BlockManager
     public ComboInfo ComboFrom(int lower_index)
     {
         ComboInfo comboInfo = new ComboInfo();
-        Debug.Log("combo start");
         if (lower_index < 0)
         {
             comboInfo.combo_achieved = false;
@@ -446,11 +429,6 @@ public class BlockManager
         int combo_cnt = 0;
         if (GetBlockColorAt(lower_index) != GetBlockColorAt(lower_index + 1))
         {
-            Debug.Log("2 edge block has different color");
-            Debug.Log(GetBlockColorAt(lower_index));
-            Debug.Log(GetBlockColorAt(lower_index + 1));
-            Debug.Log("lower_index: " + lower_index);
-            Debug.Log("combo fail");
             comboInfo.combo_achieved = false;
             return comboInfo;
         }
@@ -471,7 +449,6 @@ public class BlockManager
             low_bound--;
             combo_cnt++;
         }
-        Debug.Log("conbo_cnt: " + combo_cnt + " lower_bound: " + low_bound );
         if (combo_cnt >= mComboBound)
         {
             CombolBlockInRange(low_bound, combo_cnt);
@@ -495,6 +472,12 @@ public class BlockManager
         Color color = sr.color;
         color.a = alpha;
         sr.color = color;
+    }
+    #endregion
+
+    #region Block select
+    public GameObject SelectBlockTemp(int index ){
+        return null;
     }
     #endregion
 }
