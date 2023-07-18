@@ -273,6 +273,8 @@ public class BlockListManager : MonoBehaviour
                 }
                 mTargetBlockIndex = 1;
                 mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, (int)SkillBuildColor);
+                mMusic.clip = Resources.Load<AudioClip>("music/Audio_Buff");
+                mMusic.Play();
             }
             else if (mBlockManagers[mPlayerIndex].GetHeight() >= 1)
             {
@@ -294,6 +296,10 @@ public class BlockListManager : MonoBehaviour
                 }
                 mMusic.clip = Resources.Load<AudioClip>("music/Audio_Debuff");
                 mMusic.Play();
+                if (JudgeVictory())
+                {
+                    CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
+                }
             }
 
             mBlockSkills = BlockSkills.eNormal;
