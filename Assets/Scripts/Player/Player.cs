@@ -57,7 +57,7 @@ public class SkillInfo
 {
     public SkillInfo()
     {
-        Debug.Log("Empty skill info");
+//        Debug.Log("Empty skill info");
         PlayerBlockManager = TargetBlockManager = null;
         WillCast = false;
         CurrentState = BlockListManager.BlockState.eInvalid;

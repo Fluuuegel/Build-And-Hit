@@ -67,6 +67,8 @@ public class BlockManager
         {
             return;
         }
+        string msg = "block colour " + color + " ";
+        Debug.Log(msg);
         SpawnNewBlock(playerIndex, isHit, GetHeight(), color, init);
     }
     
