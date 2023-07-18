@@ -157,7 +157,7 @@ public class BlockListManager : MonoBehaviour
 
     private IEnumerator ServiceIdleState() {
 
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0);
 
         // Judge vectory in idle state
         if (JudgeVictory())
@@ -272,10 +272,9 @@ public class BlockListManager : MonoBehaviour
                     }
                 }
                 mTargetBlockIndex = 1;
-                //mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
                 mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, (int)SkillBuildColor);
             }
-            else
+            else if (mBlockManagers[mPlayerIndex].GetHeight() >= 1)
             {
                 // Destroy the first Block of the enemy
                 Debug.Log("Hit Skills, Prob:" + skillsChoose);
@@ -395,6 +394,7 @@ public class BlockListManager : MonoBehaviour
         bool isDestroy = HitBlockScript.isColli();
         if (isDestroy) {
             mMusic.clip = Resources.Load<AudioClip>("music/Audio_Hit");
+            mMusic.volume = 0.9f;
             mMusic.Play();
             if (mPlayerIndex == 0) {
                 GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
