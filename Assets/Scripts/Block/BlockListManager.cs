@@ -174,18 +174,18 @@ public class BlockListManager : MonoBehaviour
                 mSkillButtons[i].SetActive(false);
             }
 
-        if (randomSkill > 0.3f)
-        {
-            // TODO: Add UI
-            mBlockSkills = BlockSkills.eNormal;
-        }
-        else
-        {
-            mSkillButtons[mPlayerIndex].SetActive(true);
-            mBlockSkills = BlockSkills.eSkills;
-            mMusic.clip = Resources.Load<AudioClip>("music/Audio_Button2");
-            mMusic.Play();
-        }
+            if (randomSkill > 0.3f)
+            {
+                // TODO: Add UI
+                mBlockSkills = BlockSkills.eNormal;
+            }
+            else
+            {
+                mSkillButtons[mPlayerIndex].SetActive(true);
+                mBlockSkills = BlockSkills.eSkills;
+                mMusic.clip = Resources.Load<AudioClip>("music/Audio_Button2");
+                mMusic.Play();
+            }
 
             //mCameraControll.ModifyTarget("Player1", 10f, 5f);
             //mCameraControll.ModifyTarget("Player2", 3f, 5f);
