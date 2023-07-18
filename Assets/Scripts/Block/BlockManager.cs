@@ -13,7 +13,20 @@ public class BlockManager
     private int mComboBound = 3; //more than x blocks in a row will be destroyed, x is mComboBound
     private static GameObject[] mBlockPrefabs = new GameObject[3];
     private List<GameObject> mBlocks = new List<GameObject>();
-
+    //for skills to protect player tower
+    public int mImmuneRound = 0;
+    //for multiple destroy skill
+    public int mBlockDestroyCascade= 0;
+    
+    const int DefaultCoolDown = 3;
+    public void RefreshRound()
+    {
+        
+        if(mImmuneRound > 0)
+        {
+            mImmuneRound--;
+        }
+    }
     public GameObject GetBlockAt(int index)
     {
         if (index >= mBlocks.Count || index < 0)
