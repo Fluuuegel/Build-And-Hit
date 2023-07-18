@@ -10,9 +10,14 @@ public class BlockListManager : MonoBehaviour
 
     // UI
     private GameObject mEndCanvas = null;
-    private GameObject mTextObj = null;
-    public Text mEndText = null;
+
     public GameObject[] mSkillButtons = new GameObject[2];
+
+    public GameObject[] mBuildButtons = new GameObject[2];
+
+    public GameObject[] mHitButtons = new GameObject[2];
+
+    public GameObject[] mWinImages = new GameObject[2];
     
     public enum BlockState {
 
@@ -45,7 +50,7 @@ public class BlockListManager : MonoBehaviour
     private BlockSkills mBlockSkills = BlockSkills.eNormal;
 
     // Constants
-    private const int kInitBlockIndex = 6;
+    private const int kInitBlockIndex = 10;
     private const int kPlayerNum = 2;
 
     private int mTargetBlockIndex = 0;
@@ -71,6 +76,7 @@ public class BlockListManager : MonoBehaviour
     private AudioSource mMusic = null;
 
     // Hit
+    
     private GameObject mHitBlock;
     private GameObject mTargetBlock;
     private Vector3 mHitBlockPos;
@@ -78,18 +84,52 @@ public class BlockListManager : MonoBehaviour
     private CameraControll mCameraControll = null;
     CinemachineTargetGroup.Target[] targets = null;
 
+    //for hit cool down
+    private int[] mHitCoolDown = {0,0,0,0,0,0,0,0,0,0};
+    const int kHitCoolDown = 0;
+    public int GetCoolDownOfPlayer(int index)
+    {
+        return mHitCoolDown[index];
+    }
+    
+    //for user control
+    KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
+
+    private void UpdatePlayerKeyBinding()
+    {
+        if (mPlayerIndex == 0)
+        {
+            mHitKeyCode = KeyCode.A;
+            mBuildKeyCode = KeyCode.D;
+            mSkill1KeyCode = KeyCode.Q;
+            mSkill2KeyCode = KeyCode.E;
+            mUpBlockKey = KeyCode.W;
+            mDownBlockKey = KeyCode.S;
+        }
+
+        if (mPlayerIndex == 1)
+        {
+            mHitKeyCode = KeyCode.LeftArrow;
+            mBuildKeyCode = KeyCode.RightArrow;
+            mSkill1KeyCode = KeyCode.Comma;
+            mSkill2KeyCode = KeyCode.Period;
+            mUpBlockKey = KeyCode.UpArrow;
+            mDownBlockKey = KeyCode.DownArrow;
+        }
+    }
+    
     void Start()
     {
         // UI
         
         mCameraControll = FindObjectOfType<CameraControll>();
         mEndCanvas = GameObject.Find("EndCanvas");
-        mTextObj = GameObject.Find("EndCanvas/Panel/EndText");
-        mEndText = mTextObj.GetComponent<Text>();
         mEndCanvas.SetActive(false);
 
         for (int i = 0; i < kPlayerNum; i++) {
             mSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton");
+            mBuildButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/BuildButton");
+            mHitButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/HitButton");
             mSkillButtons[i].SetActive(false);
         }
         
@@ -146,13 +186,42 @@ public class BlockListManager : MonoBehaviour
                 break;
         }
     }
+/*
+     * @RoundRefresh
+     * update the block manager and player status
+     * exp: to decrease the cool down of skill, to reduce the immune round of block manager
+     * call when every round starts only once
+     */
+    private void RoundRefresh()
+    {
+        Debug.Log("Refresh round");
+        for(int i = 0; i < kPlayerNum; i++)
+        {
+            mBlockManagers[i].RefreshRound();
+            PlayerBehaviour script = mPlayers[i].GetComponent<PlayerBehaviour>();
+            script.RefreshRound();
+        }
 
+        if (mHitCoolDown[mPlayerIndex] > 0)
+        {
+            mHitCoolDown[mPlayerIndex]--;
+        }
+    }
     private bool JudgeVictory() {
         for (int i = 0; i < kPlayerNum; i++) {
             if (mBlockManagers[i].GetHeight() == 0) {
                 
                 mEndCanvas.SetActive(true);
-                mEndText.text = "Player " + (2 - i)  + " Win!";
+                mWinImages[i] = GameObject.Find("EndCanvas/Panel/P" + (i + 1) + "Win");
+                mWinImages[1 - i] = GameObject.Find("EndCanvas/Panel/P" + (2 - i) + "Win");
+                Debug.Log("P" + (i + 1) + "Win");
+                for (int j = 0; j < kPlayerNum; j++) {
+                    mHitButtons[j].SetActive(false);
+                    mBuildButtons[j].SetActive(false);
+                    mSkillButtons[j].SetActive(false);
+                }
+                mWinImages[i].SetActive(false);
+                mWinImages[1 - i].SetActive(true);
                 mBlockState = BlockState.eEnd;
                 return true;
             }
@@ -181,10 +250,10 @@ public class BlockListManager : MonoBehaviour
         }
         else
         {
-
+            RoundRefresh();
+            UpdatePlayerKeyBinding();
             mBlockColor = (BlockColor)Random.Range(0, 3);
-            string msg = "Idle: the newly spawn block color is" + mBlockColor;
-            Debug.Log(msg);
+            
             float randomSkill = Random.Range(0f, 1f);
 
             for (int i = 0; i < kPlayerNum; i++)
@@ -201,11 +270,8 @@ public class BlockListManager : MonoBehaviour
             {
                 mSkillButtons[mPlayerIndex].SetActive(true);
                 mBlockSkills = BlockSkills.eSkills;
-                //mMusic.clip = Resources.Load<AudioClip>("music/Audio_Button2");
-                //mMusic.Play();
             }
-
-       
+            
             for (int i = 0; i < kPlayerNum; i++)
             {
                 mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
@@ -247,7 +313,7 @@ public class BlockListManager : MonoBehaviour
             mSkillButtons[i].SetActive(false);
         }
 
-        if (rand > 0.2f) {
+        if (rand > 1.0f) {
             mBlockSkills = BlockSkills.eNormal;
         }
         else {
@@ -260,36 +326,50 @@ public class BlockListManager : MonoBehaviour
 
     private void ServiceWaitState() {
 
-
-        if (Input.GetKeyDown(KeyCode.B)) {
+        if (Input.GetKeyDown(mBuildKeyCode)) {
             mBlockState = BlockState.eBuild;
             return ;
         } 
 
         // Only if the player has blocks, can he be hit
-        if (Input.GetKeyDown(KeyCode.H) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() > 0) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() > 0))) {
-            mTargetBlockIndex = 1;
-
-            // Initialize block blink
-            mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
-            mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
-            mBlockAnimator = mTargetBlock.GetComponent<Animator>();
-            mBlockAnimator.SetBool("IsSelected", true);
-
-            mBlockState = BlockState.eSelectHit;
-            return ;
+        if (Input.GetKeyDown(mHitKeyCode) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() > 0) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() > 0))) 
+        {
+            if (mHitCoolDown[mPlayerIndex] <= 0)
+            {
+                
+                mTargetBlockIndex = 1;
+                // Initialize block blink
+                mTargetBlock = mBlockManagers[1 - mPlayerIndex]
+                    .GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+                mBlockAnimator = mTargetBlock.GetComponent<Animator>();
+                mBlockAnimator.SetBool("IsSelected", true);
+                //change status to hit
+                mBlockState = BlockState.eSelectHit;
+                return;
+            }
+            else
+            {
+                Debug.Log("!!!Hit is on cooldown!!!!");
+            }
         }
 
 
         //Use skills
-        if (Input.GetKeyDown(KeyCode.P) && (mBlockSkills == BlockSkills.eSkills))
+        
+        TriggerSkill();
+    }
+    private bool TriggerSkill()
+    {
+        if (Input.GetKeyDown(mSkill1KeyCode) && (mBlockSkills == BlockSkills.eSkills))
         {
-            Debug.Log(mPlayerIndex);
+            //Debug.Log(mPlayerIndex);
             CastPlayerSkill(mPlayers[mPlayerIndex]);
             mBlockSkills = BlockSkills.eNormal;
+            mSkillButtons[mPlayerIndex].SetActive(false);
+            return true;
         }
+        return false;
     }
-    
     private void CastPlayerSkill(GameObject player)
     {
         PlayerBehaviour script = player.GetComponent<PlayerBehaviour>();
@@ -316,11 +396,17 @@ public class BlockListManager : MonoBehaviour
 
     private void ServiceSelectHitState() {
         // TODO: Up / Down choose
-        if (Input.GetKeyDown(KeyCode.S) && mTargetBlockIndex < mBlockManagers[1 - mPlayerIndex].GetHeight()) {
+        PlayerBehaviour script = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>();
+        int VisionZone = script.VisionRange();
+        if (Input.GetKeyDown(mDownBlockKey) && mTargetBlockIndex < mBlockManagers[1 - mPlayerIndex].GetHeight()) {
             // Block blink effect
             mBlockAnimator.SetBool("IsSelected", false);
 
             mTargetBlockIndex += 1;
+            if(mTargetBlockIndex > VisionZone)
+            {
+                mTargetBlockIndex = VisionZone;
+            }
             mCameraControll.ModifyTarget(mTargetBlock, 1f, 3f);
             mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex); 
             mBlockAnimator = mTargetBlock.GetComponent<Animator>();
@@ -331,10 +417,11 @@ public class BlockListManager : MonoBehaviour
             return ;
         }
 
-        if (Input.GetKeyDown(KeyCode.W) && mTargetBlockIndex > 1) {
+        if (Input.GetKeyDown(mUpBlockKey) && mTargetBlockIndex > 1) {
             mBlockAnimator.SetBool("IsSelected", false);
 
             mTargetBlockIndex -= 1;
+
             mCameraControll.ModifyTarget(mTargetBlock, 1f, 3f);
             mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
             mBlockAnimator = mTargetBlock.GetComponent<Animator>();
@@ -345,7 +432,7 @@ public class BlockListManager : MonoBehaviour
             return ;
         }
 
-        if (Input.GetKeyDown(KeyCode.H)) {
+        if (Input.GetKeyDown(mHitKeyCode)) {
             mCameraControll.CameraFocusOnBlock(mTargetBlock);
             mIsHitState = true;
             mBlockState = BlockState.eBuild;
@@ -353,10 +440,12 @@ public class BlockListManager : MonoBehaviour
         }
 
         // You can retract the selection
-        if (Input.GetKeyDown(KeyCode.B)) {
+        if (Input.GetKeyDown(mBuildKeyCode)) {
             mBlockAnimator.SetBool("IsSelected", false);
             mBlockState = BlockState.eBuild;
         }
+
+        TriggerSkill();
     }
 
     public void InitializeHit() {
@@ -386,8 +475,9 @@ public class BlockListManager : MonoBehaviour
         bool isDestroy = HitBlockScript.isColli();
         if (isDestroy) {
             mMusic.clip = Resources.Load<AudioClip>("music/Audio_Hit");
-            mMusic.volume = 0.9f;
+            mMusic.volume = 3.0f;
             mMusic.Play();
+            Debug.Log("Hit");
             if (mPlayerIndex == 0) {
                 GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
                 mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
@@ -447,6 +537,7 @@ public class BlockListManager : MonoBehaviour
         if (mActiveManager.UpdateComboState())
         {
             Debug.Log("Combo done");
+            mHitCoolDown[mPlayerIndex] = kHitCoolDown;
             mBlockState = BlockState.eIdle;
             IdelTimer = Time.time;
             mPlayerIndex = (mPlayerIndex + 1) % 2;
