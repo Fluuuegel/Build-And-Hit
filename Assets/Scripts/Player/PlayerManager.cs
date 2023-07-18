@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using Player;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -25,7 +26,10 @@ public class PlayerManager : MonoBehaviour
 
         mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/{Player1Select.player1Select}");
         mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/{Player2Select.player2Select}");
-
+        List<string> mPlayerType = new List<string>();
+        mPlayerType.Add(Player1Select.player1Select);
+        mPlayerType.Add(Player2Select.player2Select);
+        
         // mPlayerPrefab[0] = Resources.Load<GameObject>($"Prefabs/Char1");
         // mPlayerPrefab[1] = Resources.Load<GameObject>($"Prefabs/Char1R");
 
@@ -34,10 +38,10 @@ public class PlayerManager : MonoBehaviour
             mPlayers[i].name = "Player" + i;
             mPlayers[i].transform.position = mPlayerInitPos[i];
             mPlayers[i].GetComponent<PlayerBehaviour>().mPlayerIndex = i;
+            mPlayers[i].GetComponent<PlayerBehaviour>().SetActualPlayer(Player.Player.MakeNewPlayer(mPlayerType[i]));
             mTargetGroup.AddMember(mPlayers[i].transform, 5f, 5f);
         }
     }
-
     public GameObject getPlayer(int index) {
         return mPlayers[index];
     }

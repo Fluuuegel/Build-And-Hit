@@ -22,11 +22,13 @@ public class Player1Select : MonoBehaviour
     public void SelectChar1()
     {
         player1Select = "Char1";
+        //dasher
     }
 
     public void SelectChar2()
     {
         player1Select = "Char2";
+        //engineer
     }
 
     // Update is called once per frame

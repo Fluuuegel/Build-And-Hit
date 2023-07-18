@@ -14,7 +14,7 @@ public class BlockListManager : MonoBehaviour
     public Text mEndText = null;
     public GameObject[] mSkillButtons = new GameObject[2];
     
-    private enum BlockState {
+    public enum BlockState {
 
         eIdle,
         eWait,
@@ -23,7 +23,8 @@ public class BlockListManager : MonoBehaviour
         eHit,
         eBuild,
         eCombo,
-        eEnd
+        eEnd,
+        eInvalid
     }
 
     private enum BlockColor {
@@ -226,8 +227,9 @@ public class BlockListManager : MonoBehaviour
         //Use skills
         if (Input.GetKeyDown(KeyCode.P) && (mBlockSkills == BlockSkills.eSkills))
         {
+            
             // Destroy the first Block of the enemy
-            {
+            /*do {
                 mTargetBlockIndex = 1;
                 mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
                 mTargetBlockPos = mTargetBlock.transform.position;
@@ -242,17 +244,40 @@ public class BlockListManager : MonoBehaviour
                     GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
                     mBlockManagers[0].BeingHitBlockDestroy(bullet, mBlockManagers[0].GetHeight() - mTargetBlockIndex);
                 }
+
                 mMusic.clip = Resources.Load<AudioClip>("music/Audio_Debuff");
                 mMusic.Play();
-            }
+            } while (false);
             mBlockSkills = BlockSkills.eNormal;
-            return;
+            return;*/
+            Debug.Log(mPlayerIndex);
+            CastPlayerSkill(mPlayers[mPlayerIndex]);
+            mBlockSkills = BlockSkills.eNormal;
         }
     }
 
+    private void CastPlayerSkill(GameObject player)
+    {
+        PlayerBehaviour script = player.GetComponent<PlayerBehaviour>();
+        SkillInfo skillInfo = WriteCurrentSkillInfo();
+        script.SkillCast(skillInfo);
+    }
+
+    private SkillInfo WriteCurrentSkillInfo()
+    {
+        SkillInfo cur = new SkillInfo();
+        cur.PlayerBlockManager = mBlockManagers[mPlayerIndex];
+        cur.TargetBlockManager = mBlockManagers[1 - mPlayerIndex];
+        cur.CurrentState = mBlockState;
+        cur.WillCast = true;
+        cur.curPlayerIndex = mPlayerIndex;
+        cur.GolbalBlockListManager = this;
+        return cur;
+    }
     private void ServiceInitHitState() {
         InitializeHit();
         mBlockState = BlockState.eHit;
+        
     }
 
     private void ServiceSelectHitState() {
@@ -383,18 +408,25 @@ public class BlockListManager : MonoBehaviour
         }
     }
 
-    public void ServiceBuildState() {
+    public void ServiceBuildState(bool changeState = true) {
 
         mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, (int)mBlockColor);
-        mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", false);
+        if (changeState)
+        {
+            mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", false);
+        }
+
         if (mIsHitState) {
             mBlockState = BlockState.eInitHit;
             return ;
         }
         mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
         mMusic.Play();
-        mBlockState = BlockState.eIdle;
-        mPlayerIndex = (mPlayerIndex + 1) % 2;
+        if (changeState)
+        {
+            mBlockState = BlockState.eIdle;
+            mPlayerIndex = (mPlayerIndex + 1) % 2;
+        }
     }
 
     public void ServiceEndState() {

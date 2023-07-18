@@ -79,4 +79,6 @@ public class BlockBehaviour : MonoBehaviour
     }
 
     public bool isColli() { return isCollision; }
+
+
 }
