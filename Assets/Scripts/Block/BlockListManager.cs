@@ -186,8 +186,8 @@ public class BlockListManager : MonoBehaviour
             {
                 mSkillButtons[mPlayerIndex].SetActive(true);
                 mBlockSkills = BlockSkills.eSkills;
-                mMusic.clip = Resources.Load<AudioClip>("music/Audio_Button2");
-                mMusic.Play();
+                //mMusic.clip = Resources.Load<AudioClip>("music/Audio_Button2");
+                //mMusic.Play();
             }
 
             //mCameraControll.ModifyTarget("Player1", 10f, 5f);
