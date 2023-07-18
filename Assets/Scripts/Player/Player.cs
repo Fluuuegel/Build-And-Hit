@@ -11,10 +11,20 @@ namespace Player
     public abstract class Player
     {
         PlayerType mPlayerType;
+        const int MAX_COOLDOWN_ROUND = 1;
+        public int mCoolDownRound = MAX_COOLDOWN_ROUND;
         public abstract void SkillCast(SkillInfo skillInfo);
         public PlayerType GetPlayerType()
         {
             return mPlayerType;
+        }
+
+        public virtual int VisionRange()
+        {
+            return 3;
+        }
+        public virtual void ExtendedRefreshRound()
+        {
         }
         public static Player MakeNewPlayer(string type)
         {
