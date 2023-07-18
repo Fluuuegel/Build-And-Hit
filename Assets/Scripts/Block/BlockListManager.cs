@@ -324,7 +324,6 @@ public class BlockListManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.H)) {
             mIsHitState = true;
-            mBlockAnimator.SetBool("IsSelected", false);
             mBlockState = BlockState.eBuild;
             return ;
         }
@@ -350,6 +349,7 @@ public class BlockListManager : MonoBehaviour
 
         // You can retract the selection
         if (Input.GetKeyDown(KeyCode.B)) {
+            mBlockAnimator.SetBool("IsSelected", false);
             mBlockState = BlockState.eBuild;
         }
     }
