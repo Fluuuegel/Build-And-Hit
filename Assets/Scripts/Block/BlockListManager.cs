@@ -163,9 +163,8 @@ public class BlockListManager : MonoBehaviour
     }
 
     private void ServiceIdleState() {
-
-        // Judge vectory in idle state
-        if (JudgeVictory()) {
+        if (JudgeVictory())
+        {
             CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
         }
 
