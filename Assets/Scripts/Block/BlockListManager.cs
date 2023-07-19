@@ -99,8 +99,8 @@ public class BlockListManager : MonoBehaviour
     {
         if (mPlayerIndex == 0)
         {
-            mHitKeyCode = KeyCode.A;
-            mBuildKeyCode = KeyCode.D;
+            mHitKeyCode = KeyCode.D;
+            mBuildKeyCode = KeyCode.A;
             mSkill1KeyCode = KeyCode.Q;
             mSkill2KeyCode = KeyCode.E;
             mUpBlockKey = KeyCode.W;
@@ -109,8 +109,8 @@ public class BlockListManager : MonoBehaviour
 
         if (mPlayerIndex == 1)
         {
-            mHitKeyCode = KeyCode.LeftArrow;
-            mBuildKeyCode = KeyCode.RightArrow;
+            mHitKeyCode = KeyCode.RightArrow;
+            mBuildKeyCode = KeyCode.LeftArrow;
             mSkill1KeyCode = KeyCode.Comma;
             mSkill2KeyCode = KeyCode.Period;
             mUpBlockKey = KeyCode.UpArrow;
