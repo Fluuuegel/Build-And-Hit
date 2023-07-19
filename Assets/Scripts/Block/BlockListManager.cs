@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using Unity.VisualScripting;
 
 public class BlockListManager : MonoBehaviour
-{   
+{
 
     // UI
     private GameObject mEndCanvas = null;
@@ -158,7 +158,6 @@ public class BlockListManager : MonoBehaviour
         switch (mBlockState)
         {
             case BlockState.eIdle:
-                StartCoroutine(TurnInterval());
                 ServiceIdleState();
                 break;
             case BlockState.eSkill:
@@ -241,15 +240,9 @@ public class BlockListManager : MonoBehaviour
         }
         return false;
     }
-
-    private IEnumerator TurnInterval() {
-        yield return new WaitForSeconds(0.5f);
-        Debug.Log("turn interval");
-    }
-
+  
     private void ServiceIdleState() {
-
-        // Judge vectory in idle state
+        
         if (JudgeVictory())
         {
             CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
@@ -340,6 +333,7 @@ public class BlockListManager : MonoBehaviour
         // Only if the player has blocks, can he be hit
         if (Input.GetKeyDown(mHitKeyCode) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() > 0) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() > 0))) 
         {
+            
             if (mHitCoolDown[mPlayerIndex] <= 0)
             {
                 
@@ -347,6 +341,7 @@ public class BlockListManager : MonoBehaviour
                 // Initialize block blink
                 mTargetBlock = mBlockManagers[1 - mPlayerIndex]
                     .GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+                mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
                 mBlockAnimator = mTargetBlock.GetComponent<Animator>();
                 mBlockAnimator.SetBool("IsSelected", true);
                 //change status to hit
@@ -439,6 +434,7 @@ public class BlockListManager : MonoBehaviour
         }
 
         if (Input.GetKeyDown(mHitKeyCode)) {
+            mCameraControll.CameraFocusOnBlock(mTargetBlock);
             mIsHitState = true;
             mBlockState = BlockState.eBuild;
             return ;
@@ -487,7 +483,9 @@ public class BlockListManager : MonoBehaviour
                 GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
                 mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
                 mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1);//player 1: 当前的玩家
+
                 mCameraControll.CameraFocusOnBlock(mTargetBlock);
+
                 
             } else {
                 GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
@@ -546,6 +544,7 @@ public class BlockListManager : MonoBehaviour
             Debug.Log("Combo done");
             mHitCoolDown[mPlayerIndex] = kHitCoolDown;
             mBlockState = BlockState.eIdle;
+            
             mPlayerIndex = (mPlayerIndex + 1) % 2;
             mIsHitState = false;
             mTime = 0;
@@ -568,6 +567,7 @@ public class BlockListManager : MonoBehaviour
             mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
             mMusic.Play();
             mBlockState = BlockState.eIdle;
+            
             mPlayerIndex = (mPlayerIndex + 1) % 2;
         }
         else
