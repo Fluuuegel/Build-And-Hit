@@ -254,13 +254,14 @@ public class BlockListManager : MonoBehaviour
             UpdatePlayerKeyBinding();
             mBlockColor = (BlockColor)Random.Range(0, 3);
             
-            float randomSkill = Random.Range(0f, 1f);
+            //float randomSkill = Random.Range(0f, 1f);
 
             for (int i = 0; i < kPlayerNum; i++)
             {
                 mSkillButtons[i].SetActive(false);
             }
-            const float SkillRate = 1.0f;
+            //const float SkillRate = 1.0f;
+            /*
             if (randomSkill > SkillRate)
             {
                 // TODO: Add UI
@@ -271,6 +272,7 @@ public class BlockListManager : MonoBehaviour
                 mSkillButtons[mPlayerIndex].SetActive(true);
                 mBlockSkills = BlockSkills.eSkills;
             }
+            */
             
             for (int i = 0; i < kPlayerNum; i++)
             {
