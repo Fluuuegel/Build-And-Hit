@@ -46,9 +46,8 @@ public class CameraControll : MonoBehaviour
 
     public void CameraFocusOnBlock(GameObject block)
     {
-        ModifyTarget(block, mFocusWeight,mFocusRadius);
+        ModifyTarget(block, mFocusWeight, mFocusRadius);
     }
-
     public void ModifyTarget(GameObject target, float weight, float radius)
     {
         CinemachineTargetGroup.Target[] targets = PlayerManager.mTargetGroup.m_Targets;
