@@ -16,6 +16,7 @@ public class BlockBehaviour : MonoBehaviour
         red,
         green,
         blue,
+        slime,
         invalid_colour,
     }
     private BlockManager mBlockManager = null;

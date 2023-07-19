@@ -3,10 +3,12 @@
 namespace Player
 {
     public enum PlayerType
-    {
+    {   
+        dasher,
         engineer,
-        gunSlinger,
-        ranger
+        slime,
+        //gunSlinger,
+        //ranger
     }
     public abstract class Player
     {
@@ -44,12 +46,14 @@ namespace Player
                         if(playerDebug)
                             Debug.Log("Make a Engineer");
                         break;
-                /*case PlayerType.gunSlinger:
-                    //player = new PlayerGunSlinger();
-                    break;
-                case PlayerType.ranger:
-                    //player = new PlayerRanger();
-                    break;*/
+
+                case "Slime":
+                    case "SlimeR":
+                        player = new PlayerSlime();
+                        if(playerDebug)
+                            Debug.Log("Make a Slime");
+                        break;
+
                 default:
                     throw new System.Exception("Player type not found");
             }
@@ -65,17 +69,16 @@ namespace Player
  */
 public class SkillInfo
 {
-    public SkillInfo()
-    {
-//        Debug.Log("Empty skill info");
-        PlayerBlockManager = TargetBlockManager = null;
-        WillCast = false;
-        CurrentState = BlockListManager.BlockState.eInvalid;
-        GolbalBlockListManager = null;
-    }
     public BlockManager PlayerBlockManager, TargetBlockManager;
     public bool WillCast;
     public BlockListManager.BlockState CurrentState;
     public int curPlayerIndex;
     public BlockListManager GolbalBlockListManager;
+    public SkillInfo()
+    {
+        PlayerBlockManager = TargetBlockManager = null;
+        WillCast = false;
+        CurrentState = BlockListManager.BlockState.eInvalid;
+        GolbalBlockListManager = null;
+    }
 }

@@ -31,6 +31,12 @@ public class Player1Select : MonoBehaviour
         //engineer
     }
 
+    public void SelectChar3()
+    {
+        player1Select = "Slime";
+        //slime
+    }
+
     // Update is called once per frame
     void Update()
     {

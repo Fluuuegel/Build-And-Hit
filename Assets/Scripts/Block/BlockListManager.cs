@@ -36,7 +36,8 @@ public class BlockListManager : MonoBehaviour
     private enum BlockColor {
         eRed,
         eGreen,
-        eBlue
+        eBlue,
+        eSlime
     };
 
     //For Skills
@@ -145,7 +146,7 @@ public class BlockListManager : MonoBehaviour
 
         for (int i = 0; i < kInitBlockIndex; i++) {
             for (int j = 0; j < kPlayerNum; j++) {
-                mBlockManagers[j].BuildOneBlock(j, false, -1);
+                mBlockManagers[j].BuildOneBlock(j, false, -1, true);
             }
         }
 
@@ -368,7 +369,6 @@ public class BlockListManager : MonoBehaviour
     {
         if (Input.GetKeyDown(mSkill1KeyCode) && (mBlockSkills == BlockSkills.eSkills))
         {
-            //Debug.Log(mPlayerIndex);
             CastPlayerSkill(mPlayers[mPlayerIndex]);
             mBlockSkills = BlockSkills.eNormal;
             mSkillButtons[mPlayerIndex].SetActive(false);
@@ -394,6 +394,7 @@ public class BlockListManager : MonoBehaviour
         cur.GolbalBlockListManager = this;
         return cur;
     }
+
     private void ServiceInitHitState() {
         InitializeHit();
         mBlockState = BlockState.eHit;
@@ -401,7 +402,6 @@ public class BlockListManager : MonoBehaviour
     }
 
     private void ServiceSelectHitState() {
-        // TODO: Up / Down choose
         PlayerBehaviour script = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>();
         int VisionZone = script.VisionRange();
         if (Input.GetKeyDown(mDownBlockKey) && mTargetBlockIndex < mBlockManagers[1 - mPlayerIndex].GetHeight()) {
@@ -552,8 +552,8 @@ public class BlockListManager : MonoBehaviour
         }
     }
 
-    public void ServiceBuildState(bool InFSM = true) {
-        if (InFSM)
+    public void ServiceBuildState(bool noSkillCast = true, bool buildSlimeBlock = false) {
+        if (noSkillCast)
         {
             string msg = "Build: the newly spawn block color is" + mBlockColor;
             Debug.Log(msg);
@@ -571,10 +571,13 @@ public class BlockListManager : MonoBehaviour
             mPlayerIndex = (mPlayerIndex + 1) % 2;
         }
         else
-        {
-            mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, -1);
-            mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
-            mMusic.Play();
+        {   if (buildSlimeBlock) {
+                mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, 3);
+            } else {
+                mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, -1);
+                mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
+                mMusic.Play();
+            }
         }
     }
 

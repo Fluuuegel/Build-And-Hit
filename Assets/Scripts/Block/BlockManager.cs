@@ -11,7 +11,7 @@ public class BlockManager
 {
     public const int kInitalBlockCount = 0;
     private int mComboBound = 3; //more than x blocks in a row will be destroyed, x is mComboBound
-    private static GameObject[] mBlockPrefabs = new GameObject[3];
+    private static GameObject[] mBlockPrefabs = new GameObject[4];
     private List<GameObject> mBlocks = new List<GameObject>();
     //for skills to protect player tower
     public int mImmuneRound = 0;
@@ -51,7 +51,6 @@ public class BlockManager
     private Vector2 mPlayerInitPos;
     private Vector2 mBlockInitPos;
     private int mCurLayerCount = 1;
-    private float SpawnYAxis = 15f;
 
     public void SetInitPos(Vector2 pos) {
 
@@ -72,6 +71,7 @@ public class BlockManager
         mBlockPrefabs[0] = Resources.Load<GameObject>("Prefabs/RedCube");
         mBlockPrefabs[1] = Resources.Load<GameObject>("Prefabs/GreenCube");
         mBlockPrefabs[2] = Resources.Load<GameObject>("Prefabs/BlueCube");
+        mBlockPrefabs[3] = Resources.Load<GameObject>("Prefabs/BlueSlimeCube");
     }
 
     public void BuildOneBlock(int playerIndex = -1, bool isHit = false, int color = -1, bool init = false)
@@ -108,55 +108,39 @@ public class BlockManager
         // Set the position of the players in game
     
         mBlocks.Add(p);
-        
+
         // Set block
-        if (!init)
-        {   
-            if(playerIndex == 0) { // Change the position of the block
-                if(isHit) {
-                    p.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
-                } else {
-                    p.transform.position = new Vector3(p1Pos.x, p1Pos.y - 0.4f, 0f);
-                    script.mParticle = script.GetComponent<ParticleSystem>();
-                    script.mParticle.Play();
-                }
+        if(playerIndex == 0) { // Change the position of the block
+            if(isHit) {
+                p.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
             } else {
-                if (isHit) {
-                    p.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
-                } else {
-                    p.transform.position = new Vector3(p2Pos.x, p2Pos.y - 0.4f, 0f);
-                    script.mParticle = script.GetComponent<ParticleSystem>();
-                    script.mParticle.Play();
-                }
+                p.transform.position = new Vector3(p1Pos.x, p1Pos.y - 0.1f, 0f);
+                script.mParticle = script.GetComponent<ParticleSystem>();
+                script.mParticle.Play();
             }
-        } else { // Initialization
-            p.transform.position = new Vector3(mBlockInitPos.x, SpawnYAxis + 0.5f * GetHeight(), 0f);
+        } else {
+            if (isHit) {
+                p.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
+            } else {
+                p.transform.position = new Vector3(p2Pos.x, p2Pos.y - 0.1f, 0f);
+                script.mParticle = script.GetComponent<ParticleSystem>();
+                script.mParticle.Play();
+            }
         }
 
         // Set sorting layer of the block
-        if (!init) {
-            if (playerIndex == 0 && !isHit) {
-                blockSortingGroup.sortingLayerName = "PlayerCube";
-                blockSortingGroup.sortingOrder = mCurLayerCount;
-                p1.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
-            }
-            else if (playerIndex == 1 && !isHit) {
-                blockSortingGroup.sortingLayerName = "EnemyCube";
-                blockSortingGroup.sortingOrder = mCurLayerCount;
-                p2.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
-            }
-        } else { 
-            if (playerIndex == 0 && !isHit) {
-                blockSortingGroup.sortingLayerName = "PlayerCube";
-                blockSortingGroup.sortingOrder = mCurLayerCount;
-                p1.transform.position = new Vector3(p1Pos.x, SpawnYAxis , 0f);
-            }
-            else if (playerIndex == 1 && !isHit) {
-                blockSortingGroup.sortingLayerName = "EnemyCube";
-                blockSortingGroup.sortingOrder = mCurLayerCount;
-                p2.transform.position = new Vector3(p2Pos.x, SpawnYAxis + 1.0f, 0f);
-            }
+        
+        if (playerIndex == 0 && !isHit) {
+            blockSortingGroup.sortingLayerName = "PlayerCube";
+            blockSortingGroup.sortingOrder = mCurLayerCount;
+            p1.transform.position = new Vector3(p1Pos.x, p1Pos.y + 1.0f, 0f);
         }
+        else if (playerIndex == 1 && !isHit) {
+            blockSortingGroup.sortingLayerName = "EnemyCube";
+            blockSortingGroup.sortingOrder = mCurLayerCount;
+            p2.transform.position = new Vector3(p2Pos.x, p2Pos.y + 1.0f, 0f);
+        }
+
         spriteRenderer.sortingOrder = mCurLayerCount;
         script.SetBlockManager(this);
         script.SetBlockIndex(index);
@@ -211,7 +195,9 @@ public class BlockManager
         {
             blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.blue);
         }
-        else
+        else if (color == 3) {
+            blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.slime);
+        } else 
         {
             Debug.Log("SetBlockColor: Wrong color!");
         }
