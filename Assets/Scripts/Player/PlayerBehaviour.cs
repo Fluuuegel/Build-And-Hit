@@ -7,6 +7,11 @@ public class PlayerBehaviour : MonoBehaviour
 {
     
     Player.Player mPlayer = null;
+
+    public Player.Player GetPlayer()
+    {
+        return mPlayer;
+    }
     
     public int VisionRange()
     {

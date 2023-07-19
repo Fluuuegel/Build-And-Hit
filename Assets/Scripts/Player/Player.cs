@@ -4,9 +4,9 @@ namespace Player
 {
     public enum PlayerType
     {   
-        dasher,
-        engineer,
-        slime,
+        eDasher,
+        eEngineer,
+        eSlime,
         //gunSlinger,
         //ranger
     }
@@ -28,6 +28,14 @@ namespace Player
         public virtual void ExtendedRefreshRound()
         {
         }
+
+        public virtual bool CanCastSkill()
+        {
+            return true;
+        }
+        public virtual void IncreaseTimeUntilNextSkill()
+        {
+        }
         public static Player MakeNewPlayer(string type)
         {
             bool playerDebug = true;
@@ -37,12 +45,14 @@ namespace Player
                 case "Char1":
                     case "Char1R":
                         player = new PlayerDasher();
+                        player.mPlayerType = PlayerType.eDasher;
                         if(playerDebug)
                             Debug.Log("Make a Dasher");
                     break;
                 case "Char2":
                     case "Char2R":
                         player = new PlayerEngineer();
+                        player.mPlayerType = PlayerType.eEngineer;
                         if(playerDebug)
                             Debug.Log("Make a Engineer");
                         break;
@@ -50,6 +60,7 @@ namespace Player
                 case "Slime":
                     case "SlimeR":
                         player = new PlayerSlime();
+                        player.mPlayerType = PlayerType.eSlime;
                         if(playerDebug)
                             Debug.Log("Make a Slime");
                         break;

@@ -88,6 +88,8 @@ public class BlockListManager : MonoBehaviour
     //for hit cool down
     private int[] mHitCoolDown = {0,0,0,0,0,0,0,0,0,0};
     const int kHitCoolDown = 0;
+    private Player.Player curPlayer;
+
     public int GetCoolDownOfPlayer(int index)
     {
         return mHitCoolDown[index];
@@ -187,7 +189,8 @@ public class BlockListManager : MonoBehaviour
                 break;
         }
     }
-/*
+
+    /*
      * @RoundRefresh
      * update the block manager and player status
      * exp: to decrease the cool down of skill, to reduce the immune round of block manager
@@ -208,6 +211,7 @@ public class BlockListManager : MonoBehaviour
             mHitCoolDown[mPlayerIndex]--;
         }
     }
+
     private bool JudgeVictory() {
         for (int i = 0; i < kPlayerNum; i++) {
             if (mBlockManagers[i].GetHeight() == 0) {
@@ -285,6 +289,9 @@ public class BlockListManager : MonoBehaviour
             mUIOfPlayers[mPlayerIndex].SetActive(true);
             mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
             mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
+
+            curPlayer = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>().GetPlayer();
+
             targets = PlayerManager.mTargetGroup.m_Targets;
             for (int i = 0; i < targets.Length; i++)
             {
@@ -320,6 +327,8 @@ public class BlockListManager : MonoBehaviour
             mSkillButtons[mPlayerIndex].SetActive(true);
             mBlockSkills = BlockSkills.eSkills;
         }
+
+        curPlayer.IncreaseTimeUntilNextSkill();
 
         mBlockState = BlockState.eWait;
     }
@@ -358,8 +367,21 @@ public class BlockListManager : MonoBehaviour
 
         //Use skills
         
-        TriggerSkill();
+        Player.Player curPlayer = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>().GetPlayer();
+        if (curPlayer.CanCastSkill()) {
+            if (TriggerSkill()) {
+                Player.PlayerType type = curPlayer.GetPlayerType();
+                if (type == Player.PlayerType.eEngineer) {
+                    mBlockState = BlockState.eBuild;
+                }
+                else if (type == Player.PlayerType.eSlime) {
+                    mBlockState = BlockState.eIdle;
+                    mPlayerIndex = (mPlayerIndex + 1) % 2;
+                }
+            }
+        }
     }
+
     private bool TriggerSkill()
     {
         if (Input.GetKeyDown(mSkill1KeyCode) && (mBlockSkills == BlockSkills.eSkills))
@@ -446,7 +468,19 @@ public class BlockListManager : MonoBehaviour
             mBlockState = BlockState.eBuild;
         }
 
-        TriggerSkill();
+
+        if (curPlayer.CanCastSkill()) {
+            if (TriggerSkill()) {
+                Player.PlayerType type = curPlayer.GetPlayerType();
+                if (type == Player.PlayerType.eEngineer) {
+                    mBlockState = BlockState.eBuild;
+                }
+                else if (type == Player.PlayerType.eSlime) {
+                    mBlockState = BlockState.eIdle;
+                    mPlayerIndex = (mPlayerIndex + 1) % 2;
+                }
+            }
+        }
     }
 
     public void InitializeHit() {
