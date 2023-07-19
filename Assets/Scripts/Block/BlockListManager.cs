@@ -228,22 +228,9 @@ public class BlockListManager : MonoBehaviour
         }
         return false;
     }
-    private float IdelTimer;
-    private float mDelayTime = 0.5f;
-    bool TriggerIdelStateTimer()
-    {
-        if (Time.time - IdelTimer > mDelayTime)
-            return true;
-        return false;
-    }
-
+  
     private void ServiceIdleState() {
-        //if (!TriggerIdelStateTimer())
-        //{
-        //    return;
-        //}
         
-        // Judge vectory in idle state
         if (JudgeVictory())
         {
             CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
@@ -334,6 +321,7 @@ public class BlockListManager : MonoBehaviour
         // Only if the player has blocks, can he be hit
         if (Input.GetKeyDown(mHitKeyCode) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() > 0) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() > 0))) 
         {
+            
             if (mHitCoolDown[mPlayerIndex] <= 0)
             {
                 
@@ -341,6 +329,7 @@ public class BlockListManager : MonoBehaviour
                 // Initialize block blink
                 mTargetBlock = mBlockManagers[1 - mPlayerIndex]
                     .GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+                mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
                 mBlockAnimator = mTargetBlock.GetComponent<Animator>();
                 mBlockAnimator.SetBool("IsSelected", true);
                 //change status to hit
@@ -539,7 +528,7 @@ public class BlockListManager : MonoBehaviour
             Debug.Log("Combo done");
             mHitCoolDown[mPlayerIndex] = kHitCoolDown;
             mBlockState = BlockState.eIdle;
-            IdelTimer = Time.time;
+            
             mPlayerIndex = (mPlayerIndex + 1) % 2;
             mIsHitState = false;
             mTime = 0;
@@ -562,7 +551,7 @@ public class BlockListManager : MonoBehaviour
             mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
             mMusic.Play();
             mBlockState = BlockState.eIdle;
-            IdelTimer = Time.time;
+            
             mPlayerIndex = (mPlayerIndex + 1) % 2;
         }
         else
