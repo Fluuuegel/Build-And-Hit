@@ -40,15 +40,23 @@ public class BlockListManager : MonoBehaviour
         eSlime
     };
 
-    //For Skills
+    //For Role Skills
     private enum BlockSkills {
         eNormal,
         eSkills
     };
 
+    //For Getting Skills
+    private enum GettingSkills
+    {
+        eGetNormal,
+        eGetSkills
+    }
+
     private BlockState mBlockState = BlockState.eIdle;
     private BlockColor mBlockColor = BlockColor.eRed;
     private BlockSkills mBlockSkills = BlockSkills.eNormal;
+    private GettingSkills mGettingSkills = GettingSkills.eGetNormal;
 
     // Constants
     private const int kInitBlockIndex = 10;
@@ -309,18 +317,32 @@ public class BlockListManager : MonoBehaviour
     }
     
     private void ServiceSkillState() {
-        float rand = Random.Range(0f, 1f);
-
+        
         for (int i = 0; i < kPlayerNum; i++) {
             mSkillButtons[i].SetActive(false);
         }
 
+        //For Pernsonal Skills
+        float rand = Random.Range(0f, 1f);
         if (rand > 1.0f) {
             mBlockSkills = BlockSkills.eNormal;
         }
         else {
             mSkillButtons[mPlayerIndex].SetActive(true);
             mBlockSkills = BlockSkills.eSkills;
+        }
+
+        //For Getting Skills
+        float rand2 = Random.Range(0f, 1f);
+        if (rand2 > 1.0f)
+        {
+            mGettingSkills = GettingSkills.eGetNormal;
+        }
+        else
+        {
+            Debug.Log("You got a skill!");
+            /*Need Button Code*/
+            mGettingSkills = GettingSkills.eGetSkills;
         }
 
         mBlockState = BlockState.eWait;
@@ -361,6 +383,7 @@ public class BlockListManager : MonoBehaviour
         //Use skills
         
         TriggerSkill();
+        TriGettingSkill();
     }
     private bool TriggerSkill()
     {
@@ -373,6 +396,32 @@ public class BlockListManager : MonoBehaviour
         }
         return false;
     }
+
+    private bool TriGettingSkill()
+    {
+        if (Input.GetKeyDown(mSkill2KeyCode) && (mGettingSkills == GettingSkills.eGetSkills))
+        {
+            float ChooseSkills = Random.Range(0f, 1f);
+            if (ChooseSkills < 1.0f)
+            {
+                //Skill S1
+                if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
+                {
+                    SkillHitFirstBlock();
+                }
+                else
+                {
+                    Debug.Log("False to use the skills!");
+                }
+            }
+
+            mGettingSkills = GettingSkills.eGetNormal;
+            return true;
+        }
+        return false;
+    }
+
+
     private void CastPlayerSkill(GameObject player)
     {
         PlayerBehaviour script = player.GetComponent<PlayerBehaviour>();
@@ -590,4 +639,25 @@ public class BlockListManager : MonoBehaviour
     {
         UpdateFSM();
     }
+
+    /*-------------------------------Skill Parts-------------------------------*/
+    private void SkillHitFirstBlock()
+    {
+        mTargetBlockIndex = 1;
+        mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+        mTargetBlockPos = mTargetBlock.transform.position;
+
+        if (mPlayerIndex == 0)
+        {
+            GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
+            mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);
+        }
+        else
+        {
+            GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
+            mBlockManagers[0].BeingHitBlockDestroy(bullet, mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+        }
+    }
+
+    /*-----------------------------------End-----------------------------------*/
 }
