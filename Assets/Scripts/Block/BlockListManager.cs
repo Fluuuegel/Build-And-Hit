@@ -14,6 +14,8 @@ public partial class BlockListManager : MonoBehaviour
 
     public GameObject[] mSkillCDSlider = new GameObject[2];
 
+    public GameObject[] mLastStandUI = new GameObject[2];
+
     public GameObject[] mSkillButtons = new GameObject[2];
 
     public GameObject[] mBuildButtons = new GameObject[2];
@@ -128,6 +130,8 @@ public partial class BlockListManager : MonoBehaviour
             mBuildButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/BuildButton");
             mHitButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/HitButton");
             mSkillCDSlider[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton/CDBackground");
+            mLastStandUI[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/LastStandUI");
+            mLastStandUI[i].SetActive(false);
             mSkillButtons[i].SetActive(false);
         }
         
@@ -208,7 +212,12 @@ public partial class BlockListManager : MonoBehaviour
         }
         else
         {
+            
             RoundRefresh();
+            if (mBlockManagers[mPlayerIndex].LastStand())
+            {
+                DisplayLastStandUI();
+            }
             UpdatePlayerKeyBinding();
             mBlockColor = (BlockColor)Random.Range(0, 3);
             

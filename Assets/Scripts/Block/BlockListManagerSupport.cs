@@ -21,6 +21,7 @@ public partial class BlockListManager : MonoBehaviour
      * called when entering Idle state, go through all wining conditions to see if any player wins
      */
     private bool JudgeVictory(int turncnt) {
+        UndisplayLastStandUI();
         if (turncnt == 0) {
             Debug.Log("turncnt == 0");
             mEndCanvas.SetActive(true);
@@ -244,5 +245,17 @@ public partial class BlockListManager : MonoBehaviour
         return mBlockManagers[index].GetHeight();
     }
     #endregion
-    
+
+    private void DisplayLastStandUI()
+    {
+        mLastStandUI[mPlayerIndex].SetActive(true);
+    }
+
+    private void UndisplayLastStandUI()
+    {
+        for(int i = 0; i < mBlockManagers.Length; i++)
+        {
+            mLastStandUI[i].SetActive(false);
+        }
+    }
 }

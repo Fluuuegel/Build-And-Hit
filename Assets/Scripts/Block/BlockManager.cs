@@ -51,13 +51,6 @@ public partial class BlockManager
         return mFatalLow && mCanTriggerLastBuild;
     }
 
-    public void LastStandUI()
-    {
-        if (LastStand())
-        {
-            
-        }
-    }
     public GameObject GetBlockAt(int index)
     {
         if (index >= mBlocks.Count || index < 0)
