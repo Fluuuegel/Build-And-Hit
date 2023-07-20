@@ -39,6 +39,14 @@ public class PlayerBehaviour : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
+    public void RefreshRound()
+    {
+        if (mPlayer.mCoolDownRound > 0)
+        {
+            mPlayer.mCoolDownRound--;
+        }
+        mPlayer.ExtendedRefreshRound();
+    }
     void Update() {
     }
 
