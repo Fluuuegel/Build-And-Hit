@@ -18,6 +18,8 @@ public partial class BlockListManager : MonoBehaviour
     public GameObject[] mHitButtons = new GameObject[2];
 
     public GameObject[] mWinImages = new GameObject[2];
+
+    
     
     public enum BlockState {
 
@@ -61,6 +63,8 @@ public partial class BlockListManager : MonoBehaviour
     // Constants
     private const int kInitBlockIndex = 10;
     private const int kPlayerNum = 2;
+
+    private int mTurnCnt = 30;
 
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
@@ -182,7 +186,9 @@ public partial class BlockListManager : MonoBehaviour
     }
     private void ServiceIdleState() {
         
-        if (JudgeVictory())
+        mTurnCnt--;
+        
+        if (JudgeVictory(mTurnCnt))
         {
             CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
         }
