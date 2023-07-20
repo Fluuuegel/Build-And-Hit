@@ -13,11 +13,11 @@ public class BlockBehaviour : MonoBehaviour
     public GameObject targetCollisionObject;
     public enum BlockColourType
     {
-        red,
-        green,
-        blue,
-        slime,
-        invalid_colour,
+        eRed,
+        eGreen,
+        eBlue,
+        eSlime,
+        eInvalidColour,
     }
     private BlockManager mBlockManager = null;
     public BlockColourType mMyColour;

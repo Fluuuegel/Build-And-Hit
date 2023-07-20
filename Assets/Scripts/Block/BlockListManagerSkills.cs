@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using BlockColor = BlockBehaviour.BlockColourType;
 public partial class BlockListManager : MonoBehaviour
 {
     #region redundant functions

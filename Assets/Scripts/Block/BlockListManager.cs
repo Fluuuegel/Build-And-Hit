@@ -4,7 +4,7 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
 using Unity.VisualScripting;
-
+using BlockColor = BlockBehaviour.BlockColourType;
 public partial class BlockListManager : MonoBehaviour
 {
 
@@ -33,12 +33,13 @@ public partial class BlockListManager : MonoBehaviour
         eInvalid
     }
 
-    private enum BlockColor {
+    /*private enum BlockColor {
         eRed,
         eGreen,
         eBlue,
         eSlime
-    };
+    };*/
+    
 
     //For Role Skills
     private enum BlockSkills {
