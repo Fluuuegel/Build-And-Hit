@@ -7,8 +7,6 @@ namespace Player
         eDasher,
         eEngineer,
         eSlime,
-        //gunSlinger,
-        //ranger
     }
     public abstract class Player
     {

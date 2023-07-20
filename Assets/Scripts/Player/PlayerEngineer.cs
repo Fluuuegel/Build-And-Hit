@@ -17,8 +17,10 @@ namespace Player
         public override void IncreaseTimeUntilNextSkill()
         {
             Debug.Log("Engineer IncreaseTimeUntilNextSkill: " + mTimeUntilNextSkill);
-            mTimeUntilNextSkill++;
-            mTimeUntilNextSkill %= kCoolDown;
+            if(mTimeUntilNextSkill > 0)
+            {
+                mTimeUntilNextSkill--;
+            }
         }
 
         public override void SkillCast(SkillInfo skillInfo)
@@ -30,6 +32,7 @@ namespace Player
                 Debug.Log("Engineer Skill Casted");
                 blockListManager.ServiceBuildState(false);
                 Debug.Log("Engineer Skill End");
+                mTimeUntilNextSkill = kCoolDown;
             }
             else
             {
