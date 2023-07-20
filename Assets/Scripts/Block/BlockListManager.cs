@@ -12,6 +12,8 @@ public partial class BlockListManager : MonoBehaviour
     // UI
     private GameObject mEndCanvas = null;
 
+    public GameObject[] mSkillCDSlider = new GameObject[2];
+
     public GameObject[] mSkillButtons = new GameObject[2];
 
     public GameObject[] mBuildButtons = new GameObject[2];
@@ -71,6 +73,7 @@ public partial class BlockListManager : MonoBehaviour
     public float mHitSpeed = 2f;
     private float mTime = 0f;
     
+    
     private BlockManager[] mBlockManagers = new BlockManager[2];
 
     public BlockManager mActiveManager;
@@ -114,6 +117,7 @@ public partial class BlockListManager : MonoBehaviour
             mSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton");
             mBuildButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/BuildButton");
             mHitButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/HitButton");
+            mSkillCDSlider[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton/CDBackground");
             mSkillButtons[i].SetActive(false);
         }
         

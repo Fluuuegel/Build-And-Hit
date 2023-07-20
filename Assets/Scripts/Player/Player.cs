@@ -33,6 +33,7 @@ namespace Player
         {
             return true;
         }
+
         public virtual void IncreaseTimeUntilNextSkill()
         {
         }
