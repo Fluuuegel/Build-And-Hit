@@ -57,6 +57,27 @@ public partial class BlockListManager : MonoBehaviour
     }
 
     /*
+     * @RoundRefresh
+     * update the block manager and player status
+     * exp: to decrease the cool down of skill, to reduce the immune round of block manager
+     * call when every round starts only once
+     */
+    private void RoundRefresh()
+    {
+        for(int i = 0; i < kPlayerNum; i++)
+        {
+            mBlockManagers[i].RefreshRound();
+            PlayerBehaviour script = mPlayers[i].GetComponent<PlayerBehaviour>();
+            script.RefreshRound();
+        }
+
+        if (mHitCoolDown[mPlayerIndex] > 0)
+        {
+            mHitCoolDown[mPlayerIndex]--;
+        }
+    }
+
+    /*
      * @UpdatePlayerKeyBinding
      * update the control key for player1 and player2
      * called once when block list manager is entering the Idle state

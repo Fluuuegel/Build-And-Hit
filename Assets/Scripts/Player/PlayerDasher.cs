@@ -17,11 +17,9 @@ namespace Player
         public override int VisionRange()
         {
             if (GodVision) {
-                Debug.Log("GodVision");
                 GodVision = false;
                 return 20;
             }
-            Debug.Log("NormalVision");
             return 5;
         }
     }
