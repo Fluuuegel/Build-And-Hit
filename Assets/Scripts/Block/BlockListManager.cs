@@ -42,7 +42,7 @@ public partial class BlockListManager : MonoBehaviour
     private BlockColor mBlockColor = BlockColor.eRed;
 
     // Constants
-    private const int kInitBlockIndex = 10;
+    private const int kInitBlockIndex = 12;
     private const int kPlayerNum = 2;
 
     private int mTurnCnt = 31;
@@ -183,11 +183,11 @@ public partial class BlockListManager : MonoBehaviour
         int winnerIdnex = mPlayerIndex;
         if (JudgeVictory(mTurnCnt,ref winnerIdnex))
         {
-            CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
+            CameraEnd(mPlayers[winnerIdnex], mPlayers[1 - winnerIdnex]);
         }
         else
         {
-            
+            Debug.Log("IDEL");
             curPlayer = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>().GetPlayer();
             RoundRefresh();
             curPlayer.IncreaseTimeUntilNextSkill();

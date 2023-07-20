@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 namespace Player
 {
     public class PlayerDasher : Player
     {
         private bool GodVision;
-        private const int kCD = 2;
+        private const int kCD = 4;
         public override int GetMaxCD()
         {
             return kCD;
@@ -17,13 +18,19 @@ namespace Player
                 mTimeUntilNextSkill = kCD;
             } 
         }
+        public override void ExtendedRefreshRound()
+        {
+            if(GodVision)
+            {
+                GodVision = false;
+            }
+        }
         public override int VisionRange()
         {
             if (GodVision) {
-                GodVision = false;
-                return 20;
+                return 8;
             }
-            return 5;
+            return 4;
         }
     }
 }
