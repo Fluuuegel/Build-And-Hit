@@ -136,7 +136,7 @@ public partial class BlockListManager : MonoBehaviour
                         continue;
                     }
                 }
-                mBlockManagers[j].BuildOneBlock(j, false, -1, true);
+                mBlockManagers[j].BuildOneBlock(j, false, (int)Random.Range(i,i*j*j*j*j*j+20)%4-1, true);
             }
         }
 
