@@ -9,7 +9,6 @@ public partial class BlockListManager : MonoBehaviour
     {
         mTargetBlockIndex = 1;
         mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
-        //mTargetBlockPos = mTargetBlock.transform.position;
 
         if (TurnNow())
         {
@@ -48,6 +47,46 @@ public partial class BlockListManager : MonoBehaviour
         mMusic.Play();
     }
 
+    private void SkillChangeFirstBlock()
+    {
+        mTargetBlockIndex = 1;
+        mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+
+        if (TurnNow())
+        {
+            GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
+            mBlockManagers[0].BeingHitBlockDestroy(bullet, mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+        }
+        else
+        {
+            GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
+            mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);
+        }
+
+        bool isSameColor = true;
+        BlockColor SkillBuildColor = BlockColor.eRed;
+        while (isSameColor)
+        {
+            SkillBuildColor = (BlockColor)Random.Range(0, 3);
+            if (SkillBuildColor == mBlockColor)
+            {
+                isSameColor = true;
+                SkillBuildColor = (BlockColor)Random.Range(0, 3);
+            }
+            else
+            {
+                isSameColor = false;
+            }
+        }
+        mTargetBlockIndex = 1;
+        mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, (int)SkillBuildColor);
+
+        mMusic.clip = Resources.Load<AudioClip>("music/Audio_Buff");
+        mMusic.Play();
+    }
+
+
+    #endregion
     private bool TurnNow()
     {
         if (mPlayerIndex == 0)
@@ -61,5 +100,5 @@ public partial class BlockListManager : MonoBehaviour
     }
 
 
-    #endregion
+    
 }

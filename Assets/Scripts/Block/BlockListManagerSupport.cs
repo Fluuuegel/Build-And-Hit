@@ -120,9 +120,13 @@ public partial class BlockListManager : MonoBehaviour
                     Debug.Log("False to use the skills!");
                 }
             }
-            else//Skill 2
+            else if (ChooseSkills < 0f)//Skill 2
             {
                 SkillBuildFirstBlock();
+            }
+            else
+            {
+                SkillChangeFirstBlock();
             }
 
             mGettingSkills = GettingSkills.eGetNormal;

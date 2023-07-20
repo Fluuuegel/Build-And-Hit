@@ -253,7 +253,7 @@ public partial class BlockListManager : MonoBehaviour
 
         //For Getting Skills
         float rand2 = Random.Range(0f, 1f);
-        if (rand2 > 1.0f)
+        if (rand2 > 1f)
         {
             mGettingSkills = GettingSkills.eGetNormal;
         }
@@ -262,6 +262,8 @@ public partial class BlockListManager : MonoBehaviour
             Debug.Log("You got a skill!");
             /*Need Button Code*/
             mGettingSkills = GettingSkills.eGetSkills;
+            //mMusic.clip = Resources.Load<AudioClip>("music/Audio_Button5");
+            //mMusic.Play();
         }
 
         curPlayer.IncreaseTimeUntilNextSkill();
