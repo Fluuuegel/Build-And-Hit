@@ -96,6 +96,11 @@ public partial class BlockListManager : MonoBehaviour
         }
     }
 
+    public static string[] SkillDes =
+    {
+        "You got a skills in this turn!\n You can destroy your enemy¡¯s first block!",
+        "You got a skills in this turn!\n You can Build a block with different color!",
+        "You got a skills in this turn!\n You can change the first block color! "
+    };
 
-    
 }

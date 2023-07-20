@@ -107,9 +107,9 @@ public partial class BlockListManager : MonoBehaviour
     {
         if (Input.GetKeyDown(mSkill2KeyCode) && (mGettingSkills == GettingSkills.eGetSkills))
         {
-            float ChooseSkills = Random.Range(0f, 1f);
+            //float ChooseSkills = Random.Range(0f, 1f);
             
-            if (ChooseSkills < 0.5f)//Skill 1
+            if (GettingSkillsIndex == 1)//Skill 1
             {
                 if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
                 {
@@ -120,13 +120,16 @@ public partial class BlockListManager : MonoBehaviour
                     Debug.Log("False to use the skills!");
                 }
             }
-            else if (ChooseSkills < 0.7f)//Skill 2
+            else if (GettingSkillsIndex == 2)//Skill 2
             {
                 SkillBuildFirstBlock();
             }
-            else
+            else if (GettingSkillsIndex == 3)
             {
                 SkillChangeFirstBlock();
+            }else
+            {
+                Debug.Log("Getting Skills Index is error!");
             }
 
             mGettingSkills = GettingSkills.eGetNormal;
