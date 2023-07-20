@@ -85,8 +85,6 @@ public partial class BlockListManager : MonoBehaviour
     //for user control
     KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
     
-    //for counting round
-    private int mRound = 0;
     void Start()
     {
         // UI
@@ -179,11 +177,8 @@ public partial class BlockListManager : MonoBehaviour
         }
         else
         {
-            RoundRefresh();
-            UpdatePlayerKeyBinding();
+            UpdateKeyBinding();
             mBlockColor = (BlockColor)Random.Range(0, 3);
-            
-            //float randomSkill = Random.Range(0f, 1f);
 
             for (int i = 0; i < kPlayerNum; i++)
             {
@@ -302,7 +297,7 @@ public partial class BlockListManager : MonoBehaviour
 
 
         //Use Getting skills
-        TriGettingSkill();
+        TriggerGainedSkill();
 
         //Use Role Skills
         Player.Player curPlayer = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>().GetPlayer();

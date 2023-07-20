@@ -5,7 +5,7 @@ namespace Player
 {   
     public class PlayerEngineer : Player
     {
-        private const int kCoolDown = 2;
+        private const int kCD = 2;
         
         public override void SkillCast(SkillInfo skillInfo)
         {
@@ -16,7 +16,7 @@ namespace Player
                 Debug.Log("Engineer Skill Casted");
                 blockListManager.ServiceBuildState(false);
                 Debug.Log("Engineer Skill End");
-                mTimeUntilNextSkill = kCoolDown;
+                mTimeUntilNextSkill = kCD;
             }
             else
             {
