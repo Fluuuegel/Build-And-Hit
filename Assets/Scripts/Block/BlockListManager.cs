@@ -108,6 +108,7 @@ public partial class BlockListManager : MonoBehaviour
 
     //for Getting Skills
     private int GettingSkillsIndex = 0;
+    private float GettingProb = 0f;
     
     //for user control
     KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
@@ -273,7 +274,8 @@ public partial class BlockListManager : MonoBehaviour
 
         //For Getting Skills
         float rand2 = Random.Range(0f, 1f);
-        if (rand2 > 0.2f)
+        BalanceProb();
+        if (rand2 > GettingProb)
         {
             mGettingSkills = GettingSkills.eGetNormal;
         }
@@ -342,7 +344,10 @@ public partial class BlockListManager : MonoBehaviour
 
 
         //Use Getting skills
-        TriGettingSkill();
+        if (Input.GetKeyDown(mSkill2KeyCode) && (mGettingSkills == GettingSkills.eGetSkills))
+        {
+            TriGettingSkill();
+        }
 
         //Use Role Skills
         Player.Player curPlayer = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>().GetPlayer();
@@ -414,6 +419,13 @@ public partial class BlockListManager : MonoBehaviour
         if (Input.GetKeyDown(mBuildKeyCode)) {
             mBlockAnimator.SetBool("IsSelected", false);
             mBlockState = BlockState.eBuild;
+        }
+
+        //Use Getting skills
+        if (Input.GetKeyDown(mSkill2KeyCode) && (mGettingSkills == GettingSkills.eGetSkills))
+        {
+            TriGettingSkill();
+            mSkillButtons[mPlayerIndex].SetActive(false);
         }
 
 

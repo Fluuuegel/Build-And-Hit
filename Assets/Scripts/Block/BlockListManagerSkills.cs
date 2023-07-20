@@ -100,4 +100,29 @@ public partial class BlockListManager : MonoBehaviour
         "Got a skills in this turn!\n You can change the first block color! "
     };
 
+    private void BalanceProb()
+    {
+        if(TurnNow())
+        {
+            if(mBlockManagers[0].GetHeight() < mBlockManagers[1].GetHeight())
+            {
+                GettingProb = 0.3f + (mBlockManagers[1].GetHeight() - mBlockManagers[0].GetHeight()) * 0.05f;
+                if (GettingProb > 1f)
+                { GettingProb = 1f; }
+            }
+            else { GettingProb = 0.3f; }
+        }
+        else
+        {
+            if (mBlockManagers[0].GetHeight() > mBlockManagers[1].GetHeight())
+            {
+                GettingProb = 0.3f + (mBlockManagers[0].GetHeight() - mBlockManagers[1].GetHeight()) * 0.05f;
+                if (GettingProb > 1f)
+                { GettingProb = 1f; }
+            }
+            else { GettingProb = 0.3f; }
+        } 
+    }
+
+
 }

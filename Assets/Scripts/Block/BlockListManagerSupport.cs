@@ -132,40 +132,35 @@ public partial class BlockListManager : MonoBehaviour
     #endregion
 
     #region trigger skills
-    private bool TriGettingSkill()
+    private void TriGettingSkill()
     {
-        if (Input.GetKeyDown(mSkill2KeyCode) && (mGettingSkills == GettingSkills.eGetSkills))
+        GettingSkillHintText.text = null;
+
+        if (GettingSkillsIndex == 1)//Skill 1
         {
-            GettingSkillHintText.text = null;
-
-            if (GettingSkillsIndex == 1)//Skill 1
+            if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
             {
-                if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
-                {
-                    SkillHitFirstBlock();
-                }
-                else
-                {
-                    Debug.Log("False to use the skills!");
-                }
+                SkillHitFirstBlock();
             }
-            else if (GettingSkillsIndex == 2)//Skill 2
+            else
             {
-                SkillBuildFirstBlock();
+                Debug.Log("False to use the skills!");
             }
-            else if (GettingSkillsIndex == 3)
-            {
-                SkillChangeFirstBlock();
-            }else
-            {
-                Debug.Log("Getting Skills Index is error!");
-            }
-
-            mGettingSkills = GettingSkills.eGetNormal;
-            mBlockSkills = BlockSkills.eNormal;
-            return true;
         }
-        return false;
+        else if (GettingSkillsIndex == 2)//Skill 2
+        {
+            SkillBuildFirstBlock();
+        }
+        else if (GettingSkillsIndex == 3)
+        {
+            SkillChangeFirstBlock();
+        }else
+        {
+            Debug.Log("Getting Skills Index is error!");
+        }
+
+        mGettingSkills = GettingSkills.eGetNormal;
+        mBlockSkills = BlockSkills.eNormal;
     }
 
     //fixme: implement the skill cast
