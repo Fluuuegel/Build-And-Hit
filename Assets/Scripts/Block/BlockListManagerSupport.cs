@@ -61,6 +61,9 @@ public partial class BlockListManager : MonoBehaviour
     private void RoundRefresh()
     {
         Debug.Log("Refresh round");
+        mRound++;
+        string msg = "This is round: " + mRound;
+        Debug.Log(msg);
         for(int i = 0; i < kPlayerNum; i++)
         {
             mBlockManagers[i].RefreshRound();
@@ -199,9 +202,12 @@ public partial class BlockListManager : MonoBehaviour
     }
     #endregion CameraEffect
     
-    
-    
-    #region player score recorder
-    
+    #region utils
+
+    public int GetPlayerBlockHeight(int index)
+    {
+        return mBlockManagers[index].GetHeight();
+    }
     #endregion
+    
 }

@@ -14,6 +14,12 @@ namespace Player
         public override void SkillCast(SkillInfo skillInfo)
         {
             Debug.Log("Dasher Skill Casted But no Implemented");
+            if (CoolDown > 0)
+            {
+                Debug.Log("Dasher Skill is on CoolDown");
+                return;
+            }
+
             GodVision = true;
             CoolDown = 1;
         }

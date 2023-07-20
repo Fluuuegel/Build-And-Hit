@@ -58,7 +58,9 @@ public class BlockBehaviour : MonoBehaviour
     }
 
     public void SelfDestroy()
-    {   
+    {
+        mParticle = GetComponent<ParticleSystem>();
+        mParticle.Play();
         Destroy(this.gameObject);
     }
 

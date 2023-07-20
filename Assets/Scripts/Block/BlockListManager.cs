@@ -102,6 +102,9 @@ public partial class BlockListManager : MonoBehaviour
     
     //for user control
     KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
+    
+    //for counting round
+    private int mRound = 0;
     void Start()
     {
         // UI
@@ -319,6 +322,8 @@ public partial class BlockListManager : MonoBehaviour
                 }
             }
         }
+        
+        mBlockManagers[0].test_Dye();
     }
     private void ServiceInitHitState() {
         InitializeHit();

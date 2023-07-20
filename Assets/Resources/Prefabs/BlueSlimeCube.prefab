@@ -131,7 +131,7 @@ Rigidbody2D:
   m_Material: {fileID: 6200000, guid: 24b3254d7c8cdf94587ab4dda60760ef, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 1
 --- !u!61 &7999855222653089590
 BoxCollider2D:
@@ -216,7 +216,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1414164971
-  m_SortingLayer: 3
+  m_SortingLayer: 0
   m_SortingOrder: 1
   m_RenderMode: 0
   m_MeshDistribution: 0
