@@ -48,6 +48,8 @@ public partial class BlockListManager : MonoBehaviour
                 mEndCanvas.SetActive(true);
                 mWinImages[i] = GameObject.Find("EndCanvas/Panel/P" + (i + 1) + "Win");
                 mWinImages[1 - i] = GameObject.Find("EndCanvas/Panel/P" + (2 - i) + "Win");
+                winnerIndex = 1 - i;
+
                 for (int j = 0; j < kPlayerNum; j++) {
                     mHitButtons[j].SetActive(false);
                     mBuildButtons[j].SetActive(false);
@@ -70,6 +72,7 @@ public partial class BlockListManager : MonoBehaviour
      */
     private void RoundRefresh()
     {
+        Debug.Log("Refreshing round");
         for(int i = 0; i < kPlayerNum; i++)
         {
             mBlockManagers[i].RefreshRound();
@@ -114,38 +117,35 @@ public partial class BlockListManager : MonoBehaviour
     #endregion
 
     #region Trigger skills
-    private bool TriggerGainedSkill()
+    private void TriggerGainedSkill()
     {
-        if (Input.GetKeyDown(mSkill2KeyCode) && (hasGainedSkill))
-        {   
-            if (GainedSkillIndex == 1)
-            {
-                if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
-                {
-                    SkillHitFirstBlock();
-                }
-                else
-                {
-                    Debug.Log("False to use the skills!");
-                }
-            }
-            else if (GainedSkillIndex == 2)
-            {
-                SkillBuildFirstBlock();
-            }
-            else if (GainedSkillIndex == 3)
-            {
-                SkillChangeFirstBlock();
-            }else
-            {
-                Debug.Log("Getting Skills Index is error!");
-            }
+        GainedSkillHintText.text = null;
 
-            hasGainedSkill = false;
-            hasCharacterSkill = false;
-            return true;
+        if (GainedSkillIndex == 1)
+        {
+            if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
+            {
+                SkillHitFirstBlock();
+            }
+            else
+            {
+                Debug.Log("False to use the skills!");
+            }
         }
-        return false;
+        else if (GainedSkillIndex == 2)
+        {
+            SkillBuildFirstBlock();
+        }
+        else if (GainedSkillIndex == 3)
+        {
+            SkillChangeFirstBlock();
+        }else
+        {
+            Debug.Log("Getting Skills Index is error!");
+        }
+
+        hasGainedSkill = false;
+        hasCharacterSkill = false;
     }
 
     // TODO: implement the skill cast
@@ -158,6 +158,7 @@ public partial class BlockListManager : MonoBehaviour
     {
         if (Input.GetKeyDown(mSkill1KeyCode) && (hasCharacterSkill))
         {
+            GainedSkillHintText.text = null;
             CastUniqueSkill(mPlayers[mPlayerIndex]);
             hasGainedSkill = false;
             hasCharacterSkill = false;

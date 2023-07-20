@@ -4,6 +4,7 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
 using Unity.VisualScripting;
+using TMPro;
 //use this to unify the color system
 using BlockColor = BlockBehaviour.BlockColourType;
 public partial class BlockListManager : MonoBehaviour
@@ -24,6 +25,9 @@ public partial class BlockListManager : MonoBehaviour
 
     public GameObject[] mWinImages = new GameObject[2];
 
+    public GameObject mGettingSkillHint = null;
+    private TextMeshProUGUI GainedSkillHintText;
+
     public enum BlockState {
 
         eIdle,
@@ -42,7 +46,7 @@ public partial class BlockListManager : MonoBehaviour
     private BlockColor mBlockColor = BlockColor.eRed;
 
     // Constants
-    private const int kInitBlockIndex = 10;
+    private const int kInitBlockIndex = 12;
     private const int kPlayerNum = 2;
 
     private int mTurnCnt = 31;
@@ -86,7 +90,8 @@ public partial class BlockListManager : MonoBehaviour
 
     //for Getting Skills
     private int GainedSkillIndex = 0;
-    
+    private float GettingProb = 0f;
+
     //for user control
     KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
     
@@ -135,6 +140,9 @@ public partial class BlockListManager : MonoBehaviour
             }
         }
 
+        mGettingSkillHint = GameObject.Find("Canvas/GainedSkillsHint");
+        GainedSkillHintText = mGettingSkillHint.GetComponent<TextMeshProUGUI>();
+
         // Audio
         mAudioObj = GameObject.Find("AudioObject");
         mMusic = mAudioObj.GetComponent<AudioSource>();
@@ -177,17 +185,18 @@ public partial class BlockListManager : MonoBehaviour
     }
     private void ServiceIdleState() {
 
+        GainedSkillHintText.text = null;
         mTurnCnt--;
         Debug.Log("Roundleft: " + mTurnCnt);
         DisplayCountDown();
         int winnerIdnex = mPlayerIndex;
         if (JudgeVictory(mTurnCnt,ref winnerIdnex))
         {
-            CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
+            CameraEnd(mPlayers[winnerIdnex], mPlayers[1 - winnerIdnex]);
         }
         else
         {
-            
+            Debug.Log("IDEL");
             curPlayer = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>().GetPlayer();
             RoundRefresh();
             curPlayer.IncreaseTimeUntilNextSkill();
@@ -257,7 +266,8 @@ public partial class BlockListManager : MonoBehaviour
 
         //For Getting Skills
         float rand2 = Random.Range(0f, 1f);
-        if (rand2 > 0.2f)
+        BalanceProb();
+        if (rand2 > GettingProb)
         {
             hasGainedSkill = false;
         }
@@ -278,9 +288,18 @@ public partial class BlockListManager : MonoBehaviour
             {
                 GainedSkillIndex = 3;
             }
+            /*if (mGettingSkillHint != null)
+            {*/
+                Debug.Log("GainedSkillIndex = " + GainedSkillIndex);
+                GainedSkillHintText.text = SkillDes[GainedSkillIndex - 1];
+            /*}
+            else
+            {
+                Debug.Log("Cannot find Text Object!");
+            }*/
+            //Clean the text after build, hit, using role&getting skills(Finished)
         }
 
-        
         mBlockState = BlockState.eWait;
     }
     private void ServiceWaitState() {
@@ -316,7 +335,11 @@ public partial class BlockListManager : MonoBehaviour
 
 
         //Use Getting skills
-        TriggerGainedSkill();
+        if (Input.GetKeyDown(mSkill2KeyCode) && (hasGainedSkill == true))
+        {
+            TriggerGainedSkill();
+        }
+        
 
         //Use Role Skills
         Player.Player curPlayer = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>().GetPlayer();
@@ -388,6 +411,12 @@ public partial class BlockListManager : MonoBehaviour
             mBlockState = BlockState.eBuild;
         }
 
+        //Use Gained Skills
+        if (Input.GetKeyDown(mSkill2KeyCode) && (hasGainedSkill == true))
+        {
+            TriggerGainedSkill();
+            mSkillButtons[mPlayerIndex].SetActive(false);
+        }
 
         if (curPlayer.CanCastSkill()) {
             if (TriggerSkill()) {
