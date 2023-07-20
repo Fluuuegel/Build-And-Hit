@@ -33,7 +33,7 @@ public class Player2Select : MonoBehaviour
     public void SelectChar3()
     {
         player2Select = "SlimeR";
-        //slime
+        //eSlime
     }
 
     // Update is called once per frame

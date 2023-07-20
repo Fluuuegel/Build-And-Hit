@@ -4,7 +4,8 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
 using Unity.VisualScripting;
-
+//use this to unify the color system
+using BlockColor = BlockBehaviour.BlockColourType;
 public partial class BlockListManager : MonoBehaviour
 {
 
@@ -35,12 +36,14 @@ public partial class BlockListManager : MonoBehaviour
         eInvalid
     }
 
-    private enum BlockColor {
+    /*private enum BlockColor {
         eRed,
         eGreen,
         eBlue,
         eSlime
-    };
+    };*/
+    // we should only use one color system in the block behavior
+
 
     //For Role Skills
     private enum BlockSkills {
@@ -89,7 +92,6 @@ public partial class BlockListManager : MonoBehaviour
     private AudioSource mMusic = null;
 
     // Hit
-    
     private GameObject mHitBlock;
     private GameObject mTargetBlock;
     private Vector3 mHitBlockPos;
@@ -101,8 +103,6 @@ public partial class BlockListManager : MonoBehaviour
     private int[] mHitCoolDown = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     const int kHitCoolDown = 0;
     private Player.Player curPlayer;
-
-    
     
     //for user control
     KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
@@ -151,6 +151,10 @@ public partial class BlockListManager : MonoBehaviour
         // Audio
         mAudioObj = GameObject.Find("AudioObject");
         mMusic = mAudioObj.GetComponent<AudioSource>();
+    }
+    void Update()
+    {
+        UpdateFSM();
     }
     private void UpdateFSM() {
         switch (mBlockState)
@@ -496,9 +500,6 @@ public partial class BlockListManager : MonoBehaviour
     }
     public void ServiceEndState() {
     }
-    void Update()
-    {
-        UpdateFSM();
-    }
+    
 
 }
