@@ -17,19 +17,18 @@ public class PlayerBehaviour : MonoBehaviour
     {
         return mPlayer.VisionRange();
     }
-    public bool readyToCast()
-    {
-        return mPlayer.mCoolDownRound <= 0;
-    }
+
     public void SetActualPlayer(Player.Player type)
     {
         mPlayer = type;
         
     }
+
     public void SkillCast(SkillInfo skillInfo)
     {
         mPlayer.SkillCast(skillInfo);
     }
+
     public bool isPlayer1 = true;
 
     public int mPlayerIndex = 1;
@@ -41,10 +40,6 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void RefreshRound()
     {
-        if (mPlayer.mCoolDownRound > 0)
-        {
-            mPlayer.mCoolDownRound--;
-        }
         mPlayer.ExtendedRefreshRound();
     }
     void Update() {

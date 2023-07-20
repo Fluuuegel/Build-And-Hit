@@ -177,6 +177,7 @@ public partial class BlockListManager : MonoBehaviour
         }
         else
         {
+            RoundRefresh();
             UpdateKeyBinding();
             mBlockColor = (BlockColor)Random.Range(0, 3);
 
