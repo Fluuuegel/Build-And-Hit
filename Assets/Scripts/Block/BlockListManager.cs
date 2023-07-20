@@ -178,6 +178,7 @@ public partial class BlockListManager : MonoBehaviour
     private void ServiceIdleState() {
         
         mTurnCnt--;
+        Debug.Log("Turn left: " + mTurnCnt);
         int winnerIdnex = mPlayerIndex;
         if (JudgeVictory(mTurnCnt,ref winnerIdnex))
         {
