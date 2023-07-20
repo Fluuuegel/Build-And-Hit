@@ -282,8 +282,6 @@ public partial class BlockManager
         setComboLowerBound(startDeleteIndex -1);
     }
     
-    
-
     #region Block select
     public GameObject SelectBlockTemp(int index ){
         return null;

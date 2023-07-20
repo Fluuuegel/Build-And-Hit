@@ -6,23 +6,7 @@ namespace Player
     public class PlayerEngineer : Player
     {
         private const int kCoolDown = 2;
-
-        private int mTimeUntilNextSkill = 0;
-
-        public override bool CanCastSkill()
-        {
-            return (mTimeUntilNextSkill == 0);
-        }
-
-        public override void IncreaseTimeUntilNextSkill()
-        {
-            Debug.Log("Engineer IncreaseTimeUntilNextSkill: " + mTimeUntilNextSkill);
-            if(mTimeUntilNextSkill > 0)
-            {
-                mTimeUntilNextSkill--;
-            }
-        }
-
+        
         public override void SkillCast(SkillInfo skillInfo)
         {
             if (skillInfo.WillCast)

@@ -20,8 +20,6 @@ public partial class BlockListManager : MonoBehaviour
 
     public GameObject[] mWinImages = new GameObject[2];
 
-    
-    
     public enum BlockState {
 
         eIdle,
@@ -68,7 +66,6 @@ public partial class BlockListManager : MonoBehaviour
     private const int kPlayerNum = 2;
 
     private int mTurnCnt = 30;
-
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
     private bool mIsHitState = false;
@@ -105,7 +102,7 @@ public partial class BlockListManager : MonoBehaviour
     private Player.Player curPlayer;
     
     //for user control
-    KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
+    KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode, mUpBlockKey, mDownBlockKey;
     void Start()
     {
         // UI
@@ -500,6 +497,4 @@ public partial class BlockListManager : MonoBehaviour
     }
     public void ServiceEndState() {
     }
-    
-
 }

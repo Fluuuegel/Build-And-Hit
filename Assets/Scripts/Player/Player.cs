@@ -13,7 +13,11 @@ namespace Player
         PlayerType mPlayerType;
         const int MAX_COOLDOWN_ROUND = 1;
         public int mCoolDownRound = MAX_COOLDOWN_ROUND;
+
+        public int mTimeUntilNextSkill = 0;
+
         public abstract void SkillCast(SkillInfo skillInfo);
+
         public PlayerType GetPlayerType()
         {
             return mPlayerType;
@@ -23,17 +27,23 @@ namespace Player
         {
             return 3;
         }
+
         public virtual void ExtendedRefreshRound()
         {
         }
 
-        public virtual bool CanCastSkill()
-        {
-            return true;
+        public virtual bool CanCastSkill() {
+            return mTimeUntilNextSkill == 0;
         }
-        public virtual void IncreaseTimeUntilNextSkill()
-        {
+
+        public virtual void IncreaseTimeUntilNextSkill() {
+            Debug.Log("DecreaseTimeUntilNextSkill: " + mTimeUntilNextSkill);
+            if(mTimeUntilNextSkill > 0)
+            {
+                mTimeUntilNextSkill--;
+            }
         }
+        
         public static Player MakeNewPlayer(string type)
         {
             bool playerDebug = true;
