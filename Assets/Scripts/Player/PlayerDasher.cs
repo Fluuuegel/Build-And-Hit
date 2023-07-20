@@ -4,22 +4,31 @@ namespace Player
 {
     public class PlayerDasher : Player
     {
-        private int GodVisionLastRound = 0;
+        private bool GodVision;
+        private int CoolDown = 0;
+        public override bool CanCastSkill()
+        {
+            return CoolDown == 0;
+        }
+
         public override void SkillCast(SkillInfo skillInfo)
         {
             Debug.Log("Dasher Skill Casted But no Implemented");
-            GodVisionLastRound = 2;
+            GodVision = true;
+            CoolDown = 1;
         }
         public override int VisionRange()
         {
-            if (GodVisionLastRound > 0)
+            if (GodVision)
                 return 20;
             return 5;
         }
         public override void ExtendedRefreshRound()
         {
-            if (GodVisionLastRound > 0)
-                GodVisionLastRound--;
+            if (GodVision)
+                GodVision = false;
+            if(CoolDown > 0)
+                CoolDown--;
         }
     }
 }

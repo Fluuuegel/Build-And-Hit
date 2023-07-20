@@ -138,6 +138,7 @@ public partial class BlockListManager : MonoBehaviour
     }
     private bool TriggerSkill()
     {
+        Debug.Log("Try to Trigger skill!");
         if (Input.GetKeyDown(mSkill1KeyCode) && (mBlockSkills == BlockSkills.eSkills))
         {
             CastPlayerSkill(mPlayers[mPlayerIndex]);
