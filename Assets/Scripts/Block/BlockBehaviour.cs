@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -59,8 +60,15 @@ public class BlockBehaviour : MonoBehaviour
 
     public void SelfDestroy()
     {
-        mParticle = GetComponent<ParticleSystem>();
-        mParticle.Play();
+        //summon a empty object with particle system and play it
+        GameObject[] s = new GameObject[3];
+        s[0] = Resources.Load<GameObject>("Prefabs/ParticleRed");
+        s[1] = Resources.Load<GameObject>("Prefabs/ParticleGreen");
+        s[2] = Resources.Load<GameObject>("Prefabs/ParticleBlue");
+        GameObject particle = Instantiate(s[(int)mMyColour], this.transform.position, Quaternion.identity);
+        particle.transform.position = this.transform.position;
+        ParticleSystem ps = particle.GetComponent<ParticleSystem>();
+        ps.Play();
         Destroy(this.gameObject);
     }
 
