@@ -5,7 +5,7 @@ namespace Player
 {   
     public class PlayerEngineer : Player
     {
-        private const int kCD = 3;
+        private const int kCD = 4;
         public override int GetMaxCD()
         {
             return kCD;
@@ -17,6 +17,7 @@ namespace Player
                 // Spawn 2 blocks
                 BlockListManager blockListManager = skillInfo.GolbalBlockListManager;
                 Debug.Log("Engineer Skill Casted");
+                blockListManager.ServiceBuildState(false);
                 blockListManager.ServiceBuildState(false);
                 Debug.Log("Engineer Skill End");
                 mTimeUntilNextSkill = kCD;

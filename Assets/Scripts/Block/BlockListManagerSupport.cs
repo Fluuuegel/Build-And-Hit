@@ -48,6 +48,8 @@ public partial class BlockListManager : MonoBehaviour
                 mEndCanvas.SetActive(true);
                 mWinImages[i] = GameObject.Find("EndCanvas/Panel/P" + (i + 1) + "Win");
                 mWinImages[1 - i] = GameObject.Find("EndCanvas/Panel/P" + (2 - i) + "Win");
+                winnerIndex = 1 - i;
+
                 for (int j = 0; j < kPlayerNum; j++) {
                     mHitButtons[j].SetActive(false);
                     mBuildButtons[j].SetActive(false);
@@ -70,6 +72,7 @@ public partial class BlockListManager : MonoBehaviour
      */
     private void RoundRefresh()
     {
+        Debug.Log("Refreshing round");
         for(int i = 0; i < kPlayerNum; i++)
         {
             mBlockManagers[i].RefreshRound();

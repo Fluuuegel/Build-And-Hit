@@ -61,6 +61,10 @@ public class PauseMenu : MonoBehaviour
 
     public void BackToMenu()
     {
+        mPauseCanvas.SetActive(false);
+        mMenuKey = true;
+        Time.timeScale = 1f;
+        mAudioSource.Play();
         SceneManager.LoadScene(0);
     }
 

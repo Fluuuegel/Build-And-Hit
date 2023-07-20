@@ -10,6 +10,10 @@ namespace Player
         {
             return kCD;
         }
+        public override int VisionRange()
+        {
+            return 5;
+        }
         public override void SkillCast(SkillInfo skillInfo)
         {
             if (skillInfo.WillCast)
