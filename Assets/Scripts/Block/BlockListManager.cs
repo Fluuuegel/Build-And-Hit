@@ -185,6 +185,7 @@ public partial class BlockListManager : MonoBehaviour
     }
     private void ServiceIdleState() {
 
+        GainedSkillHintText.text = null;
         mTurnCnt--;
         Debug.Log("Roundleft: " + mTurnCnt);
         DisplayCountDown();
@@ -287,15 +288,15 @@ public partial class BlockListManager : MonoBehaviour
             {
                 GainedSkillIndex = 3;
             }
-            if (GainedSkillHintText != null)
-            {
-                //Debug.Log("GainedSkillIndex = " + GainedSkillIndex);
+            /*if (mGettingSkillHint != null)
+            {*/
+                Debug.Log("GainedSkillIndex = " + GainedSkillIndex);
                 GainedSkillHintText.text = SkillDes[GainedSkillIndex - 1];
-            }
+            /*}
             else
             {
                 Debug.Log("Cannot find Text Object!");
-            }
+            }*/
             //Clean the text after build, hit, using role&getting skills(Finished)
         }
 
