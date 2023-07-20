@@ -94,7 +94,7 @@ public partial class BlockListManager : MonoBehaviour
     CinemachineTargetGroup.Target[] targets = null;
 
     //for hit cool down
-    private int[] mHitCoolDown = {0,0,0,0,0,0,0,0,0,0};
+    private int[] mHitCoolDown = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     const int kHitCoolDown = 0;
     private Player.Player curPlayer;
 
@@ -121,7 +121,6 @@ public partial class BlockListManager : MonoBehaviour
             mBlockManagers[i] = new BlockManager();
             mBlockManagers[i].SetInitPos(GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayerPos(i));
             mPlayers[i] = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer(i);
-            Debug.Log("Here");
             if (mPlayers[i] == null) {
                 Debug.Log("Player " + i + " is null");
             }
@@ -129,6 +128,18 @@ public partial class BlockListManager : MonoBehaviour
 
         for (int i = 0; i < kInitBlockIndex; i++) {
             for (int j = 0; j < kPlayerNum; j++) {
+                if (j == 1) {
+                    if (i == kInitBlockIndex - 1) {
+                        mBlockManagers[j].BuildOneBlock(j, false, 0, true);
+                        continue;
+                    } else if (i == kInitBlockIndex - 2) {
+                        mBlockManagers[j].BuildOneBlock(j, false, 1, true);
+                        continue;
+                    } else if (i == kInitBlockIndex - 3) {
+                        mBlockManagers[j].BuildOneBlock(j, false, 2, true);
+                        continue;
+                    }
+                }
                 mBlockManagers[j].BuildOneBlock(j, false, -1, true);
             }
         }
@@ -282,7 +293,7 @@ public partial class BlockListManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("!!!Hit is on cooldown!!!!");
+                Debug.Log("Hit cool down..");
             }
         }
 
