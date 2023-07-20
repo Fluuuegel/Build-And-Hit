@@ -39,15 +39,6 @@ public class PlayerBehaviour : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    public void RefreshRound()
-    {
-        //update cooldown of skill
-        if (mPlayer.mCoolDownRound > 0)
-        {
-            mPlayer.mCoolDownRound--;
-        }
-        mPlayer.ExtendedRefreshRound();
-    }
     void Update() {
     }
 

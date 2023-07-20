@@ -40,16 +40,6 @@ public partial class BlockManager
             }
             return DyeBlock(mBlocks[index], color);
         }
-
-        public void test_Dye()
-        {
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                int color = Random.Range(0, 3);
-                DyeBlock(3, (BlockColor)color);
-            }
-                
-        }
     }
 /*
  * ref:

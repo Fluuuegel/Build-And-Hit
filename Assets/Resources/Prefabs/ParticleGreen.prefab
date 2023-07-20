@@ -4839,7 +4839,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1414164971
-  m_SortingLayer: 0
+  m_SortingLayer: 3
   m_SortingOrder: 1
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -4880,6 +4880,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 5649604761626795958}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60c2b36a4bb56a1439198ea671739304, type: 3}
+  m_Script: {fileID: 11500000, guid: a544076ca33014b08849bcf0ed30b3e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
