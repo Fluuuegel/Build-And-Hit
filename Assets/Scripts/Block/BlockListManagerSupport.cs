@@ -108,9 +108,9 @@ public partial class BlockListManager : MonoBehaviour
         if (Input.GetKeyDown(mSkill2KeyCode) && (mGettingSkills == GettingSkills.eGetSkills))
         {
             float ChooseSkills = Random.Range(0f, 1f);
-            if (ChooseSkills < 1.0f)
+            
+            if (ChooseSkills < 0f)//Skill 1
             {
-                //Skill S1
                 if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
                 {
                     SkillHitFirstBlock();
@@ -120,8 +120,13 @@ public partial class BlockListManager : MonoBehaviour
                     Debug.Log("False to use the skills!");
                 }
             }
+            else//Skill 2
+            {
+                SkillBuildFirstBlock();
+            }
 
             mGettingSkills = GettingSkills.eGetNormal;
+            mBlockSkills = BlockSkills.eNormal;
             return true;
         }
         return false;
@@ -137,6 +142,7 @@ public partial class BlockListManager : MonoBehaviour
         {
             CastPlayerSkill(mPlayers[mPlayerIndex]);
             mBlockSkills = BlockSkills.eNormal;
+            mGettingSkills = GettingSkills.eGetNormal;
             mSkillButtons[mPlayerIndex].SetActive(false);
             return true;
         }
@@ -192,25 +198,7 @@ public partial class BlockListManager : MonoBehaviour
     }
     #endregion CameraEffect
     
-    #region redundant functions
-    private void SkillHitFirstBlock()
-    {
-        mTargetBlockIndex = 1;
-        mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
-        mTargetBlockPos = mTargetBlock.transform.position;
-
-        if (mPlayerIndex == 0)
-        {
-            GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
-            mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);
-        }
-        else
-        {
-            GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
-            mBlockManagers[0].BeingHitBlockDestroy(bullet, mBlockManagers[0].GetHeight() - mTargetBlockIndex);
-        }
-    }
-    #endregion
+    
     
     #region player score recorder
     
