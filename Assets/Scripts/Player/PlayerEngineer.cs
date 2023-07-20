@@ -11,16 +11,12 @@ namespace Player
         {
             if (skillInfo.WillCast)
             {
-                //spawn 2 blocks at the top of player's tower without changing the state
+                // Spawn 2 blocks
                 BlockListManager blockListManager = skillInfo.GolbalBlockListManager;
                 Debug.Log("Engineer Skill Casted");
                 blockListManager.ServiceBuildState(false);
                 Debug.Log("Engineer Skill End");
                 mTimeUntilNextSkill = kCD;
-            }
-            else
-            {
-                return;
             }
         }
     }

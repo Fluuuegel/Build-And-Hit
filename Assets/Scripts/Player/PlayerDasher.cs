@@ -5,36 +5,24 @@ namespace Player
     public class PlayerDasher : Player
     {
         private bool GodVision;
-        private int CoolDown = 0;
-        public override bool CanCastSkill()
-        {
-            return CoolDown == 0;
-        }
+        private const int kCD = 2;
 
         public override void SkillCast(SkillInfo skillInfo)
         {
-            Debug.Log("Dasher Skill Casted But no Implemented");
-            if (CoolDown > 0)
-            {
-                Debug.Log("Dasher Skill is on CoolDown");
-                return;
-            }
-
-            GodVision = true;
-            CoolDown = 1;
+            if (skillInfo.WillCast) {
+                GodVision = true;
+                mTimeUntilNextSkill = kCD;
+            } 
         }
         public override int VisionRange()
         {
-            if (GodVision)
-                return 20;
-            return 5;
-        }
-        public override void ExtendedRefreshRound()
-        {
-            if (GodVision)
+            if (GodVision) {
+                Debug.Log("GodVision");
                 GodVision = false;
-            if(CoolDown > 0)
-                CoolDown--;
+                return 20;
+            }
+            Debug.Log("NormalVision");
+            return 5;
         }
     }
 }
