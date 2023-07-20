@@ -256,7 +256,7 @@ public partial class BlockListManager : MonoBehaviour
 
         //For Getting Skills
         float rand2 = Random.Range(0f, 1f);
-        if (rand2 > 1f)
+        if (rand2 > 0.3f)
         {
             mGettingSkills = GettingSkills.eGetNormal;
         }

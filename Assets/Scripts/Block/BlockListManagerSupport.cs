@@ -109,7 +109,7 @@ public partial class BlockListManager : MonoBehaviour
         {
             float ChooseSkills = Random.Range(0f, 1f);
             
-            if (ChooseSkills < 0f)//Skill 1
+            if (ChooseSkills < 0.5f)//Skill 1
             {
                 if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
                 {
@@ -120,7 +120,7 @@ public partial class BlockListManager : MonoBehaviour
                     Debug.Log("False to use the skills!");
                 }
             }
-            else if (ChooseSkills < 0f)//Skill 2
+            else if (ChooseSkills < 0.7f)//Skill 2
             {
                 SkillBuildFirstBlock();
             }
