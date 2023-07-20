@@ -117,38 +117,35 @@ public partial class BlockListManager : MonoBehaviour
     #endregion
 
     #region Trigger skills
-    private bool TriggerGainedSkill()
+    private void TriggerGainedSkill()
     {
-        if (Input.GetKeyDown(mSkill2KeyCode) && (hasGainedSkill))
-        {   
-            if (GainedSkillIndex == 1)
-            {
-                if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
-                {
-                    SkillHitFirstBlock();
-                }
-                else
-                {
-                    Debug.Log("False to use the skills!");
-                }
-            }
-            else if (GainedSkillIndex == 2)
-            {
-                SkillBuildFirstBlock();
-            }
-            else if (GainedSkillIndex == 3)
-            {
-                SkillChangeFirstBlock();
-            }else
-            {
-                Debug.Log("Getting Skills Index is error!");
-            }
+        GainedSkillHintText.text = null;
 
-            hasGainedSkill = false;
-            hasCharacterSkill = false;
-            return true;
+        if (GainedSkillIndex == 1)
+        {
+            if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
+            {
+                SkillHitFirstBlock();
+            }
+            else
+            {
+                Debug.Log("False to use the skills!");
+            }
         }
-        return false;
+        else if (GainedSkillIndex == 2)
+        {
+            SkillBuildFirstBlock();
+        }
+        else if (GainedSkillIndex == 3)
+        {
+            SkillChangeFirstBlock();
+        }else
+        {
+            Debug.Log("Getting Skills Index is error!");
+        }
+
+        hasGainedSkill = false;
+        hasCharacterSkill = false;
     }
 
     // TODO: implement the skill cast
@@ -161,6 +158,7 @@ public partial class BlockListManager : MonoBehaviour
     {
         if (Input.GetKeyDown(mSkill1KeyCode) && (hasCharacterSkill))
         {
+            GainedSkillHintText.text = null;
             CastUniqueSkill(mPlayers[mPlayerIndex]);
             hasGainedSkill = false;
             hasCharacterSkill = false;
