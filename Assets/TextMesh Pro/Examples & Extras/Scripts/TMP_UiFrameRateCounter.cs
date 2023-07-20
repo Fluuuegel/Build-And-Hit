@@ -75,9 +75,9 @@ namespace TMPro.Examples
                 if (fps < 30)
                     htmlColorTag = "<color=yellow>";
                 else if (fps < 10)
-                    htmlColorTag = "<color=red>";
+                    htmlColorTag = "<color=eRed>";
                 else
-                    htmlColorTag = "<color=green>";
+                    htmlColorTag = "<color=eGreen>";
 
                 m_TextMeshPro.SetText(htmlColorTag + fpsLabel, fps, ms);
 

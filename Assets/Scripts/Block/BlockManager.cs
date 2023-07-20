@@ -76,7 +76,7 @@ public partial class BlockManager
     {
         if (index >= mBlocks.Count)
         {
-            return BlockBehaviour.BlockColourType.red;
+            return BlockBehaviour.BlockColourType.eRed;
         }
 
         GameObject p = mBlocks[index];
@@ -215,18 +215,18 @@ public partial class BlockManager
     {
         if (color == 0)
         {
-            blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.red);
+            blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.eRed);
         }
         else if (color == 1)
         {
-            blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.green);
+            blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.eGreen);
         }
         else if (color == 2)
         {
-            blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.blue);
+            blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.eBlue);
         }
         else if (color == 3) {
-            blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.slime);
+            blockBehaviour.SetBlockColour(BlockBehaviour.BlockColourType.eSlime);
         } else 
         {
             Debug.Log("SetBlockColor: Wrong color!");

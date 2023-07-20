@@ -4,7 +4,8 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
 using Unity.VisualScripting;
-
+//use this to unify the color system
+using BlockColor = BlockBehaviour.BlockColourType;
 public partial class BlockListManager : MonoBehaviour
 {
 
@@ -33,12 +34,14 @@ public partial class BlockListManager : MonoBehaviour
         eInvalid
     }
 
-    private enum BlockColor {
+    /*private enum BlockColor {
         eRed,
         eGreen,
         eBlue,
         eSlime
-    };
+    };*/
+    // we should only use one color system in the block behavior
+
 
     //For Role Skills
     private enum BlockSkills {
