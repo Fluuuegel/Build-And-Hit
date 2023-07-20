@@ -5,7 +5,7 @@ using Cinemachine;
 using UnityEngine.UI;
 using Unity.VisualScripting;
 
-public class BlockListManager : MonoBehaviour
+public partial class BlockListManager : MonoBehaviour
 {
 
     // UI
@@ -98,37 +98,10 @@ public class BlockListManager : MonoBehaviour
     const int kHitCoolDown = 0;
     private Player.Player curPlayer;
 
-    public int GetCoolDownOfPlayer(int index)
-    {
-        return mHitCoolDown[index];
-    }
+    
     
     //for user control
     KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
-
-    private void UpdatePlayerKeyBinding()
-    {
-        if (mPlayerIndex == 0)
-        {
-            mHitKeyCode = KeyCode.D;
-            mBuildKeyCode = KeyCode.A;
-            mSkill1KeyCode = KeyCode.Q;
-            mSkill2KeyCode = KeyCode.E;
-            mUpBlockKey = KeyCode.W;
-            mDownBlockKey = KeyCode.S;
-        }
-
-        if (mPlayerIndex == 1)
-        {
-            mHitKeyCode = KeyCode.LeftArrow;
-            mBuildKeyCode = KeyCode.RightArrow;
-            mSkill1KeyCode = KeyCode.Comma;
-            mSkill2KeyCode = KeyCode.Period;
-            mUpBlockKey = KeyCode.UpArrow;
-            mDownBlockKey = KeyCode.DownArrow;
-        }
-    }
-    
     void Start()
     {
         // UI
@@ -164,7 +137,6 @@ public class BlockListManager : MonoBehaviour
         mAudioObj = GameObject.Find("AudioObject");
         mMusic = mAudioObj.GetComponent<AudioSource>();
     }
-
     private void UpdateFSM() {
         switch (mBlockState)
         {
@@ -197,63 +169,6 @@ public class BlockListManager : MonoBehaviour
                 break;
         }
     }
-
-    /*
-     * @RoundRefresh
-     * update the block manager and player status
-     * exp: to decrease the cool down of skill, to reduce the immune round of block manager
-     * call when every round starts only once
-     */
-    private void RoundRefresh()
-    {
-        Debug.Log("Refresh round");
-        for(int i = 0; i < kPlayerNum; i++)
-        {
-            mBlockManagers[i].RefreshRound();
-            PlayerBehaviour script = mPlayers[i].GetComponent<PlayerBehaviour>();
-            script.RefreshRound();
-        }
-
-        if (mHitCoolDown[mPlayerIndex] > 0)
-        {
-            mHitCoolDown[mPlayerIndex]--;
-        }
-    }
-
-    private bool JudgeVictory() {
-        for (int i = 0; i < kPlayerNum; i++) {
-            if (mBlockManagers[i].GetHeight() == 0) {
-                
-                mEndCanvas.SetActive(true);
-                mWinImages[i] = GameObject.Find("EndCanvas/Panel/P" + (i + 1) + "Win");
-                mWinImages[1 - i] = GameObject.Find("EndCanvas/Panel/P" + (2 - i) + "Win");
-                for (int j = 0; j < kPlayerNum; j++) {
-                    mHitButtons[j].SetActive(false);
-                    mBuildButtons[j].SetActive(false);
-                    mSkillButtons[j].SetActive(false);
-                }
-                mWinImages[i].SetActive(false);
-                mWinImages[1 - i].SetActive(true);
-                mBlockState = BlockState.eEnd;
-                return true;
-            } else if (mBlockManagers[i].GetHeight() >= 20) {
-                mEndCanvas.SetActive(true);
-                mWinImages[i] = GameObject.Find("EndCanvas/Panel/P" + (i + 1) + "Win");
-                mWinImages[1 - i] = GameObject.Find("EndCanvas/Panel/P" + (2 - i) + "Win");
-                for (int j = 0; j < kPlayerNum; j++) {
-                    mHitButtons[j].SetActive(false);
-                    mBuildButtons[j].SetActive(false);
-                    mSkillButtons[j].SetActive(false);
-                }
-                mWinImages[i].SetActive(true);
-                mWinImages[1 - i].SetActive(false);
-                mBlockState = BlockState.eEnd;
-                return true;
-            }
-        }
-        return false;
-    }
-  
     private void ServiceIdleState() {
         
         if (JudgeVictory())
@@ -272,20 +187,6 @@ public class BlockListManager : MonoBehaviour
             {
                 mSkillButtons[i].SetActive(false);
             }
-            //const float SkillRate = 1.0f;
-            /*
-            if (randomSkill > SkillRate)
-            {
-                // TODO: Add UI
-                mBlockSkills = BlockSkills.eNormal;
-            }
-            else
-            {
-                mSkillButtons[mPlayerIndex].SetActive(true);
-                mBlockSkills = BlockSkills.eSkills;
-            }
-            */
-            
             for (int i = 0; i < kPlayerNum; i++)
             {
                 mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
@@ -322,7 +223,6 @@ public class BlockListManager : MonoBehaviour
             mBlockState = BlockState.eSkill;
         }
     }
-    
     private void ServiceSkillState() {
         
         for (int i = 0; i < kPlayerNum; i++) {
@@ -355,7 +255,6 @@ public class BlockListManager : MonoBehaviour
         curPlayer.IncreaseTimeUntilNextSkill();
         mBlockState = BlockState.eWait;
     }
-
     private void ServiceWaitState() {
 
         if (Input.GetKeyDown(mBuildKeyCode)) {
@@ -406,69 +305,11 @@ public class BlockListManager : MonoBehaviour
             }
         }
     }
-
-    private bool TriggerSkill()
-    {
-        if (Input.GetKeyDown(mSkill1KeyCode) && (mBlockSkills == BlockSkills.eSkills))
-        {
-            CastPlayerSkill(mPlayers[mPlayerIndex]);
-            mBlockSkills = BlockSkills.eNormal;
-            mSkillButtons[mPlayerIndex].SetActive(false);
-            return true;
-        }
-        return false;
-    }
-
-    private bool TriGettingSkill()
-    {
-        if (Input.GetKeyDown(mSkill2KeyCode) && (mGettingSkills == GettingSkills.eGetSkills))
-        {
-            float ChooseSkills = Random.Range(0f, 1f);
-            if (ChooseSkills < 1.0f)
-            {
-                //Skill S1
-                if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
-                {
-                    SkillHitFirstBlock();
-                }
-                else
-                {
-                    Debug.Log("False to use the skills!");
-                }
-            }
-
-            mGettingSkills = GettingSkills.eGetNormal;
-            return true;
-        }
-        return false;
-    }
-
-
-    private void CastPlayerSkill(GameObject player)
-    {
-        PlayerBehaviour script = player.GetComponent<PlayerBehaviour>();
-        SkillInfo skillInfo = WriteCurrentSkillInfo();
-        script.SkillCast(skillInfo);
-    }
-
-    private SkillInfo WriteCurrentSkillInfo()
-    {
-        SkillInfo cur = new SkillInfo();
-        cur.PlayerBlockManager = mBlockManagers[mPlayerIndex];
-        cur.TargetBlockManager = mBlockManagers[1 - mPlayerIndex];
-        cur.CurrentState = mBlockState;
-        cur.WillCast = true;
-        cur.curPlayerIndex = mPlayerIndex;
-        cur.GolbalBlockListManager = this;
-        return cur;
-    }
-
     private void ServiceInitHitState() {
         InitializeHit();
         mBlockState = BlockState.eHit;
         
     }
-
     private void ServiceSelectHitState() {
         PlayerBehaviour script = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>();
         int VisionZone = script.VisionRange();
@@ -533,7 +374,6 @@ public class BlockListManager : MonoBehaviour
             }
         }
     }
-
     public void InitializeHit() {
 
         // TODO: Think about what if mPlayerIndex == 2 ?
@@ -547,7 +387,6 @@ public class BlockListManager : MonoBehaviour
         mHitBlockPos = mHitBlock.transform.position;
         mTargetBlockPos = mTargetBlock.transform.position;
     }
-
     public void ServiceHitState() {
 
         mTime += mHitSpeed * Time.smoothDeltaTime;
@@ -584,33 +423,6 @@ public class BlockListManager : MonoBehaviour
             mTime = 0;
         }
     }
-    
-    #region CameraEffect
-    public void CameraEffect(GameObject player)
-    {
-        
-        if (mCameraControll != null)
-        {
-            mCameraControll.CameraFocusOnPlayer(player);
-        }
-        else
-        {
-            Debug.Log("No CameraControll Found");
-        }
-    }
-
-    public void CameraEnd(GameObject playerWin, GameObject playerLose)
-    {
-        Debug.Log("CameraEnd!");
-        if(mCameraControll != null)
-        {
-            Debug.Log($"focus on {playerWin.name}");
-            mCameraControll.ModifyTarget(playerLose.name, 3f, 5f);
-            mCameraControll.ModifyTarget(playerWin.name, 40f, 0.1f);
-        }
-    }
-    #endregion CameraEffect
-
     public void ServiceComboState()
     {
         Debug.Log("Combo in block list");
@@ -635,7 +447,6 @@ public class BlockListManager : MonoBehaviour
             mTime = 0;
         }
     }
-
     public void ServiceBuildState(bool noSkillCast = true, bool buildSlimeBlock = false) {
         if (noSkillCast)
         {
@@ -665,33 +476,11 @@ public class BlockListManager : MonoBehaviour
             }
         }
     }
-
     public void ServiceEndState() {
     }
-
     void Update()
     {
         UpdateFSM();
     }
 
-    /*-------------------------------Skill Parts-------------------------------*/
-    private void SkillHitFirstBlock()
-    {
-        mTargetBlockIndex = 1;
-        mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
-        mTargetBlockPos = mTargetBlock.transform.position;
-
-        if (mPlayerIndex == 0)
-        {
-            GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
-            mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);
-        }
-        else
-        {
-            GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
-            mBlockManagers[0].BeingHitBlockDestroy(bullet, mBlockManagers[0].GetHeight() - mTargetBlockIndex);
-        }
-    }
-
-    /*-----------------------------------End-----------------------------------*/
 }
