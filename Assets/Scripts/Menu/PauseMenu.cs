@@ -10,6 +10,8 @@ public class PauseMenu : MonoBehaviour
     public GameObject mPauseCanvas;
     [SerializeField] private bool mMenuKey = true;
     [SerializeField] private AudioSource mAudioSource;
+    public GameObject mTutorialPanel;
+    public GameObject mTutorialBackButton;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,7 +32,7 @@ public class PauseMenu : MonoBehaviour
             }
             
         }
-        else if (Input.GetKeyDown(KeyCode.Escape))
+        else if (Input.GetKeyDown(KeyCode.Escape) && !mTutorialPanel.activeInHierarchy)
         {
             mPauseCanvas.SetActive(false);
             mMenuKey = true;
@@ -38,6 +40,10 @@ public class PauseMenu : MonoBehaviour
             mAudioSource.Play();
         }
 
+        if(Input.GetKeyDown(KeyCode.Escape) && mTutorialPanel.activeInHierarchy) 
+        { 
+            mTutorialPanel.SetActive(false);
+        }
        
     }
     public void ClosePauseMenu()
@@ -56,5 +62,17 @@ public class PauseMenu : MonoBehaviour
     public void BackToMenu()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public void ShowTutorialPanel()
+    {
+        mTutorialPanel.SetActive(true);
+        mTutorialBackButton.SetActive(true);
+    }
+
+    public void UnshowTutorialPanel()
+    {
+        mTutorialPanel.SetActive(false);
+        mTutorialBackButton.SetActive(false);
     }
 }

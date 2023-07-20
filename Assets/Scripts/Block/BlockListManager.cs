@@ -12,6 +12,10 @@ public partial class BlockListManager : MonoBehaviour
     // UI
     private GameObject mEndCanvas = null;
 
+    public GameObject[] mSkillCDSlider = new GameObject[2];
+
+    public GameObject[] mLastStandUI = new GameObject[2];
+
     public GameObject[] mSkillButtons = new GameObject[2];
 
     public GameObject[] mBuildButtons = new GameObject[2];
@@ -41,7 +45,7 @@ public partial class BlockListManager : MonoBehaviour
     private const int kInitBlockIndex = 10;
     private const int kPlayerNum = 2;
 
-    private int mTurnCnt = 30;
+    private int mTurnCnt = 29;
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
     private bool mIsHitState = false;
@@ -49,6 +53,7 @@ public partial class BlockListManager : MonoBehaviour
     private bool hasCharacterSkill = false;
     public float mHitSpeed = 2f;
     private float mTime = 0f;
+    
     
     private BlockManager[] mBlockManagers = new BlockManager[2];
 
@@ -97,6 +102,9 @@ public partial class BlockListManager : MonoBehaviour
             mSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton");
             mBuildButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/BuildButton");
             mHitButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/HitButton");
+            mSkillCDSlider[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton/CDBackground");
+            mLastStandUI[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/LastStandUI");
+            mLastStandUI[i].SetActive(false);
             mSkillButtons[i].SetActive(false);
         }
         
@@ -170,14 +178,18 @@ public partial class BlockListManager : MonoBehaviour
     private void ServiceIdleState() {
         
         mTurnCnt--;
-        
-        if (JudgeVictory(mTurnCnt))
+        int winnerIdnex = mPlayerIndex;
+        if (JudgeVictory(mTurnCnt,ref winnerIdnex))
         {
             CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
         }
         else
         {
             RoundRefresh();
+            if (mBlockManagers[mPlayerIndex].LastStand())
+            {
+                DisplayLastStandUI();
+            }
             UpdateKeyBinding();
             mBlockColor = (BlockColor)Random.Range(0, 3);
 
