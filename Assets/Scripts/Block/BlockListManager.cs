@@ -34,32 +34,8 @@ public partial class BlockListManager : MonoBehaviour
         eInvalid
     }
 
-    /*private enum BlockColor {
-        eRed,
-        eGreen,
-        eBlue,
-        eSlime
-    };*/
-    // we should only use one color system in the block behavior
-
-
-    //For Role Skills
-    private enum BlockSkills {
-        eNormal,
-        eSkills
-    };
-
-    //For Getting Skills
-    private enum GettingSkills
-    {
-        eGetNormal,
-        eGetSkills
-    }
-
     private BlockState mBlockState = BlockState.eIdle;
     private BlockColor mBlockColor = BlockColor.eRed;
-    private BlockSkills mBlockSkills = BlockSkills.eNormal;
-    private GettingSkills mGettingSkills = GettingSkills.eGetNormal;
 
     // Constants
     private const int kInitBlockIndex = 10;
@@ -69,6 +45,8 @@ public partial class BlockListManager : MonoBehaviour
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
     private bool mIsHitState = false;
+    private bool hasGainedSkill = false;
+    private bool hasCharacterSkill = false;
     public float mHitSpeed = 2f;
     private float mTime = 0f;
     
@@ -102,7 +80,7 @@ public partial class BlockListManager : MonoBehaviour
     private Player.Player curPlayer;
 
     //for Getting Skills
-    private int GettingSkillsIndex = 0;
+    private int GainedSkillIndex = 0;
     
     //for user control
     KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
@@ -256,35 +234,35 @@ public partial class BlockListManager : MonoBehaviour
         //For Pernsonal Skills
         float rand = Random.Range(0f, 1f);
         if (rand > 1.0f) {
-            mBlockSkills = BlockSkills.eNormal;
+            hasCharacterSkill = false;
         }
         else {
             mSkillButtons[mPlayerIndex].SetActive(true);
-            mBlockSkills = BlockSkills.eSkills;
+            hasCharacterSkill = true;
         }
 
         //For Getting Skills
         float rand2 = Random.Range(0f, 1f);
         if (rand2 > 0.2f)
         {
-            mGettingSkills = GettingSkills.eGetNormal;
+            hasGainedSkill = false;
         }
         else
         {
             Debug.Log("You got a skill!");
-            mGettingSkills = GettingSkills.eGetSkills;
-            float ChooseSkills = Random.Range(0f, 1f);
-            if(ChooseSkills < 0.5f)
+            hasGainedSkill = true;
+            rand = Random.Range(0f, 1f);
+            if(rand < 0.5f)
             {
-                GettingSkillsIndex = 1;
+                GainedSkillIndex = 1;
             }
-            else if(ChooseSkills < 0.7f)
+            else if(rand < 0.7f)
             {
-                GettingSkillsIndex = 2;
+                GainedSkillIndex = 2;
             }
             else
             {
-                GettingSkillsIndex = 3;
+                GainedSkillIndex = 3;
             }
         }
 
@@ -340,8 +318,6 @@ public partial class BlockListManager : MonoBehaviour
                 }
             }
         }
-        
-        mBlockManagers[0].test_Dye();
     }
     private void ServiceInitHitState() {
         InitializeHit();

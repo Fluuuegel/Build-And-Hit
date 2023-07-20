@@ -134,11 +134,9 @@ public partial class BlockListManager : MonoBehaviour
     #region trigger skills
     private bool TriGettingSkill()
     {
-        if (Input.GetKeyDown(mSkill2KeyCode) && (mGettingSkills == GettingSkills.eGetSkills))
-        {
-            //float ChooseSkills = Random.Range(0f, 1f);
-            
-            if (GettingSkillsIndex == 1)//Skill 1
+        if (Input.GetKeyDown(mSkill2KeyCode) && (hasGainedSkill))
+        {   
+            if (GainedSkillIndex == 1)
             {
                 if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
                 {
@@ -149,11 +147,11 @@ public partial class BlockListManager : MonoBehaviour
                     Debug.Log("False to use the skills!");
                 }
             }
-            else if (GettingSkillsIndex == 2)//Skill 2
+            else if (GainedSkillIndex == 2)
             {
                 SkillBuildFirstBlock();
             }
-            else if (GettingSkillsIndex == 3)
+            else if (GainedSkillIndex == 3)
             {
                 SkillChangeFirstBlock();
             }else
@@ -161,8 +159,8 @@ public partial class BlockListManager : MonoBehaviour
                 Debug.Log("Getting Skills Index is error!");
             }
 
-            mGettingSkills = GettingSkills.eGetNormal;
-            mBlockSkills = BlockSkills.eNormal;
+            hasGainedSkill = false;
+            hasCharacterSkill = false;
             return true;
         }
         return false;
@@ -175,12 +173,11 @@ public partial class BlockListManager : MonoBehaviour
     }
     private bool TriggerSkill()
     {
-        Debug.Log("Try to Trigger skill!");
-        if (Input.GetKeyDown(mSkill1KeyCode) && (mBlockSkills == BlockSkills.eSkills))
+        if (Input.GetKeyDown(mSkill1KeyCode) && (hasCharacterSkill))
         {
             CastPlayerSkill(mPlayers[mPlayerIndex]);
-            mBlockSkills = BlockSkills.eNormal;
-            mGettingSkills = GettingSkills.eGetNormal;
+            hasGainedSkill = false;
+            hasCharacterSkill = false;
             mSkillButtons[mPlayerIndex].SetActive(false);
             return true;
         }
@@ -238,7 +235,6 @@ public partial class BlockListManager : MonoBehaviour
     #endregion CameraEffect
     
     #region utils
-
     public int GetPlayerBlockHeight(int index)
     {
         return mBlockManagers[index].GetHeight();
