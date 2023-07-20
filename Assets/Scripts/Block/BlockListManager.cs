@@ -21,6 +21,8 @@ public partial class BlockListManager : MonoBehaviour
     public GameObject[] mHitButtons = new GameObject[2];
 
     public GameObject[] mWinImages = new GameObject[2];
+
+    
     
     public enum BlockState {
 
@@ -67,6 +69,8 @@ public partial class BlockListManager : MonoBehaviour
     private const int kInitBlockIndex = 10;
     private const int kPlayerNum = 2;
 
+    private int mTurnCnt = 30;
+
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
     private bool mIsHitState = false;
@@ -102,9 +106,15 @@ public partial class BlockListManager : MonoBehaviour
     private int[] mHitCoolDown = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     const int kHitCoolDown = 0;
     private Player.Player curPlayer;
+
+    //for Getting Skills
+    private int GettingSkillsIndex = 0;
     
     //for user control
     KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
+    
+    //for counting round
+    private int mRound = 0;
     void Start()
     {
         // UI
@@ -190,7 +200,9 @@ public partial class BlockListManager : MonoBehaviour
     }
     private void ServiceIdleState() {
         
-        if (JudgeVictory())
+        mTurnCnt--;
+        
+        if (JudgeVictory(mTurnCnt))
         {
             CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
         }
@@ -260,15 +272,27 @@ public partial class BlockListManager : MonoBehaviour
 
         //For Getting Skills
         float rand2 = Random.Range(0f, 1f);
-        if (rand2 > 1.0f)
+        if (rand2 > 0.2f)
         {
             mGettingSkills = GettingSkills.eGetNormal;
         }
         else
         {
             Debug.Log("You got a skill!");
-            /*Need Button Code*/
             mGettingSkills = GettingSkills.eGetSkills;
+            float ChooseSkills = Random.Range(0f, 1f);
+            if(ChooseSkills < 0.5f)
+            {
+                GettingSkillsIndex = 1;
+            }
+            else if(ChooseSkills < 0.7f)
+            {
+                GettingSkillsIndex = 2;
+            }
+            else
+            {
+                GettingSkillsIndex = 3;
+            }
         }
 
         curPlayer.IncreaseTimeUntilNextSkill();
@@ -323,6 +347,8 @@ public partial class BlockListManager : MonoBehaviour
                 }
             }
         }
+        
+        mBlockManagers[0].test_Dye();
     }
     private void ServiceInitHitState() {
         InitializeHit();

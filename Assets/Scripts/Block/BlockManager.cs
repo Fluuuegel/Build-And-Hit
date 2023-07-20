@@ -120,7 +120,7 @@ public partial class BlockManager
     {
         if (color == -1)
         {
-            color = Random.Range(0, 1800)%3;
+            color = Random.Range(0, 3);
         }
 
         GameObject p = GameObject.Instantiate(mBlockPrefabs[color]) as GameObject;
