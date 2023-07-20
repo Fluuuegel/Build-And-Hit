@@ -36,9 +36,26 @@ public partial class BlockManager
         {
             mFatalLow = true;
         }
+        else
+        {
+            mFatalLow = false;
+        }
         if(mImmuneRound > 0)
         {
             mImmuneRound--;
+        }
+    }
+
+    public bool LastStand()
+    {
+        return mFatalLow && mCanTriggerLastBuild;
+    }
+
+    public void LastStandUI()
+    {
+        if (LastStand())
+        {
+            
         }
     }
     public GameObject GetBlockAt(int index)
@@ -51,6 +68,10 @@ public partial class BlockManager
         return mBlocks[index];
     }
 
+    public bool PowerfulBuildWhenLow()
+    {
+        return mFatalLow;
+    }
     public BlockBehaviour.BlockColourType GetBlockColorAt(int index)
     {
         if (index >= mBlocks.Count)
