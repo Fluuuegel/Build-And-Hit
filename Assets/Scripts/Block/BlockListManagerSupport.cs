@@ -16,7 +16,7 @@ public partial class BlockListManager : MonoBehaviour
      * @JudgeVictory
      * called when entering Idle state, go through all wining conditions to see if any player wins
      */
-    private bool JudgeVictory(int turncnt) {
+    private bool JudgeVictory(int turncnt,ref int winnerIndex) {
         UndisplayLastStandUI();
         if (turncnt == 0) {
             mEndCanvas.SetActive(true);
@@ -26,9 +26,11 @@ public partial class BlockListManager : MonoBehaviour
                 mSkillButtons[j].SetActive(false);
             }
             if (mBlockManagers[0].GetHeight() > mBlockManagers[1].GetHeight()) {
+                winnerIndex = 0;
                 mWinImages[0] = GameObject.Find("EndCanvas/Panel/P1Win");
                 mWinImages[1] = GameObject.Find("EndCanvas/Panel/P2Win");
             } else {
+                winnerIndex = 1;
                 mWinImages[0] = GameObject.Find("EndCanvas/Panel/P2Win");
                 mWinImages[1] = GameObject.Find("EndCanvas/Panel/P1Win");
             }

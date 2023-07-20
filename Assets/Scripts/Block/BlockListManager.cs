@@ -45,7 +45,7 @@ public partial class BlockListManager : MonoBehaviour
     private const int kInitBlockIndex = 10;
     private const int kPlayerNum = 2;
 
-    private int mTurnCnt = 30;
+    private int mTurnCnt = 29;
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
     private bool mIsHitState = false;
@@ -178,8 +178,8 @@ public partial class BlockListManager : MonoBehaviour
     private void ServiceIdleState() {
         
         mTurnCnt--;
-        
-        if (JudgeVictory(mTurnCnt))
+        int winnerIdnex = mPlayerIndex;
+        if (JudgeVictory(mTurnCnt,ref winnerIdnex))
         {
             CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
         }
