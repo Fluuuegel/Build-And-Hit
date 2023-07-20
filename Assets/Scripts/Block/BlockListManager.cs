@@ -471,6 +471,7 @@ public class BlockListManager : MonoBehaviour
 
         if (curPlayer.CanCastSkill()) {
             if (TriggerSkill()) {
+                mBlockAnimator.SetBool("IsSelected", false);
                 Player.PlayerType type = curPlayer.GetPlayerType();
                 if (type == Player.PlayerType.eEngineer) {
                     mBlockState = BlockState.eBuild;
