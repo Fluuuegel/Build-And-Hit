@@ -135,7 +135,7 @@ public partial class BlockListManager : MonoBehaviour
         {
             float ChooseSkills = Random.Range(0f, 1f);
             
-            if (ChooseSkills < 0f)//Skill 1
+            if (ChooseSkills < 0f) //Skill 1
             {
                 if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
                 {
