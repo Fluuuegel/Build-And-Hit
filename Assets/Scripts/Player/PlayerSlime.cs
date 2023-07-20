@@ -5,6 +5,11 @@ namespace Player
 {
     public class PlayerSlime : Player
     {
+        private const int kCD = 1;
+        public override int GetMaxCD()
+        {
+            return kCD;
+        }
         public override void SkillCast(SkillInfo skillInfo)
         {
             if (skillInfo.WillCast)
@@ -14,6 +19,7 @@ namespace Player
                 Debug.Log("Slime Skill Casted");
                 blockListManager.ServiceBuildState(false, true);
                 Debug.Log("Slime Skill End");
+                mTimeUntilNextSkill = kCD;
             }
             else
             {

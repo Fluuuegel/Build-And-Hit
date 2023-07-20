@@ -45,7 +45,7 @@ public partial class BlockListManager : MonoBehaviour
     private const int kInitBlockIndex = 10;
     private const int kPlayerNum = 2;
 
-    private int mTurnCnt = 29;
+    private int mTurnCnt = 31;
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
     private bool mIsHitState = false;
@@ -176,9 +176,10 @@ public partial class BlockListManager : MonoBehaviour
         }
     }
     private void ServiceIdleState() {
-        
+
         mTurnCnt--;
-        Debug.Log("Turn left: " + mTurnCnt);
+        Debug.Log("Roundleft: " + mTurnCnt);
+        DisplayCountDown();
         int winnerIdnex = mPlayerIndex;
         if (JudgeVictory(mTurnCnt,ref winnerIdnex))
         {
@@ -186,7 +187,11 @@ public partial class BlockListManager : MonoBehaviour
         }
         else
         {
+            
+            curPlayer = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>().GetPlayer();
             RoundRefresh();
+            curPlayer.IncreaseTimeUntilNextSkill();
+            ModifyCDValue();
             if (mBlockManagers[mPlayerIndex].LastStand())
             {
                 DisplayLastStandUI();
@@ -212,7 +217,7 @@ public partial class BlockListManager : MonoBehaviour
             mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
             mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
 
-            curPlayer = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>().GetPlayer();
+            
 
             targets = PlayerManager.mTargetGroup.m_Targets;
             for (int i = 0; i < targets.Length; i++)
@@ -275,7 +280,7 @@ public partial class BlockListManager : MonoBehaviour
             }
         }
 
-        curPlayer.IncreaseTimeUntilNextSkill();
+        
         mBlockState = BlockState.eWait;
     }
     private void ServiceWaitState() {

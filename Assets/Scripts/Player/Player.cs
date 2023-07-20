@@ -15,7 +15,12 @@ namespace Player
         public int mTimeUntilNextSkill = 0;
 
         public abstract void SkillCast(SkillInfo skillInfo);
-
+        public abstract int GetMaxCD();
+        public int GetCurrentCD()
+        {
+            return mTimeUntilNextSkill;
+        }
+       
         public PlayerType GetPlayerType()
         {
             return mPlayerType;

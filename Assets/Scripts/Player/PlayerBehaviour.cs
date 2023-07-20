@@ -17,7 +17,10 @@ public class PlayerBehaviour : MonoBehaviour
     {
         return mPlayer.VisionRange();
     }
-
+    public bool readyToCast()
+    {
+        return mPlayer.mTimeUntilNextSkill <= 0;
+    }
     public void SetActualPlayer(Player.Player type)
     {
         mPlayer = type;
