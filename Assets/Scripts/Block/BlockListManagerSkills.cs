@@ -8,8 +8,7 @@ public partial class BlockListManager : MonoBehaviour
     private void SkillHitFirstBlock()
     {
         mTargetBlockIndex = 1;
-        mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
-        //mTargetBlockPos = mTargetBlock.transform.position;
+        //mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
 
         if (TurnNow())
         {
@@ -35,7 +34,6 @@ public partial class BlockListManager : MonoBehaviour
             if (SkillBuildColor == mBlockColor)
             {
                 isSameColor = true;
-                SkillBuildColor = (BlockColor)Random.Range(0, 3);
             }
             else
             {
@@ -47,6 +45,44 @@ public partial class BlockListManager : MonoBehaviour
         mMusic.clip = Resources.Load<AudioClip>("music/Audio_Buff");
         mMusic.Play();
     }
+
+    private void SkillChangeFirstBlock()
+    {
+        bool isSameColor = true;
+        BlockColor SkillChangeColor = BlockColor.eRed;
+        BlockColor ChangeColor = BlockColor.eRed;
+        mTargetBlockIndex = 1;
+        if (TurnNow())
+        {
+            GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
+            SkillChangeColor = mBlockManagers[0].GetBlockColorAt(mBlockManagers[0].GetHeight() - 1);
+            while(isSameColor)
+            {
+                ChangeColor = (BlockColor)Random.Range(0, 3);
+                if (ChangeColor == SkillChangeColor)
+                { isSameColor = true; }
+                else { isSameColor = false; }
+            }
+            mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1);
+        }
+        else
+        {
+            GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
+            SkillChangeColor = mBlockManagers[1].GetBlockColorAt(mBlockManagers[1].GetHeight() - 1);
+            while(isSameColor)
+            {
+                ChangeColor = (BlockColor)Random.Range(0, 3);
+                if (ChangeColor == SkillChangeColor)
+                { isSameColor = true; }
+                else { isSameColor = false; }
+            }
+            mBlockManagers[1].DestroyOneBlock(mBlockManagers[1].GetHeight() - 1);
+        }
+
+        mTargetBlockIndex = 1;
+        mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, (int)ChangeColor);
+    }
+    #endregion
 
     private bool TurnNow()
     {
@@ -60,6 +96,11 @@ public partial class BlockListManager : MonoBehaviour
         }
     }
 
+    public static string[] SkillDes =
+    {
+        "You got a skills in this turn!\n You can destroy your enemy¡¯s first block!",
+        "You got a skills in this turn!\n You can Build a block with different color!",
+        "You got a skills in this turn!\n You can change the first block color! "
+    };
 
-    #endregion
 }

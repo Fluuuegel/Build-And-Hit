@@ -85,6 +85,9 @@ public partial class BlockListManager : MonoBehaviour
     private void RoundRefresh()
     {
         Debug.Log("Refresh round");
+        mRound++;
+        string msg = "This is round: " + mRound;
+        Debug.Log(msg);
         for(int i = 0; i < kPlayerNum; i++)
         {
             mBlockManagers[i].RefreshRound();
@@ -133,9 +136,9 @@ public partial class BlockListManager : MonoBehaviour
     {
         if (Input.GetKeyDown(mSkill2KeyCode) && (mGettingSkills == GettingSkills.eGetSkills))
         {
-            float ChooseSkills = Random.Range(0f, 1f);
+            //float ChooseSkills = Random.Range(0f, 1f);
             
-            if (ChooseSkills < 0f) //Skill 1
+            if (GettingSkillsIndex == 1)//Skill 1
             {
                 if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
                 {
@@ -146,9 +149,16 @@ public partial class BlockListManager : MonoBehaviour
                     Debug.Log("False to use the skills!");
                 }
             }
-            else//Skill 2
+            else if (GettingSkillsIndex == 2)//Skill 2
             {
                 SkillBuildFirstBlock();
+            }
+            else if (GettingSkillsIndex == 3)
+            {
+                SkillChangeFirstBlock();
+            }else
+            {
+                Debug.Log("Getting Skills Index is error!");
             }
 
             mGettingSkills = GettingSkills.eGetNormal;
@@ -165,6 +175,7 @@ public partial class BlockListManager : MonoBehaviour
     }
     private bool TriggerSkill()
     {
+        Debug.Log("Try to Trigger skill!");
         if (Input.GetKeyDown(mSkill1KeyCode) && (mBlockSkills == BlockSkills.eSkills))
         {
             CastPlayerSkill(mPlayers[mPlayerIndex]);
@@ -226,9 +237,12 @@ public partial class BlockListManager : MonoBehaviour
     }
     #endregion CameraEffect
     
-    
-    
-    #region player score recorder
-    
+    #region utils
+
+    public int GetPlayerBlockHeight(int index)
+    {
+        return mBlockManagers[index].GetHeight();
+    }
     #endregion
+    
 }
