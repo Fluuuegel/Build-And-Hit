@@ -100,8 +100,6 @@ public partial class BlockListManager : MonoBehaviour
             mDownBlockKey = KeyCode.DownArrow;
         }
     }
-    
-    
     #endregion
 
     #region trigger skills
@@ -200,5 +198,27 @@ public partial class BlockListManager : MonoBehaviour
     }
     #endregion CameraEffect
     
+    #region redundant functions
+    private void SkillHitFirstBlock()
+    {
+        mTargetBlockIndex = 1;
+        mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+        mTargetBlockPos = mTargetBlock.transform.position;
+
+        if (mPlayerIndex == 0)
+        {
+            GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
+            mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);
+        }
+        else
+        {
+            GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
+            mBlockManagers[0].BeingHitBlockDestroy(bullet, mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+        }
+    }
+    #endregion
     
+    #region player score recorder
+    
+    #endregion
 }

@@ -85,7 +85,6 @@ public partial class BlockListManager : MonoBehaviour
     private AudioSource mMusic = null;
 
     // Hit
-    
     private GameObject mHitBlock;
     private GameObject mTargetBlock;
     private Vector3 mHitBlockPos;
@@ -94,11 +93,9 @@ public partial class BlockListManager : MonoBehaviour
     CinemachineTargetGroup.Target[] targets = null;
 
     //for hit cool down
-    private int[] mHitCoolDown = {0,0,0,0,0,0,0,0,0,0};
+    private int[] mHitCoolDown = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     const int kHitCoolDown = 0;
     private Player.Player curPlayer;
-
-    
     
     //for user control
     KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
@@ -121,7 +118,6 @@ public partial class BlockListManager : MonoBehaviour
             mBlockManagers[i] = new BlockManager();
             mBlockManagers[i].SetInitPos(GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayerPos(i));
             mPlayers[i] = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer(i);
-            Debug.Log("Here");
             if (mPlayers[i] == null) {
                 Debug.Log("Player " + i + " is null");
             }
@@ -129,6 +125,18 @@ public partial class BlockListManager : MonoBehaviour
 
         for (int i = 0; i < kInitBlockIndex; i++) {
             for (int j = 0; j < kPlayerNum; j++) {
+                if (j == 1) {
+                    if (i == kInitBlockIndex - 1) {
+                        mBlockManagers[j].BuildOneBlock(j, false, 0, true);
+                        continue;
+                    } else if (i == kInitBlockIndex - 2) {
+                        mBlockManagers[j].BuildOneBlock(j, false, 1, true);
+                        continue;
+                    } else if (i == kInitBlockIndex - 3) {
+                        mBlockManagers[j].BuildOneBlock(j, false, 2, true);
+                        continue;
+                    }
+                }
                 mBlockManagers[j].BuildOneBlock(j, false, -1, true);
             }
         }
@@ -136,6 +144,10 @@ public partial class BlockListManager : MonoBehaviour
         // Audio
         mAudioObj = GameObject.Find("AudioObject");
         mMusic = mAudioObj.GetComponent<AudioSource>();
+    }
+    void Update()
+    {
+        UpdateFSM();
     }
     private void UpdateFSM() {
         switch (mBlockState)
@@ -282,7 +294,7 @@ public partial class BlockListManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("!!!Hit is on cooldown!!!!");
+                Debug.Log("Hit cool down..");
             }
         }
 
@@ -363,6 +375,7 @@ public partial class BlockListManager : MonoBehaviour
 
         if (curPlayer.CanCastSkill()) {
             if (TriggerSkill()) {
+                mBlockAnimator.SetBool("IsSelected", false);
                 Player.PlayerType type = curPlayer.GetPlayerType();
                 if (type == Player.PlayerType.eEngineer) {
                     mBlockState = BlockState.eBuild;
@@ -478,9 +491,6 @@ public partial class BlockListManager : MonoBehaviour
     }
     public void ServiceEndState() {
     }
-    void Update()
-    {
-        UpdateFSM();
-    }
+    
 
 }
