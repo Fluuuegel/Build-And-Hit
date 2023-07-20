@@ -85,7 +85,6 @@ public partial class BlockListManager : MonoBehaviour
     private AudioSource mMusic = null;
 
     // Hit
-    
     private GameObject mHitBlock;
     private GameObject mTargetBlock;
     private Vector3 mHitBlockPos;
@@ -97,8 +96,6 @@ public partial class BlockListManager : MonoBehaviour
     private int[] mHitCoolDown = {0,0,0,0,0,0,0,0,0,0};
     const int kHitCoolDown = 0;
     private Player.Player curPlayer;
-
-    
     
     //for user control
     KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
@@ -136,6 +133,10 @@ public partial class BlockListManager : MonoBehaviour
         // Audio
         mAudioObj = GameObject.Find("AudioObject");
         mMusic = mAudioObj.GetComponent<AudioSource>();
+    }
+    void Update()
+    {
+        UpdateFSM();
     }
     private void UpdateFSM() {
         switch (mBlockState)
@@ -478,9 +479,6 @@ public partial class BlockListManager : MonoBehaviour
     }
     public void ServiceEndState() {
     }
-    void Update()
-    {
-        UpdateFSM();
-    }
+    
 
 }

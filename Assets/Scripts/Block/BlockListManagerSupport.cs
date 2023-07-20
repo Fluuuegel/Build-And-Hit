@@ -100,8 +100,6 @@ public partial class BlockListManager : MonoBehaviour
             mDownBlockKey = KeyCode.DownArrow;
         }
     }
-    
-    
     #endregion
 
     #region trigger skills
@@ -212,5 +210,9 @@ public partial class BlockListManager : MonoBehaviour
             mBlockManagers[0].BeingHitBlockDestroy(bullet, mBlockManagers[0].GetHeight() - mTargetBlockIndex);
         }
     }
+    #endregion
+    
+    #region player score recorder
+    
     #endregion
 }
