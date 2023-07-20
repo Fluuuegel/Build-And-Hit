@@ -7,18 +7,15 @@ public partial class BlockListManager : MonoBehaviour
     #region redundant functions
     private void SkillHitFirstBlock()
     {
-        mTargetBlockIndex = 1;
-        //mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
-
         if (TurnNow())
         {
-            GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
-            mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);
+            GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
+            mBlockManagers[1].DestroyOneBlock(mBlockManagers[1].GetHeight() - 1);
         }
         else
         {
-            GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
-            mBlockManagers[0].BeingHitBlockDestroy(bullet, mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+            GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
+            mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1);
         }
         mMusic.clip = Resources.Load<AudioClip>("music/Audio_Debuff");
         mMusic.Play();
@@ -102,5 +99,30 @@ public partial class BlockListManager : MonoBehaviour
         "You got a skills in this turn!\n You can Build a block with different color!",
         "You got a skills in this turn!\n You can change the first block color! "
     };
+
+    private void BalanceProb()
+    {
+        if (TurnNow())
+        {
+            if (mBlockManagers[0].GetHeight() < mBlockManagers[1].GetHeight())
+            {
+                GettingProb = 0.3f + (mBlockManagers[1].GetHeight() - mBlockManagers[0].GetHeight()) * 0.05f;
+                if (GettingProb > 1f)
+                { GettingProb = 1f; }
+            }
+            else { GettingProb = 0.3f; }
+        }
+        else
+        {
+            if (mBlockManagers[0].GetHeight() > mBlockManagers[1].GetHeight())
+            {
+                GettingProb = 0.3f + (mBlockManagers[0].GetHeight() - mBlockManagers[1].GetHeight()) * 0.05f;
+                if (GettingProb > 1f)
+                { GettingProb = 1f; }
+            }
+            else { GettingProb = 0.3f; }
+        }
+    }
+
 
 }
