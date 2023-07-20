@@ -136,8 +136,8 @@ public partial class BlockListManager : MonoBehaviour
     {
         if (Input.GetKeyDown(mSkill2KeyCode) && (mGettingSkills == GettingSkills.eGetSkills))
         {
-            //float ChooseSkills = Random.Range(0f, 1f);
-            
+            GettingSkillHintText.text = null;
+
             if (GettingSkillsIndex == 1)//Skill 1
             {
                 if(mBlockManagers[mPlayerIndex].GetHeight() >= 1)
@@ -178,6 +178,7 @@ public partial class BlockListManager : MonoBehaviour
         Debug.Log("Try to Trigger skill!");
         if (Input.GetKeyDown(mSkill1KeyCode) && (mBlockSkills == BlockSkills.eSkills))
         {
+            GettingSkillHintText.text = null;
             CastPlayerSkill(mPlayers[mPlayerIndex]);
             mBlockSkills = BlockSkills.eNormal;
             mGettingSkills = GettingSkills.eGetNormal;

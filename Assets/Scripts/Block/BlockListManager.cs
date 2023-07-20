@@ -4,6 +4,7 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
 using Unity.VisualScripting;
+using TMPro;
 //use this to unify the color system
 using BlockColor = BlockBehaviour.BlockColourType;
 public partial class BlockListManager : MonoBehaviour
@@ -20,7 +21,8 @@ public partial class BlockListManager : MonoBehaviour
 
     public GameObject[] mWinImages = new GameObject[2];
 
-    
+    public GameObject mGettingSkillHint = null;
+    private TextMeshProUGUI GettingSkillHintText;
     
     public enum BlockState {
 
@@ -153,6 +155,9 @@ public partial class BlockListManager : MonoBehaviour
                 mBlockManagers[j].BuildOneBlock(j, false, -1, true);
             }
         }
+
+        mGettingSkillHint = GameObject.Find("Canvas/GettingSkillsHint");
+        GettingSkillHintText = mGettingSkillHint.GetComponent<TextMeshProUGUI>();
 
         // Audio
         mAudioObj = GameObject.Find("AudioObject");
@@ -289,6 +294,16 @@ public partial class BlockListManager : MonoBehaviour
             {
                 GettingSkillsIndex = 3;
             }
+
+            if (GettingSkillHintText != null)
+            {
+                GettingSkillHintText.text = SkillDes[GettingSkillsIndex - 1];
+            }
+            else
+            {
+                Debug.Log("Cannot find Text Object!");
+            }
+            //Clean the text after build, hit, using role&getting skills(Finished)
         }
 
         curPlayer.IncreaseTimeUntilNextSkill();
@@ -431,6 +446,8 @@ public partial class BlockListManager : MonoBehaviour
     }
     public void ServiceHitState() {
 
+        GettingSkillHintText.text = null;
+        mGettingSkills = GettingSkills.eGetNormal;
         mTime += mHitSpeed * Time.smoothDeltaTime;
 
         float x = Mathf.LerpUnclamped(mHitBlockPos.x, mTargetBlockPos.x, mTime);
@@ -502,6 +519,8 @@ public partial class BlockListManager : MonoBehaviour
                 return;
             }
 
+            GettingSkillHintText.text = null;
+            mGettingSkills = GettingSkills.eGetNormal;
             mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
             mMusic.Play();
             mBlockState = BlockState.eIdle;
@@ -513,6 +532,8 @@ public partial class BlockListManager : MonoBehaviour
                 mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, 3);
             } else {
                 mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, -1);
+                GettingSkillHintText.text = null;
+                mGettingSkills = GettingSkills.eGetNormal;
                 mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
                 mMusic.Play();
             }

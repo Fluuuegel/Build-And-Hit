@@ -7,18 +7,15 @@ public partial class BlockListManager : MonoBehaviour
     #region redundant functions
     private void SkillHitFirstBlock()
     {
-        mTargetBlockIndex = 1;
-        //mTargetBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - mTargetBlockIndex);
-
         if (TurnNow())
         {
-            GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
-            mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);
+            GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
+            mBlockManagers[1].DestroyOneBlock(mBlockManagers[1].GetHeight() - 1);
         }
         else
         {
-            GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
-            mBlockManagers[0].BeingHitBlockDestroy(bullet, mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+            GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
+            mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1);
         }
         mMusic.clip = Resources.Load<AudioClip>("music/Audio_Debuff");
         mMusic.Play();
@@ -98,9 +95,9 @@ public partial class BlockListManager : MonoBehaviour
 
     public static string[] SkillDes =
     {
-        "You got a skills in this turn!\n You can destroy your enemy¡¯s first block!",
-        "You got a skills in this turn!\n You can Build a block with different color!",
-        "You got a skills in this turn!\n You can change the first block color! "
+        "Got a skills in this turn!\n You can destroy enemy¡¯s first block!",
+        "Got a skills in this turn!\n You can Build a block with different color!",
+        "Got a skills in this turn!\n You can change the first block color! "
     };
 
 }
