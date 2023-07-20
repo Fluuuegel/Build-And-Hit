@@ -61,10 +61,11 @@ public class BlockBehaviour : MonoBehaviour
     public void SelfDestroy()
     {
         //summon a empty object with particle system and play it
-        GameObject[] s = new GameObject[3];
+        GameObject[] s = new GameObject[4];
         s[0] = Resources.Load<GameObject>("Prefabs/ParticleRed");
         s[1] = Resources.Load<GameObject>("Prefabs/ParticleGreen");
         s[2] = Resources.Load<GameObject>("Prefabs/ParticleBlue");
+        s[3] = Resources.Load<GameObject>("Prefabs/ParticleBlue");
         GameObject particle = Instantiate(s[(int)mMyColour], this.transform.position, Quaternion.identity);
         particle.transform.position = this.transform.position;
         ParticleSystem ps = particle.GetComponent<ParticleSystem>();

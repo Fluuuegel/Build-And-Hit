@@ -185,13 +185,12 @@ public partial class BlockListManager : MonoBehaviour
         }
         else
         {
-            
             RoundRefresh();
             if (mBlockManagers[mPlayerIndex].LastStand())
             {
                 DisplayLastStandUI();
             }
-            UpdatePlayerKeyBinding();
+            UpdateKeyBinding();
             mBlockColor = (BlockColor)Random.Range(0, 3);
 
             for (int i = 0; i < kPlayerNum; i++)
