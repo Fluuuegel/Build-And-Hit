@@ -19,6 +19,8 @@ public partial class BlockListManager : MonoBehaviour
     public GameObject[] mHitButtons = new GameObject[2];
 
     public GameObject[] mWinImages = new GameObject[2];
+
+    
     
     public enum BlockState {
 
@@ -65,6 +67,8 @@ public partial class BlockListManager : MonoBehaviour
     private const int kInitBlockIndex = 10;
     private const int kPlayerNum = 2;
 
+    private int mTurnCnt = 30;
+
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
     private bool mIsHitState = false;
@@ -105,6 +109,9 @@ public partial class BlockListManager : MonoBehaviour
     
     //for user control
     KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
+    
+    //for counting round
+    private int mRound = 0;
     void Start()
     {
         // UI
@@ -189,7 +196,9 @@ public partial class BlockListManager : MonoBehaviour
     }
     private void ServiceIdleState() {
         
-        if (JudgeVictory())
+        mTurnCnt--;
+        
+        if (JudgeVictory(mTurnCnt))
         {
             CameraEnd(mPlayers[1 - mPlayerIndex], mPlayers[mPlayerIndex]);
         }
@@ -334,6 +343,8 @@ public partial class BlockListManager : MonoBehaviour
                 }
             }
         }
+        
+        mBlockManagers[0].test_Dye();
     }
     private void ServiceInitHitState() {
         InitializeHit();
