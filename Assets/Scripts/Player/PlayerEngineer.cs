@@ -5,8 +5,11 @@ namespace Player
 {   
     public class PlayerEngineer : Player
     {
-        private const int kCD = 2;
-        
+        private const int kCD = 3;
+        public override int GetMaxCD()
+        {
+            return kCD;
+        }
         public override void SkillCast(SkillInfo skillInfo)
         {
             if (skillInfo.WillCast)

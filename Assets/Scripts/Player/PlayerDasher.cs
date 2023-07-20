@@ -6,7 +6,10 @@ namespace Player
     {
         private bool GodVision;
         private const int kCD = 2;
-
+        public override int GetMaxCD()
+        {
+            return kCD;
+        }
         public override void SkillCast(SkillInfo skillInfo)
         {
             if (skillInfo.WillCast) {

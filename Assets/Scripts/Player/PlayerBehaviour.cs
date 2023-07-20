@@ -19,7 +19,7 @@ public class PlayerBehaviour : MonoBehaviour
     }
     public bool readyToCast()
     {
-        return mPlayer.mCoolDownRound <= 0;
+        return mPlayer.mTimeUntilNextSkill <= 0;
     }
     public void SetActualPlayer(Player.Player type)
     {
@@ -41,10 +41,6 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void RefreshRound()
     {
-        if (mPlayer.mCoolDownRound > 0)
-        {
-            mPlayer.mCoolDownRound--;
-        }
         mPlayer.ExtendedRefreshRound();
     }
     void Update() {

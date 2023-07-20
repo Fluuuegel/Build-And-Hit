@@ -4,6 +4,9 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
 using Unity.VisualScripting;
+using JetBrains.Annotations;
+using System.Runtime.CompilerServices;
+using TMPro;
 
 /*
  * @BlockListManagerSupport
@@ -235,5 +238,30 @@ public partial class BlockListManager : MonoBehaviour
         {
             mLastStandUI[i].SetActive(false);
         }
+    }
+
+    private void ModifyCDValue()
+    {
+        PlayerBehaviour playerBehaviour = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>();
+        Player.Player curPlayer = playerBehaviour.GetPlayer();
+        float mFillAmount = mSkillCDSlider[mPlayerIndex].GetComponent<Image>().fillAmount;
+        int MaxCD = curPlayer.GetMaxCD();
+        int curCD = curPlayer.GetCurrentCD();
+        mFillAmount = (float)curCD / (float)MaxCD;
+        mSkillCDSlider[mPlayerIndex].GetComponent<Image>().fillAmount = mFillAmount;
+    }
+
+    private void DisplayCountDown()
+    {
+        TextMeshProUGUI countdown = GameObject.Find("Canvas/RoundCountdown").GetComponent<TextMeshProUGUI>();
+        if(countdown != null )
+        {
+            //Debug.Log(countdown.text);
+        }
+        else
+        {
+            Debug.Log("NO TMPRO");
+        }
+        countdown.text = $"Round Left: {mTurnCnt}";
     }
 }

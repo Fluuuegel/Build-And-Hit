@@ -11,13 +11,16 @@ namespace Player
     public abstract class Player
     {
         PlayerType mPlayerType;
-        const int MAX_COOLDOWN_ROUND = 1;
-        public int mCoolDownRound = MAX_COOLDOWN_ROUND;
 
         public int mTimeUntilNextSkill = 0;
 
         public abstract void SkillCast(SkillInfo skillInfo);
-
+        public abstract int GetMaxCD();
+        public int GetCurrentCD()
+        {
+            return mTimeUntilNextSkill;
+        }
+       
         public PlayerType GetPlayerType()
         {
             return mPlayerType;
