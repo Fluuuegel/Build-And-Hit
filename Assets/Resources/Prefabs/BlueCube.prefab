@@ -154,8 +154,8 @@ SortingGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6186385690629784779}
   m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 694436495
+  m_SortingLayer: 2
   m_SortingOrder: 0
 --- !u!198 &6186385690629784781
 ParticleSystem:
