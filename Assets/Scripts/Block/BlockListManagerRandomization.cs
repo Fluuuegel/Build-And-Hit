@@ -18,62 +18,48 @@ public partial class BlockListManager
         private const float mLowestWeight = 1;
         //after generate one block of certain color, decrease its weight by this value
         //and add other 2 colors' weight by half this size
-        private const float mWeightLostPerGen = 8;
+        private const float mWeightLostPerGen = 8f;
+
+        private const float mWeightShrinkFactorPerGen = 100f;
         
         /*
          * color pattern
          */
         private int test_GenRandomColour()
         {
+            const float normalizeFactor = (mWeightShrinkFactorPerGen - 1f) / 2;
             Debug.Log("Gen random color");
-            /*if (mRedWeight < mLowestWeight) mRedWeight = mLowestWeight;
-            if (mBlueWeight < mLowestWeight) mBlueWeight = mLowestWeight;
-            if (mGreenWeight < mLowestWeight) mGreenWeight = mLowestWeight;*/
             BlockColor genBlockColor = BlockColor.eInvalidColour;
             float randomFloat = Random.Range(0f, 1f);
-            float normalizeFactor = mRedWeight + mBlueWeight + mGreenWeight;
-            float redBound = mRedWeight / normalizeFactor;
-            float blueBound = mBlueWeight / normalizeFactor + redBound;
-            float greenBound = mGreenWeight / normalizeFactor + blueBound;
-            for (int i = 0; i < 99; i++)
+            float weightSum = mRedWeight + mBlueWeight + mGreenWeight;
+            float redBound = mRedWeight / weightSum;
+            float blueBound = mBlueWeight / weightSum + redBound;
+            float greenBound = mGreenWeight / weightSum + blueBound;
+            if (randomFloat < redBound)
             {
-                
-                if (randomFloat < redBound)
+                genBlockColor = BlockColor.eRed;
                 {
-                    genBlockColor = BlockColor.eRed;
-                    if (mRedWeight - mWeightLostPerGen > mLowestWeight)
-                    {
-                        mRedWeight /= 2f;
-                        mGreenWeight += mRedWeight/2f;
-                        mBlueWeight += mRedWeight/2f;
-                    }
-
-                    break;
-                }
-                else if(randomFloat < blueBound)
-                {
-                    genBlockColor = BlockColor.eBlue;
-                    if (mBlueWeight - mWeightLostPerGen > mLowestWeight)
-                    {
-                        mBlueWeight /= 2f;
-                        mRedWeight += mBlueWeight / 2f;
-                        mGreenWeight += mBlueWeight / 2f;
-                    }
-                    break;
-                }
-                else 
-                {
-                    genBlockColor = BlockColor.eGreen;
-                    mGreenWeight /= 2f;
-                    mRedWeight += mGreenWeight / 2f;
-                    mBlueWeight += mGreenWeight /2f;
-                    break;
+                    mRedWeight /= mWeightShrinkFactorPerGen;
+                    mGreenWeight += mRedWeight/mWeightShrinkFactorPerGen*normalizeFactor;
+                    mBlueWeight += mRedWeight/mWeightShrinkFactorPerGen*normalizeFactor;
                 }
 
             }
-            if(genBlockColor == BlockColor.eInvalidColour)
+            else if(randomFloat < blueBound)
             {
-                Debug.Log("Error: BlockListManager.GenRandomColour() failed to generate a valid color");
+                genBlockColor = BlockColor.eBlue;
+                {
+                    mBlueWeight /= mWeightShrinkFactorPerGen;
+                    mRedWeight += mBlueWeight / mWeightShrinkFactorPerGen*normalizeFactor;
+                    mGreenWeight += mBlueWeight / mWeightShrinkFactorPerGen*normalizeFactor;
+                }
+            }
+            else 
+            {
+                genBlockColor = BlockColor.eGreen;
+                mGreenWeight /= mWeightShrinkFactorPerGen;
+                mRedWeight += mGreenWeight / mWeightShrinkFactorPerGen*normalizeFactor;
+                mBlueWeight += mGreenWeight /mWeightShrinkFactorPerGen*normalizeFactor;
             }
             /*string msg = "Color Generated: " + genBlockColor.ToString();
             Debug.Log(msg);
