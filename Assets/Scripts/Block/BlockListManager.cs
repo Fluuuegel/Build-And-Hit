@@ -21,6 +21,8 @@ public partial class BlockListManager : MonoBehaviour
 
     public GameObject[] mBuildButtons = new GameObject[2];
 
+    public GameObject[] mGainedSkillButtons = new GameObject[2];
+
     public GameObject[] mHitButtons = new GameObject[2];
 
     public GameObject[] mWinImages = new GameObject[2];
@@ -104,13 +106,17 @@ public partial class BlockListManager : MonoBehaviour
         mEndCanvas.SetActive(false);
 
         for (int i = 0; i < kPlayerNum; i++) {
-            mSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton");
+
             mBuildButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/BuildButton");
             mHitButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/HitButton");
+            mSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton");
+            mGainedSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/GainedSkillButton");
             mSkillCDSlider[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton/CDBackground");
             mLastStandUI[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/LastStandUI");
+
             mLastStandUI[i].SetActive(false);
             mSkillButtons[i].SetActive(false);
+            mGainedSkillButtons[i].SetActive(false);
         }
         
         for (int i = 0; i < kPlayerNum; i++) {
@@ -208,10 +214,6 @@ public partial class BlockListManager : MonoBehaviour
 
             for (int i = 0; i < kPlayerNum; i++)
             {
-                mSkillButtons[i].SetActive(false);
-            }
-            for (int i = 0; i < kPlayerNum; i++)
-            {
                 mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
                 if (mUIOfPlayers[i] == null)
                 {
@@ -250,9 +252,10 @@ public partial class BlockListManager : MonoBehaviour
         
         for (int i = 0; i < kPlayerNum; i++) {
             mSkillButtons[i].SetActive(false);
+            mGainedSkillButtons[i].SetActive(false);
         }
 
-        //For Pernsonal Skills
+        // Unique Skill
         float rand = Random.Range(0f, 1f);
         if (rand > 1.0f) {
             hasCharacterSkill = false;
@@ -262,7 +265,7 @@ public partial class BlockListManager : MonoBehaviour
             hasCharacterSkill = true;
         }
 
-        //For Getting Skills
+        // Gained Skill
         float rand2 = Random.Range(0f, 1f);
         BalanceProb();
         if (rand2 > GettingProb)
@@ -272,6 +275,7 @@ public partial class BlockListManager : MonoBehaviour
         else
         {
             hasGainedSkill = true;
+            mGainedSkillButtons[mPlayerIndex].SetActive(true);
             rand = Random.Range(0f, 1f);
             if(rand < 0.5f)
             {
