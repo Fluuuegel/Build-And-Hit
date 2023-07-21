@@ -27,6 +27,8 @@ public partial class BlockListManager : MonoBehaviour
 
     public GameObject[] mWinImages = new GameObject[2];
 
+    public GameObject mBlockHeight = null;
+
     public GameObject mGettingSkillHint = null;
     private TextMeshProUGUI GainedSkillHintText;
 
@@ -106,7 +108,7 @@ public partial class BlockListManager : MonoBehaviour
     void Start()
     {
         // UI
-        
+        mBlockHeight = GameObject.Find("Canvas/BlockHeight");
         mCameraControll = FindObjectOfType<CameraControll>();
         mEndCanvas = GameObject.Find("EndCanvas");
         mEndCanvas.SetActive(false);
@@ -205,6 +207,7 @@ public partial class BlockListManager : MonoBehaviour
         int winnerIdnex = mPlayerIndex;
         if (JudgeVictory(mTurnCnt,ref winnerIdnex))
         {
+            RefreshBlockHeight();
             CameraEnd(mPlayers[winnerIdnex], mPlayers[1 - winnerIdnex]);
         }
         else
@@ -254,6 +257,7 @@ public partial class BlockListManager : MonoBehaviour
             }
 
             mBlockState = BlockState.eSkill;
+            RefreshBlockHeight();
         }
     }
     private void ServiceSkillState() {
@@ -547,6 +551,7 @@ public partial class BlockListManager : MonoBehaviour
                 mMusic.Play();
             }
         }
+        RefreshBlockHeight();
     }
     public void ServiceEndState() {
     }
