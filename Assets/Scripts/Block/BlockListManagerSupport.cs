@@ -40,6 +40,9 @@ public partial class BlockListManager : MonoBehaviour
             }
             mWinImages[0].SetActive(true);
             mWinImages[1].SetActive(false);
+            mBGM.Stop();
+            mMusic.clip = Resources.Load<AudioClip>("music/Audio_Win");
+            mMusic.Play();
             mBlockState = BlockState.eEnd;
             return true;
         }
@@ -58,6 +61,9 @@ public partial class BlockListManager : MonoBehaviour
                 }
                 mWinImages[i].SetActive(false);
                 mWinImages[1 - i].SetActive(true);
+                mMusic.Stop();
+                mMusic.clip = Resources.Load<AudioClip>("music/Audio_Win");
+                mMusic.Play();
                 mBlockState = BlockState.eEnd;
                 return true;
               }
@@ -101,6 +107,7 @@ public partial class BlockListManager : MonoBehaviour
             mSkill2KeyCode = KeyCode.E;
             mUpBlockKey = KeyCode.W;
             mDownBlockKey = KeyCode.S;
+            mRefreshKey = KeyCode.R;
         }
 
         if (mPlayerIndex == 1)
@@ -111,6 +118,7 @@ public partial class BlockListManager : MonoBehaviour
             mSkill2KeyCode = KeyCode.Period;
             mUpBlockKey = KeyCode.UpArrow;
             mDownBlockKey = KeyCode.DownArrow;
+            mRefreshKey = KeyCode.Slash;
         }
     }
     
@@ -266,6 +274,25 @@ public partial class BlockListManager : MonoBehaviour
             Debug.Log("NO TMPRO");
         }
         countdown.text = $"Round Left: {mTurnCnt}";
+    }
+
+    private bool CanRefreshTower(int playerIndex)
+    {
+        return (canRefresh[playerIndex] && (maxTurn - mTurnCnt) <= 2);
+    }
+
+    private bool TriggerRefresh(bool haltAnimation = true)
+    {
+        
+        if(Input.GetKeyDown(mRefreshKey) && CanRefreshTower(mPlayerIndex))
+        {
+            if(haltAnimation)
+                mBlockAnimator.SetBool("IsSelected", false);
+            DyeOneBlockTowerRandomly(mPlayerIndex); 
+            canRefresh[mPlayerIndex] = false;
+            return true;
+        }
+        return false;
     }
 
     private void RefreshBlockHeight()

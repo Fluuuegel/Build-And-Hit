@@ -20,12 +20,15 @@ public partial class BlockListManager
         //and add other 2 colors' weight by half this size
         private const float mWeightLostPerGen = 8f;
 
-        private const float mWeightShrinkFactorPerGen = 100f;
+        private const float mWeightShrinkFactorPerGen = 20f;
         
         /*
-         * color pattern
+         * @GenRanDomColour
+         * this function can generate a series of blocks with a controlled possibility
+         * that once a block is generated, it's very unlikely that the next block will have the same colour
+         * call function @ResetRandom ONCE before you want to start generating a new list of block
          */
-        private int test_GenRandomColour()
+        private int GenRandomColour()
         {
             const float normalizeFactor = (mWeightShrinkFactorPerGen - 1f) / 2;
             Debug.Log("Gen random color");
@@ -74,5 +77,16 @@ public partial class BlockListManager
         private void ResetRandom()
         {
             mRedWeight = mBlueWeight = mGreenWeight = 33f;
+        }
+
+        private void DyeOneBlockTowerRandomly(int towerIndex)
+        {
+            ResetRandom();
+            BlockManager tower = mBlockManagers[towerIndex];
+            int blockCount = tower.GetHeight();
+            for (int i = 0; i < blockCount; i++)
+            {
+                tower.DyeBlock(i, (BlockColor)GenRandomColour());
+            }
         }
     }
