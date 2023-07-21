@@ -21,6 +21,8 @@ public partial class BlockListManager : MonoBehaviour
 
     public GameObject[] mBuildButtons = new GameObject[2];
 
+    public GameObject[] mGainedSkillButtons = new GameObject[2];
+
     public GameObject[] mHitButtons = new GameObject[2];
 
     public GameObject[] mWinImages = new GameObject[2];
@@ -49,7 +51,7 @@ public partial class BlockListManager : MonoBehaviour
     private const int kInitBlockIndex = 12;
     private const int kPlayerNum = 2;
 
-    private int mTurnCnt = 31;
+    private int mTurnCnt = 21;
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
     private bool mIsHitState = false;
@@ -104,13 +106,17 @@ public partial class BlockListManager : MonoBehaviour
         mEndCanvas.SetActive(false);
 
         for (int i = 0; i < kPlayerNum; i++) {
-            mSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton");
+
             mBuildButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/BuildButton");
             mHitButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/HitButton");
+            mSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton");
+            mGainedSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/GainedSkillButton");
             mSkillCDSlider[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton/CDBackground");
             mLastStandUI[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/LastStandUI");
+
             mLastStandUI[i].SetActive(false);
             mSkillButtons[i].SetActive(false);
+            mGainedSkillButtons[i].SetActive(false);
         }
         
         for (int i = 0; i < kPlayerNum; i++) {
@@ -187,7 +193,6 @@ public partial class BlockListManager : MonoBehaviour
 
         GainedSkillHintText.text = null;
         mTurnCnt--;
-        Debug.Log("Roundleft: " + mTurnCnt);
         DisplayCountDown();
         int winnerIdnex = mPlayerIndex;
         if (JudgeVictory(mTurnCnt,ref winnerIdnex))
@@ -196,7 +201,6 @@ public partial class BlockListManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("IDEL");
             curPlayer = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>().GetPlayer();
             RoundRefresh();
             curPlayer.IncreaseTimeUntilNextSkill();
@@ -210,12 +214,7 @@ public partial class BlockListManager : MonoBehaviour
 
             for (int i = 0; i < kPlayerNum; i++)
             {
-                mSkillButtons[i].SetActive(false);
-            }
-            for (int i = 0; i < kPlayerNum; i++)
-            {
                 mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
-                Debug.Log("load animator");
                 if (mUIOfPlayers[i] == null)
                 {
                     mUIOfPlayers[i] = GameObject.Find("UIOfPlayer" + (i + 1));
@@ -225,6 +224,7 @@ public partial class BlockListManager : MonoBehaviour
             mUIOfPlayers[mPlayerIndex].SetActive(true);
             mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
             mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
+            Debug.Log("Idle block color: " + mBlockColor);
 
             
 
@@ -252,9 +252,10 @@ public partial class BlockListManager : MonoBehaviour
         
         for (int i = 0; i < kPlayerNum; i++) {
             mSkillButtons[i].SetActive(false);
+            mGainedSkillButtons[i].SetActive(false);
         }
 
-        //For Pernsonal Skills
+        // Unique Skill
         float rand = Random.Range(0f, 1f);
         if (rand > 1.0f) {
             hasCharacterSkill = false;
@@ -264,7 +265,7 @@ public partial class BlockListManager : MonoBehaviour
             hasCharacterSkill = true;
         }
 
-        //For Getting Skills
+        // Gained Skill
         float rand2 = Random.Range(0f, 1f);
         BalanceProb();
         if (rand2 > GettingProb)
@@ -273,8 +274,8 @@ public partial class BlockListManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("You got a skill!");
             hasGainedSkill = true;
+            mGainedSkillButtons[mPlayerIndex].SetActive(true);
             rand = Random.Range(0f, 1f);
             if(rand < 0.5f)
             {
@@ -290,7 +291,6 @@ public partial class BlockListManager : MonoBehaviour
             }
             /*if (mGettingSkillHint != null)
             {*/
-                Debug.Log("GainedSkillIndex = " + GainedSkillIndex);
                 GainedSkillHintText.text = SkillDes[GainedSkillIndex - 1];
             /*}
             else
@@ -413,9 +413,11 @@ public partial class BlockListManager : MonoBehaviour
 
         //Use Gained Skills
         if (Input.GetKeyDown(mSkill2KeyCode) && (hasGainedSkill == true))
-        {
+        {   
+            mBlockAnimator.SetBool("IsSelected", false);
             TriggerGainedSkill();
             mSkillButtons[mPlayerIndex].SetActive(false);
+            mBlockState = BlockState.eWait;
         }
 
         if (curPlayer.CanCastSkill()) {
@@ -432,9 +434,9 @@ public partial class BlockListManager : MonoBehaviour
             }
         }
     }
+
     public void InitializeHit() {
 
-        // TODO: Think about what if mPlayerIndex == 2 ?
         if (mPlayerIndex == 0) {
             mHitBlock = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
             mTargetBlock = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - mTargetBlockIndex);
@@ -445,6 +447,7 @@ public partial class BlockListManager : MonoBehaviour
         mHitBlockPos = mHitBlock.transform.position;
         mTargetBlockPos = mTargetBlock.transform.position;
     }
+
     public void ServiceHitState() {
 
         mTime += mHitSpeed * Time.smoothDeltaTime;
@@ -463,16 +466,16 @@ public partial class BlockListManager : MonoBehaviour
             Debug.Log("Hit");
             if (mPlayerIndex == 0) {
                 GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
-                mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);//player 2被击打的玩家
-                mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1);//player 1: 当前的玩家
+                mBlockManagers[1].BeingHitBlockDestroy(bullet, mBlockManagers[1].GetHeight() - mTargetBlockIndex);
+                mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1); // P1: Cur player
 
                 mCameraControll.CameraFocusOnBlock(mTargetBlock);
 
                 
             } else {
                 GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
-                mBlockManagers[0].BeingHitBlockDestroy(bullet,mBlockManagers[0].GetHeight() - mTargetBlockIndex);//player 1
-                mBlockManagers[1].DestroyOneBlock(mBlockManagers[1].GetHeight() - 1);//player 2: 当前的玩家
+                mBlockManagers[0].BeingHitBlockDestroy(bullet,mBlockManagers[0].GetHeight() - mTargetBlockIndex);
+                mBlockManagers[1].DestroyOneBlock(mBlockManagers[1].GetHeight() - 1); // P2: Cur player
                 mCameraControll.CameraFocusOnBlock(mTargetBlock);
             }
             
@@ -483,8 +486,6 @@ public partial class BlockListManager : MonoBehaviour
     }
     public void ServiceComboState()
     {
-        Debug.Log("Combo in block list");
-        // TODO: Think about what if mPlayerIndex == 2 ?
         if (mPlayerIndex == 0)
         {
             mActiveManager = mBlockManagers[1];
@@ -508,7 +509,7 @@ public partial class BlockListManager : MonoBehaviour
     public void ServiceBuildState(bool noSkillCast = true, bool buildSlimeBlock = false) {
         if (noSkillCast)
         {
-            string msg = "Build: the newly spawn block color is" + mBlockColor;
+            string msg = "Build block color: " + mBlockColor;
             Debug.Log(msg);
             mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, (int)mBlockColor);
             mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", false);
@@ -528,6 +529,7 @@ public partial class BlockListManager : MonoBehaviour
         {   if (buildSlimeBlock) {
                 mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, 3);
             } else {
+                Debug.Log("Build block color (SkillCast): " + mBlockColor);
                 mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, -1);
                 mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
                 mMusic.Play();
