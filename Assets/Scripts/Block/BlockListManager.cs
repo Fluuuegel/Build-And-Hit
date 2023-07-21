@@ -76,6 +76,8 @@ public partial class BlockListManager : MonoBehaviour
     // Audio
     private GameObject mAudioObj = null;
     private AudioSource mMusic = null;
+    private GameObject mBGMObj = null;
+    private AudioSource mBGM = null;
 
     // Hit
     private GameObject mHitBlock;
@@ -152,6 +154,8 @@ public partial class BlockListManager : MonoBehaviour
         // Audio
         mAudioObj = GameObject.Find("AudioObject");
         mMusic = mAudioObj.GetComponent<AudioSource>();
+        mBGMObj = GameObject.Find("BattleBGM");
+        mBGM = mBGMObj.GetComponent<AudioSource>();
     }
     void Update()
     {

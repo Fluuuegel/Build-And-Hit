@@ -40,6 +40,9 @@ public partial class BlockListManager : MonoBehaviour
             }
             mWinImages[0].SetActive(true);
             mWinImages[1].SetActive(false);
+            mBGM.Stop();
+            mMusic.clip = Resources.Load<AudioClip>("music/Audio_Win");
+            mMusic.Play();
             mBlockState = BlockState.eEnd;
             return true;
         }
@@ -58,6 +61,9 @@ public partial class BlockListManager : MonoBehaviour
                 }
                 mWinImages[i].SetActive(false);
                 mWinImages[1 - i].SetActive(true);
+                mMusic.Stop();
+                mMusic.clip = Resources.Load<AudioClip>("music/Audio_Win");
+                mMusic.Play();
                 mBlockState = BlockState.eEnd;
                 return true;
               }
