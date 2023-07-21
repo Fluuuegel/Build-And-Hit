@@ -51,6 +51,7 @@ public partial class BlockListManager : MonoBehaviour
     private const int kInitBlockIndex = 12;
     private const int kPlayerNum = 2;
 
+    private int maxTurn = 21;
     private int mTurnCnt = 21;
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
@@ -97,7 +98,10 @@ public partial class BlockListManager : MonoBehaviour
     private float GettingProb = 0f;
 
     //for user control
-    KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
+    KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey, mRefreshKey;
+    
+    //for refresh the initial tower
+    private bool[] canRefresh = {true, true};
     
     void Start()
     {
@@ -129,9 +133,8 @@ public partial class BlockListManager : MonoBehaviour
                 Debug.Log("Player " + i + " is null");
             }
         }
-
-        for (int i = 0; i < kInitBlockIndex; i++) {
-            for (int j = 0; j < kPlayerNum; j++) {
+        for (int j = 0; j < kPlayerNum; j++) {
+            for (int i = 0; i < kInitBlockIndex; i++) {
                 if (j == 1) {
                     if (i == kInitBlockIndex - 1) {
                         mBlockManagers[j].BuildOneBlock(j, false, 0, true);
@@ -144,8 +147,9 @@ public partial class BlockListManager : MonoBehaviour
                         continue;
                     }
                 }
-                mBlockManagers[j].BuildOneBlock(j, false, (int)Random.Range(i,i*j*j*j*j*j+20)%4-1, true);
+                mBlockManagers[j].BuildOneBlock(j, false, (int)GenRandomColour(), true);
             }
+            ResetRandom();
         }
 
         mGettingSkillHint = GameObject.Find("Canvas/GainedSkillsHint");
@@ -306,8 +310,10 @@ public partial class BlockListManager : MonoBehaviour
 
         mBlockState = BlockState.eWait;
     }
-    private void ServiceWaitState() {
-
+    private void ServiceWaitState()
+    {
+        TriggerRefresh();
+        
         if (Input.GetKeyDown(mBuildKeyCode)) {
             mBlockState = BlockState.eBuild;
             return ;
@@ -366,6 +372,7 @@ public partial class BlockListManager : MonoBehaviour
         
     }
     private void ServiceSelectHitState() {
+        TriggerRefresh(false);
         PlayerBehaviour script = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>();
         int VisionZone = script.VisionRange();
         if (Input.GetKeyDown(mDownBlockKey) && mTargetBlockIndex < mBlockManagers[1 - mPlayerIndex].GetHeight()) {
@@ -511,6 +518,7 @@ public partial class BlockListManager : MonoBehaviour
         }
     }
     public void ServiceBuildState(bool noSkillCast = true, bool buildSlimeBlock = false) {
+        TriggerRefresh();
         if (noSkillCast)
         {
             string msg = "Build block color: " + mBlockColor;
