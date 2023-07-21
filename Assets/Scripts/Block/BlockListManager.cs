@@ -127,9 +127,8 @@ public partial class BlockListManager : MonoBehaviour
                 Debug.Log("Player " + i + " is null");
             }
         }
-
-        for (int i = 0; i < kInitBlockIndex; i++) {
-            for (int j = 0; j < kPlayerNum; j++) {
+        for (int j = 0; j < kPlayerNum; j++) {
+            for (int i = 0; i < kInitBlockIndex; i++) {
                 if (j == 1) {
                     if (i == kInitBlockIndex - 1) {
                         mBlockManagers[j].BuildOneBlock(j, false, 0, true);
@@ -142,8 +141,9 @@ public partial class BlockListManager : MonoBehaviour
                         continue;
                     }
                 }
-                mBlockManagers[j].BuildOneBlock(j, false, (int)Random.Range(i,i*j*j*j*j*j+20)%4-1, true);
+                mBlockManagers[j].BuildOneBlock(j, false, (int)test_GenRandomColour(), true);
             }
+            ResetRandom();
         }
 
         mGettingSkillHint = GameObject.Find("Canvas/GainedSkillsHint");
