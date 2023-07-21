@@ -72,7 +72,6 @@ public partial class BlockListManager : MonoBehaviour
      */
     private void RoundRefresh()
     {
-        Debug.Log("Refreshing round");
         for(int i = 0; i < kPlayerNum; i++)
         {
             mBlockManagers[i].RefreshRound();
