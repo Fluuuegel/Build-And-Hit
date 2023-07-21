@@ -24,9 +24,10 @@ public partial class BlockListManager : MonoBehaviour
         if (turncnt == 0) {
             mEndCanvas.SetActive(true);
             for (int j = 0; j < kPlayerNum; j++) {
-                mHitButtons[j].SetActive(false);
                 mBuildButtons[j].SetActive(false);
+                mHitButtons[j].SetActive(false);
                 mSkillButtons[j].SetActive(false);
+                mGainedSkillButtons[j].SetActive(false);
             }
             if (mBlockManagers[0].GetHeight() > mBlockManagers[1].GetHeight()) {
                 winnerIndex = 0;
@@ -72,7 +73,6 @@ public partial class BlockListManager : MonoBehaviour
      */
     private void RoundRefresh()
     {
-        Debug.Log("Refreshing round");
         for(int i = 0; i < kPlayerNum; i++)
         {
             mBlockManagers[i].RefreshRound();

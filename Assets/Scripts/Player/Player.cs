@@ -40,7 +40,6 @@ namespace Player
         }
 
         public virtual void IncreaseTimeUntilNextSkill() {
-            Debug.Log("DecreaseTimeUntilNextSkill: " + mTimeUntilNextSkill);
             if(mTimeUntilNextSkill > 0)
             {
                 mTimeUntilNextSkill--;
