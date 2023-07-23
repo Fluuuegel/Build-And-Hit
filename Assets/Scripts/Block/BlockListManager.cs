@@ -56,8 +56,8 @@ public partial class BlockListManager : MonoBehaviour
     private const int kInitBlockIndex = 12;
     private const int kPlayerNum = 2;
 
-    private int maxTurn = 21;
-    private int mTurnCnt = 21;
+    private int maxTurn = 31;
+    private int mTurnCnt = 31;
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
     private bool mIsHitState = false;
@@ -658,7 +658,7 @@ public partial class BlockListManager : MonoBehaviour
                                 mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatBlueL1")) as GameObject;
                                 break;
                             case BlockBehaviour.BlockColourType.eSlime:
-                                mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatRedL1")) as GameObject;
+                                mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatSlimeL1")) as GameObject;
                                 break;
                         }
                         mPopUp[mPlayerIndex].transform.position = new Vector3(pos.x - 2.5f, pos.y + 0.5f, 0);
@@ -675,7 +675,7 @@ public partial class BlockListManager : MonoBehaviour
                                 mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatBlueR1")) as GameObject;
                                 break;
                             case BlockBehaviour.BlockColourType.eSlime:
-                                mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatRedR1")) as GameObject;
+                                mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatSlimeR1")) as GameObject;
                                 break;
                         }
                         mPopUp[mPlayerIndex].transform.position = new Vector3(pos.x + 2.5f, pos.y + 0.5f, 0);

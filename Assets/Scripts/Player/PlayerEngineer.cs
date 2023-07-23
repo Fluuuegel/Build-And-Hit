@@ -5,7 +5,7 @@ namespace Player
 {   
     public class PlayerEngineer : Player
     {
-        private const int kCD = 4;
+        private const int kCD = 3;
         public override int GetMaxCD()
         {
             return kCD;
