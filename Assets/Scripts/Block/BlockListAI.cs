@@ -6,10 +6,11 @@ using UnityEngine;
 public partial class BlockListManager
 {
     public bool AIEnabled { get; private set; } = false;
-    private float mBuildPossibility = 0.7f;
-    private float mHitPossibility = 0.4f;
+    private float mBuildPossibility = 0.5f;
+    private float mHitPossibility = 1f;
     private float mSkillPossibility = 0.5f;
     private int[] mAIPlayerIndex = {1};
+    private float mAISkillPossibility = 0.5f;
 
     public bool ActiveAI()
     {
@@ -17,10 +18,14 @@ public partial class BlockListManager
     }
     private bool IsAITurn()
     {
+        if(!AIEnabled)
+            return false;
         return mAIPlayerIndex.Contains(mPlayerIndex);
     }
     private bool AITriggerBuild()
     {
+        if(!AIEnabled)
+            return false;
         /*if(IsAITurn())
             return true;*/
         if (!IsAITurn() || !AICanOperate() || !AIEnabled)
@@ -32,15 +37,21 @@ public partial class BlockListManager
             Debug.Log("curplayerindex: " + mPlayerIndex);
             return false;
         }
+        if (mBlockManagers[1].GetHeight() == 1)
+        {
+            return true;
+        }
         Debug.Log("Ai Build success!");
         float build = Random.value;
         return build < mBuildPossibility;
-        StartAITimer();
+        
     }
 
     private bool AITriggerHit()
     {
-        if (!IsAITurn() || !AICanOperate() || ! AIEnabled)
+        if(!AIEnabled)
+            return false;
+        if (!IsAITurn() || !AICanOperate() || !AIEnabled)
         {
             if (!IsAITurn() )
                 Debug.Log("AI Hit fail! Not his turn!");
@@ -48,51 +59,48 @@ public partial class BlockListManager
                 Debug.Log("AI Hit In cool down!");
             return false;
         }
-
-        if (mBlockManagers[1].GetHeight() == 1)
-        {
-            return true;
-        }
+        Debug.Log("Ai Hit success!");
         return Random.value < mHitPossibility;
-        StartAITimer();
     }
 
     private bool AIUseSkill()
     {
-        if (!IsAITurn() || !AICanOperate())
+        if(!AIEnabled)
             return false;
-        return Random.value < 1.0f;
-        StartAITimer();
+        if (!IsAITurn() || !AICanOperate() || !AIEnabled)
+            return false;
+        return Random.value < mAISkillPossibility;
+        
     }
     private int AIAttackTarget()
     {
         int height = mBlockManagers[0].GetHeight();
         int vision = curPlayer.VisionRange();
         //return Random.Range(1, vision);
-        int BestHit = -1;
+        int bestHitIndex = -1;
         int maxDestroy = 0;
         for(int i = 1; i <= vision; i++)
         {
-            if (maxDestroy < CalculateDestroyByHitThisBlock(height - i) && CalculateDestroyByHitThisBlock(height - i) > 2)
+            if (maxDestroy < CalculateDestroyByHitThisBlock(height - i) && CalculateDestroyByHitThisBlock(height - i) > 1)
             {
                 maxDestroy = CalculateDestroyByHitThisBlock(height - i);
-                BestHit = i;
+                bestHitIndex = i;
             }
             
         }
-        if(BestHit != -1)
+        if(bestHitIndex != -1)
         {
-            Debug.Log("AI Attack Target: " + BestHit + " Destroy: " + maxDestroy + " blocks");
+            Debug.Log("AI Attack Target: " + bestHitIndex + " Destroy: " + maxDestroy + " blocks");
             Debug.Log("NotRandom: ");
-            return BestHit;
+            return bestHitIndex;
         }
         else
         {
-            BestHit = Random.Range(1, vision);
+            bestHitIndex = Random.Range(1, vision);
             Debug.Log("AI Attack Target: " + -1 + " Destroy: " + maxDestroy + " blocks");
             Debug.Log("Vision: " + vision);
             Debug.Log("Random: ");
-            return BestHit;
+            return bestHitIndex;
         }
     }
     private float AITimer = 0;
@@ -103,7 +111,7 @@ public partial class BlockListManager
 
     private bool AICanOperate()
     {
-        return Time.time - AITimer > 0.5f;
+        return Time.time - AITimer > 1f;
     }
     private int CalculateDestroyByHitThisBlock(int index)
     {
