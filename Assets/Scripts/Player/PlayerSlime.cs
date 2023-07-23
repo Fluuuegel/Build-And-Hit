@@ -5,14 +5,14 @@ namespace Player
 {
     public class PlayerSlime : Player
     {
-        private const int kCD = 1;
+        private const int kCD = 2;
         public override int GetMaxCD()
         {
             return kCD;
         }
         public override int VisionRange()
         {
-            return 5;
+            return 4;
         }
         public override void SkillCast(SkillInfo skillInfo)
         {

@@ -20,7 +20,7 @@ public partial class BlockListManager
         //and add other 2 colors' weight by half this size
         private const float mWeightLostPerGen = 8f;
 
-        private const float mWeightShrinkFactorPerGen = 5f;
+        private const float mWeightShrinkFactorPerGen = 4.7f;
         
         /*
          * @GenRanDomColour
@@ -31,7 +31,7 @@ public partial class BlockListManager
         private int GenRandomColour()
         {
             const float normalizeFactor = (mWeightShrinkFactorPerGen - 1f) / 2;
-            Debug.Log("Gen random color");
+//            Debug.Log("Gen random color");
             BlockColor genBlockColor = BlockColor.eInvalidColour;
             float randomFloat = Random.Range(0f, 1f);
             float weightSum = mRedWeight + mBlueWeight + mGreenWeight;
