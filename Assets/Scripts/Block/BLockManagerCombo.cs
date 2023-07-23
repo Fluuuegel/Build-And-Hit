@@ -65,6 +65,10 @@ public partial class BlockManager
                 }
                 else // combo is success, prepare for next combo
                 {
+                    AudioSource Sound = GameObject.Find("AudioObject").GetComponent<AudioSource>();
+                    Sound.clip = Resources.Load<AudioClip>("music/Audio_Hit");
+                    Sound.volume = 3.0f;
+                    Sound.Play();
                     comboLowerBound = comboInfo.lower_bound - 1;
                     if (comboLowerBound < 0)
                     {
