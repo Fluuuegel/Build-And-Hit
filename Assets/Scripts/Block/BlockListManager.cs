@@ -341,14 +341,17 @@ public partial class BlockListManager : MonoBehaviour
         DeveloperModeUpdate();
         
         if (Input.GetKeyDown(mBuildKeyCode) || AITriggerBuild()) {
+            Debug.Log("Wait state to Build state");
             mBlockState = BlockState.eBuild;
             return ;
         } 
 
         // Only if the player has blocks, can he be hit
-        if ((Input.GetKeyDown(mHitKeyCode) && ((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() > 0) || 
-                                              ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() > 0))||
-                                              AITriggerHit())
+        /*if ((Input.GetKeyDown(mHitKeyCode))) /*&& 
+             (
+                 (mPlayerIndex == 0 && mBlockManagers[1].GetHeight() > 0)) || (mPlayerIndex == 1 && mBlockManagers[0].GetHeight() > 0))
+            )#1#*/
+        if(Input.GetKeyDown(mHitKeyCode) || AITriggerBuild())
         {
             
             if (mHitCoolDown[mPlayerIndex] <= 0)
@@ -362,6 +365,7 @@ public partial class BlockListManager : MonoBehaviour
                 mBlockAnimator = mTargetBlock.GetComponent<Animator>();
                 mBlockAnimator.SetBool("IsSelected", true);
                 //change status to hit
+                Debug.Log("Wait state to Hit state");
                 mBlockState = BlockState.eSelectHit;
                 return;
             }
@@ -460,7 +464,7 @@ public partial class BlockListManager : MonoBehaviour
         }
 
         // You can retract the selection
-        if (Input.GetKeyDown(mBuildKeyCode) || AITriggerBuild()) {
+        if (Input.GetKeyDown(mBuildKeyCode) ) {
             mBlockAnimator.SetBool("IsSelected", false);
             mBlockState = BlockState.eBuild;
         }
