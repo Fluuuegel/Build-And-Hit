@@ -91,9 +91,9 @@ public partial class BlockListManager : MonoBehaviour
 
     public static string[] SkillDes =
     {
-        "Skill!\n Destroy opponent's first block! \n(P1 : E, P2 : >)",
-        "Skill!\n Get different color block! \n(P1 : E, P2 : >)",
-        "Skill!\n Change your block color! \n(P1 : E, P2 : >)"
+        "You got a skills in this turn!\n <b><size=22><color=green>Destroy your opponent's first block!</size></color></b>",
+        "You got a skills in this turn!\n <b><size=22><color=green>Build a block with different color!</size></color></b>",
+        "You got a skills in this turn!\n <b><size=22><color=green>Change the first block's color!</size></color></b>"
     };
 
     private void BalanceProb()

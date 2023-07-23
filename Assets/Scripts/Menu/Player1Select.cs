@@ -37,6 +37,10 @@ public class Player1Select : MonoBehaviour
         //eSlime
     }
 
+    public void SelectChar4() {
+        player1Select = "APinkBall";
+    }
+
     // Update is called once per frame
     void Update()
     {

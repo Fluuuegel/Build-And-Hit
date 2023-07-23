@@ -182,9 +182,7 @@ public partial class BlockListManager : MonoBehaviour
         SkillInfo skillInfo = WriteCurrentSkillInfo();
         script.SkillCast(skillInfo);
     }
-    
-
-    
+        
     /*
      * @SkillInfo
      * write all information needed for casting a skill
@@ -251,7 +249,7 @@ public partial class BlockListManager : MonoBehaviour
         }
     }
 
-    private void ModifyCDValue()
+    private void ModifyCDUI()
     {
         PlayerBehaviour playerBehaviour = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>();
         Player.Player curPlayer = playerBehaviour.GetPlayer();
@@ -302,13 +300,17 @@ public partial class BlockListManager : MonoBehaviour
         {
             blockHeight[i] = GetPlayerBlockHeight(i);
         }
-        if (blockHeight[0] <= 3 )
+        if (blockHeight[0] <= 3 && blockHeight[1] > 3)
         {
             mBlockHeight.GetComponent<TextMeshProUGUI>().text = $"<color=red>{blockHeight[0]}</color>       :       {blockHeight[1]}";
         }
-        else if (blockHeight[1] <= 3 )
+        else if (blockHeight[1] <= 3 && blockHeight[0] > 3)
         {
             mBlockHeight.GetComponent<TextMeshProUGUI>().text = $"{blockHeight[0]}       :       <color=red>{blockHeight[1]}</color>";
+        }
+        else if (blockHeight[0] <= 3 && blockHeight[1] <= 3)
+        {
+            mBlockHeight.GetComponent<TextMeshProUGUI>().text = $"<color=red>{blockHeight[0]}</color>       :       <color=red>{blockHeight[1]}</color>";
         }
         else
         {

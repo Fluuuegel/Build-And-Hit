@@ -20,6 +20,7 @@ public class BlockBehaviour : MonoBehaviour
         eSlime,
         eInvalidColour,
     }
+    
     private BlockManager mBlockManager = null;
     public BlockColourType mMyColour;
     public int mIndex;
@@ -85,9 +86,16 @@ public class BlockBehaviour : MonoBehaviour
         if (mBlockManager.IsTargetBlock(this.gameObject, collision.gameObject))
         {
             mBlockManager.TargetBlockCollided();
-            //Debug.Log("2 target collided");
+            Debug.Log("2 target collided");
         }
-        
+    }
+
+    public void OnCollisionStay2D(Collision2D collision) {
+         if (mBlockManager.IsTargetBlock(this.gameObject, collision.gameObject))
+        {
+            mBlockManager.TargetBlockCollided();
+            Debug.Log("2 target stay collided");
+        }
     }
 
     public bool isColli() { return isCollision; }
