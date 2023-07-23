@@ -560,6 +560,9 @@ public partial class BlockListManager : MonoBehaviour
         mBlockState = BlockState.eSuck;
     }
     private void ServiceSuckState() {
+
+        curPlayer.GetColor(mTargetBlock.GetComponent<BlockBehaviour>().GetBlockColour());
+        
         mPlayerAnimators[mPlayerIndex].SetBool("Suck", true);
 
         mTime += mSuckSpeed * Time.smoothDeltaTime;
