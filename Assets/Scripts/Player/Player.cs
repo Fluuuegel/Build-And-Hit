@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 
 namespace Player
-{
+{   
     public enum PlayerType
     {   
         eDasher,
         eEngineer,
         eSlime,
+        eAPinkBall,
     }
     public abstract class Player
     {
         PlayerType mPlayerType;
+
+        public Animator mAnimator;
 
         public int mTimeUntilNextSkill = 0;
 
@@ -39,6 +42,15 @@ namespace Player
             return mTimeUntilNextSkill == 0;
         }
 
+        public virtual void GetAnimator(Animator animator)
+        {
+            mAnimator = animator;
+        }
+
+        public virtual void GetColor(BlockBehaviour.BlockColourType color)
+        {
+            return;
+        }
         public virtual void IncreaseTimeUntilNextSkill() {
             if(mTimeUntilNextSkill > 0)
             {
@@ -73,6 +85,14 @@ namespace Player
                         player.mPlayerType = PlayerType.eSlime;
                         if(playerDebug)
                             Debug.Log("Make a Slime");
+                        break;
+
+                case "APinkBall":
+                    case "APinkBallR":
+                        player = new PlayerAPinkBall();
+                        player.mPlayerType = PlayerType.eAPinkBall;
+                        if(playerDebug)
+                            Debug.Log("Make A Pink Ball");
                         break;
 
                 default:

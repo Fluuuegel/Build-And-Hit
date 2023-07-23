@@ -43,6 +43,9 @@ public partial class BlockListManager : MonoBehaviour
         eBuild,
         eCombo,
         eEnd,
+        eSelectSuck,
+        eInitSuck,
+        eSuck,
         eInvalid
     }
 
@@ -58,9 +61,13 @@ public partial class BlockListManager : MonoBehaviour
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
     private bool mIsHitState = false;
+
+    private bool[] mKirbyIsHungry = new bool[2] {true, true};
     private bool hasGainedSkill = false;
     private bool hasCharacterSkill = false;
     public float mHitSpeed = 2f;
+
+    public float mSuckSpeed = 1.5f;
     private float mTime = 0f;
     
     
@@ -94,6 +101,7 @@ public partial class BlockListManager : MonoBehaviour
     private int[] mHitCoolDown = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     const int kHitCoolDown = 0;
     private Player.Player curPlayer;
+    private PlayerManager mPlayerManager;
 
     //for Getting Skills
     private int GainedSkillIndex = 0;
@@ -129,12 +137,21 @@ public partial class BlockListManager : MonoBehaviour
             mGainedSkillButtons[i].SetActive(false);
         }
         
+        mPlayerManager = GameManager.sTheGlobalBehavior.GetPlayerManager();
         for (int i = 0; i < kPlayerNum; i++) {
             mBlockManagers[i] = new BlockManager();
             mBlockManagers[i].SetInitPos(GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayerPos(i));
-            mPlayers[i] = GameManager.sTheGlobalBehavior.GetPlayerManager().getPlayer(i);
+            mPlayers[i] = mPlayerManager.getPlayer(i);
             if (mPlayers[i] == null) {
                 Debug.Log("Player " + i + " is null");
+            }
+
+            mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
+            mPlayers[i].GetComponent<PlayerBehaviour>().GetPlayer().GetAnimator(mPlayerAnimators[i]);
+
+            if (mUIOfPlayers[i] == null)
+            {
+                mUIOfPlayers[i] = GameObject.Find("UIOfPlayer" + (i + 1));
             }
         }
         for (int j = 0; j < kPlayerNum; j++) {
@@ -199,6 +216,16 @@ public partial class BlockListManager : MonoBehaviour
             case BlockState.eEnd:
                 ServiceEndState();
                 break;
+
+            case BlockState.eInitSuck:
+                ServiceInitSuckState();
+                break;
+            case BlockState.eSelectSuck:
+                ServiceSelectSuckState();
+                break;
+            case BlockState.eSuck:
+                ServiceSuckState();
+                break;
         }
     }
     private void ServiceIdleState() {
@@ -217,29 +244,16 @@ public partial class BlockListManager : MonoBehaviour
             curPlayer = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>().GetPlayer();
             RoundRefresh();
             curPlayer.IncreaseTimeUntilNextSkill();
-            ModifyCDValue();
+            ModifyCDUI();
             if (mBlockManagers[mPlayerIndex].LastStand())
             {
                 DisplayLastStandUI();
             }
             UpdateKeyBinding();
             mBlockColor = (BlockColor)Random.Range(0, 3);
-
-            for (int i = 0; i < kPlayerNum; i++)
-            {
-                mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
-                if (mUIOfPlayers[i] == null)
-                {
-                    mUIOfPlayers[i] = GameObject.Find("UIOfPlayer" + (i + 1));
-                }
-            }
-
             mUIOfPlayers[mPlayerIndex].SetActive(true);
             mPlayerAnimators[mPlayerIndex].SetBool("IsHolding", true);
             mPlayerAnimators[mPlayerIndex].SetInteger("BlockColor", (int)mBlockColor);
-            Debug.Log("Idle block color: " + mBlockColor);
-
-            
 
             targets = PlayerManager.mTargetGroup.m_Targets;
             for (int i = 0; i < targets.Length; i++)
@@ -319,6 +333,7 @@ public partial class BlockListManager : MonoBehaviour
     private void ServiceWaitState()
     {
         TriggerRefresh();
+        
         if (Input.GetKeyDown(mBuildKeyCode)) {
             mBlockState = BlockState.eBuild;
             return ;
@@ -330,6 +345,7 @@ public partial class BlockListManager : MonoBehaviour
             
             if (mHitCoolDown[mPlayerIndex] <= 0)
             {
+                
                 mTargetBlockIndex = 1;
                 // Initialize block blink
                 mTargetBlock = mBlockManagers[1 - mPlayerIndex]
@@ -366,6 +382,20 @@ public partial class BlockListManager : MonoBehaviour
                 else if (type == Player.PlayerType.eSlime) {
                     mBlockState = BlockState.eIdle;
                     mPlayerIndex = (mPlayerIndex + 1) % 2;
+                } else if (type == Player.PlayerType.eAPinkBall) {
+                    if (mKirbyIsHungry[mPlayerIndex]) {
+                        mTargetBlockIndex = 1;
+                        // Initialize block blink
+                        mTargetBlock = mBlockManagers[1 - mPlayerIndex]
+                            .GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+                        mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
+                        mBlockAnimator = mTargetBlock.GetComponent<Animator>();
+                        mBlockAnimator.SetBool("IsSelected", true);
+
+                        mBlockState = BlockState.eSelectSuck;
+                    } else {
+                        mKirbyIsHungry[mPlayerIndex] = true;
+                    }
                 }
             }
         }
@@ -445,10 +475,121 @@ public partial class BlockListManager : MonoBehaviour
                 else if (type == Player.PlayerType.eSlime) {
                     mBlockState = BlockState.eIdle;
                     mPlayerIndex = (mPlayerIndex + 1) % 2;
+
+                    // TODO: Fix this
+                } else if (type == Player.PlayerType.eAPinkBall) {
+                    if (mKirbyIsHungry[mPlayerIndex]) {
+                        mTargetBlockIndex = 1;
+                        // Initialize block blink
+                        mTargetBlock = mBlockManagers[1 - mPlayerIndex]
+                            .GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+                        mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
+                        mBlockAnimator = mTargetBlock.GetComponent<Animator>();
+                        mBlockAnimator.SetBool("IsSelected", true);
+
+                        mBlockState = BlockState.eSelectSuck;
+                    } else {
+                        mKirbyIsHungry[mPlayerIndex] = true;
+                        mBlockState = BlockState.eWait;
+                    }
                 }
             }
         }
     }
+
+    private void ServiceSelectSuckState() {
+        TriggerRefresh(false);
+        PlayerBehaviour script = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>();
+        int VisionZone = script.VisionRange();
+        if (Input.GetKeyDown(mDownBlockKey) && mTargetBlockIndex < mBlockManagers[1 - mPlayerIndex].GetHeight()) {
+            // Block blink effect
+            mBlockAnimator.SetBool("IsSelected", false);
+
+            mTargetBlockIndex += 1;
+            if(mTargetBlockIndex > VisionZone)
+            {
+                mTargetBlockIndex = VisionZone;
+            }
+            mCameraControll.ModifyTarget(mTargetBlock, 1f, 3f);
+            mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex); 
+            mBlockAnimator = mTargetBlock.GetComponent<Animator>();
+            mBlockAnimator.SetBool("IsSelected", true);
+
+            mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
+            Debug.Log(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            return ;
+        }
+
+        if (Input.GetKeyDown(mUpBlockKey) && mTargetBlockIndex > 1) {
+            mBlockAnimator.SetBool("IsSelected", false);
+
+            mTargetBlockIndex -= 1;
+
+            mCameraControll.ModifyTarget(mTargetBlock, 1f, 3f);
+            mTargetBlock = mBlockManagers[1 - mPlayerIndex].GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            mBlockAnimator = mTargetBlock.GetComponent<Animator>();
+            mBlockAnimator.SetBool("IsSelected", true);
+
+            mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
+            Debug.Log(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+            return ;
+        }
+
+        // You can retract the selection
+        if (Input.GetKeyDown(mBuildKeyCode)) {
+            mBlockAnimator.SetBool("IsSelected", false);
+            mBlockState = BlockState.eBuild;
+        }
+
+        //Use Gained Skills
+        if (Input.GetKeyDown(mSkill2KeyCode) && (hasGainedSkill == true))
+        {   
+            mBlockAnimator.SetBool("IsSelected", false);
+            TriggerGainedSkill();
+            mSkillButtons[mPlayerIndex].SetActive(false);
+            mBlockState = BlockState.eWait;
+        }
+
+        if (Input.GetKeyDown(mSkill1KeyCode)) {
+            mBlockAnimator.SetBool("IsSelected", false);
+            // TODO: Suck opponent's block
+            mBlockState = BlockState.eInitSuck;
+        }
+    }
+
+    private void ServiceInitSuckState() {
+        InitializeHit();
+        mBlockState = BlockState.eSuck;
+    }
+    private void ServiceSuckState() {
+        mPlayerAnimators[mPlayerIndex].SetBool("Suck", true);
+
+        mTime += mSuckSpeed * Time.smoothDeltaTime;
+
+        float x = Mathf.LerpUnclamped(mTargetBlockPos.x, mPlayerManager.getPlayerPos(mPlayerIndex).x, mTime);
+        float y = Mathf.LerpUnclamped(mTargetBlockPos.y, mPlayerManager.getPlayerPos(mPlayerIndex).y + 0.3f, mTime);
+        mTargetBlock.transform.position = new Vector3(x, y, 0);
+        
+        BlockBehaviour TargetBlockScript = mTargetBlock.GetComponent<BlockBehaviour>();
+        TargetBlockScript.targetCollisionObject = mPlayers[mPlayerIndex];
+        bool isDestroy = TargetBlockScript.isColli();
+        if (isDestroy) {
+            if (mPlayerIndex == 0) {
+                mBlockManagers[1].BeingHitBlockDestroy(null, mBlockManagers[1].GetHeight() - mTargetBlockIndex, true);
+            } else {
+                mBlockManagers[0].BeingHitBlockDestroy(null, mBlockManagers[0].GetHeight() - mTargetBlockIndex, true);
+            }
+            // mMusic.clip = Resources.Load<AudioClip>("music/Audio_Hit");
+            // mMusic.volume = 3.0f;
+            // mMusic.Play();
+            Debug.Log("Suck");
+            mCameraControll.CameraFocusOnBlock(mTargetBlock);
+            mBlockState = BlockState.eCombo;
+            mKirbyIsHungry[mPlayerIndex] = false;
+            mTime = 0;
+        }
+    }
+
     public void InitializeHit() {
 
         if (mPlayerIndex == 0) {
@@ -461,6 +602,7 @@ public partial class BlockListManager : MonoBehaviour
         mHitBlockPos = mHitBlock.transform.position;
         mTargetBlockPos = mTargetBlock.transform.position;
     }
+
     public void ServiceHitState() {
 
         mTime += mHitSpeed * Time.smoothDeltaTime;
@@ -497,8 +639,10 @@ public partial class BlockListManager : MonoBehaviour
             mTime = 0;
         }
     }
+
     public void ServiceComboState()
     {
+        Debug.Log("Combo");
         if (mPlayerIndex == 0)
         {
             mActiveManager = mBlockManagers[1];
@@ -544,7 +688,7 @@ public partial class BlockListManager : MonoBehaviour
                 mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, 3);
             } else {
                 Debug.Log("Build block color (SkillCast): " + mBlockColor);
-                mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, -1);
+                mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, mIsHitState, color);
                 mMusic.clip = Resources.Load<AudioClip>("music/Audio_Build");
                 mMusic.Play();
             }
