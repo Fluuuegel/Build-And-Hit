@@ -11,7 +11,7 @@ public partial class BlockListManager
     private float mSkillPossibility = 0.5f;
     private int[] mAIPlayerIndex = {1};
 
-    private bool ActiveAI()
+    public bool ActiveAI()
     {
         return AIEnabled = true;
     }

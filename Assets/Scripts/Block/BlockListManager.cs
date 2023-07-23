@@ -116,8 +116,6 @@ public partial class BlockListManager : MonoBehaviour
     
     void Start()
     {
-        // fortest
-        ActiveAI();
         //developer key
         BindDeveloperKey();
         // UI
