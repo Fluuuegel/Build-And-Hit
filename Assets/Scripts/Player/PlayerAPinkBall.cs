@@ -6,7 +6,7 @@ namespace Player
     public class PlayerAPinkBall : Player
     {
         private int kCD = 3;
-
+        
         private bool mCanRelease = false;
 
         private BlockBehaviour.BlockColourType mColour = BlockBehaviour.BlockColourType.eRed;
@@ -34,6 +34,7 @@ namespace Player
                     mAnimator.SetBool("Released", true);
                     BlockListManager blockListManager = skillInfo.GolbalBlockListManager;
                     blockListManager.ServiceBuildState(false, false, (int)mColour);
+                    //GameObject.Destroy(mPopUp);
                     mCanRelease = false;
                     mTimeUntilNextSkill = kCD;
                 }
@@ -44,6 +45,9 @@ namespace Player
                     mAnimator.SetBool("Released", false);
                     mCanRelease = true;
                     mTimeUntilNextSkill = 0;
+
+                    // Hint
+                    
                 }
             }
             else

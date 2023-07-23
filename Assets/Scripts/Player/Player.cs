@@ -14,6 +14,9 @@ namespace Player
         PlayerType mPlayerType;
 
         public Animator mAnimator;
+        
+        public Vector2 mPlayerPosition = new Vector2(0, 0);
+        public int mPlayerIndex = 0;
 
         public int mTimeUntilNextSkill = 0;
 
@@ -45,6 +48,16 @@ namespace Player
         public virtual void GetAnimator(Animator animator)
         {
             mAnimator = animator;
+        }
+
+        public virtual void GetPlayerIndex(int index)
+        {
+            mPlayerIndex = index;
+        }
+
+        public virtual void GetPlayerPosition(Vector2 position)
+        {
+            mPlayerPosition = position;
         }
 
         public virtual void SetColor(BlockBehaviour.BlockColourType color)
