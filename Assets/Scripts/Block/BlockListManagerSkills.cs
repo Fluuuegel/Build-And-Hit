@@ -100,6 +100,12 @@ public partial class BlockListManager : MonoBehaviour
     {
         if (TurnNow())
         {
+            if (mBlockManagers[0].GetHeight() > mBlockManagers[1].GetHeight())
+            {
+                GettingProb = 0.3f - (mBlockManagers[0].GetHeight() - mBlockManagers[1].GetHeight()) * 0.05f;
+                if (GettingProb < 0.05f)
+                { GettingProb = 0.05f; }
+            }
             if (mBlockManagers[0].GetHeight() < mBlockManagers[1].GetHeight())
             {
                 GettingProb = 0.3f + (mBlockManagers[1].GetHeight() - mBlockManagers[0].GetHeight()) * 0.05f;
@@ -110,6 +116,12 @@ public partial class BlockListManager : MonoBehaviour
         }
         else
         {
+            if (mBlockManagers[0].GetHeight() < mBlockManagers[1].GetHeight())
+            {
+                GettingProb = 0.3f - (mBlockManagers[1].GetHeight() - mBlockManagers[0].GetHeight()) * 0.05f;
+                if (GettingProb <0.05f)
+                { GettingProb = 0.05f; }
+            }
             if (mBlockManagers[0].GetHeight() > mBlockManagers[1].GetHeight())
             {
                 GettingProb = 0.3f + (mBlockManagers[0].GetHeight() - mBlockManagers[1].GetHeight()) * 0.05f;
