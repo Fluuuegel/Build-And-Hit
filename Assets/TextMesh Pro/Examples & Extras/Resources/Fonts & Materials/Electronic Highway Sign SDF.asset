@@ -149,6 +149,10 @@ MonoBehaviour:
     m_TabWidth: 88
   m_GlyphTable: []
   m_CharacterTable: []
+  - m_ElementType: 1
+    m_Unicode: 77
+    m_GlyphIndex: 48
+    m_Scale: 1
   m_AtlasTextures:
   - {fileID: 28981121099961358}
   m_AtlasTextureIndex: 0
@@ -158,8 +162,293 @@ MonoBehaviour:
   m_FreeGlyphRects:
   - m_X: 0
     m_Y: 0
+    m_Width: 98
+    m_Height: 36
+  - m_X: 98
+    m_Y: 0
+    m_Width: 98
+    m_Height: 130
+  - m_X: 0
+    m_Y: 36
+    m_Width: 98
+    m_Height: 130
+  - m_X: 0
+    m_Y: 166
+    m_Width: 98
+    m_Height: 130
+  - m_X: 0
+    m_Y: 296
+    m_Width: 98
+    m_Height: 130
+  - m_X: 0
+    m_Y: 426
+    m_Width: 98
+    m_Height: 130
+  - m_X: 0
+    m_Y: 556
+    m_Width: 98
+    m_Height: 130
+  - m_X: 0
+    m_Y: 686
+    m_Width: 98
+    m_Height: 130
+  - m_X: 0
+    m_Y: 816
+    m_Width: 98
+    m_Height: 130
+  - m_X: 196
+    m_Y: 0
+    m_Width: 98
+    m_Height: 130
+  - m_X: 294
+    m_Y: 0
+    m_Width: 51
+    m_Height: 98
+  - m_X: 345
+    m_Y: 0
+    m_Width: 98
+    m_Height: 130
+  - m_X: 443
+    m_Y: 0
+    m_Width: 98
+    m_Height: 130
+  - m_X: 541
+    m_Y: 0
+    m_Width: 98
+    m_Height: 130
+  - m_X: 639
+    m_Y: 0
+    m_Width: 98
+    m_Height: 130
+  - m_X: 737
+    m_Y: 0
+    m_Width: 98
+    m_Height: 130
+  - m_X: 835
+    m_Y: 0
+    m_Width: 98
+    m_Height: 130
+  - m_X: 98
+    m_Y: 130
+    m_Width: 98
+    m_Height: 130
+  - m_X: 98
+    m_Y: 260
+    m_Width: 98
+    m_Height: 130
+  - m_X: 98
+    m_Y: 390
+    m_Width: 98
+    m_Height: 130
+  - m_X: 98
+    m_Y: 520
+    m_Width: 98
+    m_Height: 130
+  - m_X: 933
+    m_Y: 0
+    m_Width: 67
+    m_Height: 130
+  - m_X: 98
+    m_Y: 650
+    m_Width: 98
+    m_Height: 130
+  - m_X: 98
+    m_Y: 780
+    m_Width: 98
+    m_Height: 130
+  - m_X: 196
+    m_Y: 130
+    m_Width: 98
+    m_Height: 130
+  - m_X: 294
+    m_Y: 130
+    m_Width: 98
+    m_Height: 130
+  - m_X: 392
+    m_Y: 130
+    m_Width: 36
+    m_Height: 130
+  - m_X: 428
+    m_Y: 130
+    m_Width: 98
+    m_Height: 130
+  - m_X: 526
+    m_Y: 130
+    m_Width: 98
+    m_Height: 130
+  - m_X: 624
+    m_Y: 130
+    m_Width: 98
+    m_Height: 130
+  - m_X: 722
+    m_Y: 130
+    m_Width: 98
+    m_Height: 130
+  - m_X: 820
+    m_Y: 130
+    m_Width: 98
+    m_Height: 130
+  - m_X: 0
+    m_Y: 946
+    m_Width: 36
+    m_Height: 68
+  - m_X: 918
+    m_Y: 130
+    m_Width: 98
+    m_Height: 130
+  - m_X: 196
+    m_Y: 260
+    m_Width: 98
+    m_Height: 130
+  - m_X: 196
+    m_Y: 390
+    m_Width: 67
+    m_Height: 130
+  - m_X: 196
+    m_Y: 520
+    m_Width: 98
+    m_Height: 130
+  - m_X: 263
+    m_Y: 390
+    m_Width: 67
+    m_Height: 130
+  - m_X: 98
+    m_Y: 910
+    m_Width: 51
+    m_Height: 83
+  - m_X: 294
+    m_Y: 260
+    m_Width: 98
+    m_Height: 130
+  - m_X: 196
+    m_Y: 650
+    m_Width: 83
+    m_Height: 130
+  - m_X: 196
+    m_Y: 780
+    m_Width: 67
+    m_Height: 130
+  - m_X: 263
+    m_Y: 780
+    m_Width: 98
+    m_Height: 130
+  - m_X: 279
+    m_Y: 650
+    m_Width: 98
+    m_Height: 130
+  - m_X: 294
+    m_Y: 520
+    m_Width: 98
+    m_Height: 130
+  - m_X: 330
+    m_Y: 390
+    m_Width: 98
+    m_Height: 130
+  - m_X: 392
+    m_Y: 260
+    m_Width: 98
+    m_Height: 130
+  - m_X: 361
+    m_Y: 780
+    m_Width: 98
+    m_Height: 130
+  - m_X: 377
+    m_Y: 650
+    m_Width: 98
+    m_Height: 130
+  - m_X: 392
+    m_Y: 520
+    m_Width: 98
+    m_Height: 130
+  - m_X: 428
+    m_Y: 390
+    m_Width: 67
+    m_Height: 130
+  - m_X: 490
+    m_Y: 260
+    m_Width: 98
+    m_Height: 130
+  - m_X: 459
+    m_Y: 780
+    m_Width: 98
+    m_Height: 130
+  - m_X: 475
+    m_Y: 650
+    m_Width: 98
+    m_Height: 130
+  - m_X: 490
+    m_Y: 520
+    m_Width: 98
+    m_Height: 130
+  - m_X: 495
+    m_Y: 390
+    m_Width: 98
+    m_Height: 130
+  - m_X: 588
+    m_Y: 260
+    m_Width: 98
+    m_Height: 130
+  - m_X: 557
+    m_Y: 780
+    m_Width: 98
+    m_Height: 130
+  - m_X: 573
+    m_Y: 650
+    m_Width: 98
+    m_Height: 130
+  - m_X: 588
+    m_Y: 520
+    m_Width: 98
+    m_Height: 130
+  - m_X: 593
+    m_Y: 390
+    m_Width: 98
+    m_Height: 130
+  - m_X: 686
+    m_Y: 260
+    m_Width: 98
+    m_Height: 130
+  m_FreeGlyphRects:
+  - m_X: 294
+    m_Y: 98
+    m_Width: 51
+    m_Height: 32
+  - m_X: 0
+    m_Y: 1014
     m_Width: 1023
     m_Height: 1023
+  - m_X: 149
+    m_Y: 910
+    m_Width: 874
+    m_Height: 113
+  - m_X: 36
+    m_Y: 993
+    m_Width: 987
+    m_Height: 30
+  - m_X: 36
+    m_Y: 946
+    m_Width: 62
+    m_Height: 77
+  - m_X: 655
+    m_Y: 780
+    m_Width: 368
+    m_Height: 243
+  - m_X: 671
+    m_Y: 650
+    m_Width: 352
+    m_Height: 373
+  - m_X: 686
+    m_Y: 520
+    m_Width: 337
+    m_Height: 503
+  - m_X: 691
+    m_Y: 390
+    m_Width: 332
+    m_Height: 633
+  - m_X: 784
+    m_Y: 260
+    m_Width: 239
+    m_Height: 763
   m_fontInfo:
     Name: Electronic Highway Sign
     PointSize: 144
