@@ -27,6 +27,8 @@ public partial class BlockListManager : MonoBehaviour
 
     public GameObject[] mWinImages = new GameObject[2];
 
+    public GameObject mBlockHeight = null;
+
     public GameObject mGettingSkillHint = null;
     private TextMeshProUGUI GainedSkillHintText;
 
@@ -51,6 +53,7 @@ public partial class BlockListManager : MonoBehaviour
     private const int kInitBlockIndex = 12;
     private const int kPlayerNum = 2;
 
+    private int maxTurn = 21;
     private int mTurnCnt = 21;
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
@@ -76,6 +79,8 @@ public partial class BlockListManager : MonoBehaviour
     // Audio
     private GameObject mAudioObj = null;
     private AudioSource mMusic = null;
+    private GameObject mBGMObj = null;
+    private AudioSource mBGM = null;
 
     // Hit
     private GameObject mHitBlock;
@@ -95,12 +100,15 @@ public partial class BlockListManager : MonoBehaviour
     private float GettingProb = 0f;
 
     //for user control
-    KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey;
+    KeyCode mHitKeyCode, mBuildKeyCode, mSkill1KeyCode, mSkill2KeyCode,mUpBlockKey, mDownBlockKey, mRefreshKey;
+    
+    //for refresh the initial tower
+    private bool[] canRefresh = {true, true};
     
     void Start()
     {
         // UI
-        
+        mBlockHeight = GameObject.Find("Canvas/BlockHeight");
         mCameraControll = FindObjectOfType<CameraControll>();
         mEndCanvas = GameObject.Find("EndCanvas");
         mEndCanvas.SetActive(false);
@@ -127,9 +135,8 @@ public partial class BlockListManager : MonoBehaviour
                 Debug.Log("Player " + i + " is null");
             }
         }
-
-        for (int i = 0; i < kInitBlockIndex; i++) {
-            for (int j = 0; j < kPlayerNum; j++) {
+        for (int j = 0; j < kPlayerNum; j++) {
+            for (int i = 0; i < kInitBlockIndex; i++) {
                 if (j == 1) {
                     if (i == kInitBlockIndex - 1) {
                         mBlockManagers[j].BuildOneBlock(j, false, 0, true);
@@ -142,8 +149,9 @@ public partial class BlockListManager : MonoBehaviour
                         continue;
                     }
                 }
-                mBlockManagers[j].BuildOneBlock(j, false, (int)Random.Range(i,i*j*j*j*j*j+20)%4-1, true);
+                mBlockManagers[j].BuildOneBlock(j, false, (int)GenRandomColour(), true);
             }
+            ResetRandom();
         }
 
         mGettingSkillHint = GameObject.Find("Canvas/GainedSkillsHint");
@@ -152,6 +160,8 @@ public partial class BlockListManager : MonoBehaviour
         // Audio
         mAudioObj = GameObject.Find("AudioObject");
         mMusic = mAudioObj.GetComponent<AudioSource>();
+        mBGMObj = GameObject.Find("BattleBGM");
+        mBGM = mBGMObj.GetComponent<AudioSource>();
     }
     void Update()
     {
@@ -197,6 +207,7 @@ public partial class BlockListManager : MonoBehaviour
         int winnerIdnex = mPlayerIndex;
         if (JudgeVictory(mTurnCnt,ref winnerIdnex))
         {
+            RefreshBlockHeight();
             CameraEnd(mPlayers[winnerIdnex], mPlayers[1 - winnerIdnex]);
         }
         else
@@ -246,6 +257,7 @@ public partial class BlockListManager : MonoBehaviour
             }
 
             mBlockState = BlockState.eSkill;
+            RefreshBlockHeight();
         }
     }
     private void ServiceSkillState() {
@@ -302,8 +314,10 @@ public partial class BlockListManager : MonoBehaviour
 
         mBlockState = BlockState.eWait;
     }
-    private void ServiceWaitState() {
-
+    private void ServiceWaitState()
+    {
+        TriggerRefresh();
+        
         if (Input.GetKeyDown(mBuildKeyCode)) {
             mBlockState = BlockState.eBuild;
             return ;
@@ -362,6 +376,7 @@ public partial class BlockListManager : MonoBehaviour
         
     }
     private void ServiceSelectHitState() {
+        TriggerRefresh(false);
         PlayerBehaviour script = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>();
         int VisionZone = script.VisionRange();
         if (Input.GetKeyDown(mDownBlockKey) && mTargetBlockIndex < mBlockManagers[1 - mPlayerIndex].GetHeight()) {
@@ -507,6 +522,7 @@ public partial class BlockListManager : MonoBehaviour
         }
     }
     public void ServiceBuildState(bool noSkillCast = true, bool buildSlimeBlock = false) {
+        TriggerRefresh();
         if (noSkillCast)
         {
             string msg = "Build block color: " + mBlockColor;
@@ -535,6 +551,7 @@ public partial class BlockListManager : MonoBehaviour
                 mMusic.Play();
             }
         }
+        RefreshBlockHeight();
     }
     public void ServiceEndState() {
     }

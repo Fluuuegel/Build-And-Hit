@@ -40,6 +40,9 @@ public partial class BlockListManager : MonoBehaviour
             }
             mWinImages[0].SetActive(true);
             mWinImages[1].SetActive(false);
+            mBGM.Stop();
+            mMusic.clip = Resources.Load<AudioClip>("music/Audio_Win");
+            mMusic.Play();
             mBlockState = BlockState.eEnd;
             return true;
         }
@@ -58,6 +61,9 @@ public partial class BlockListManager : MonoBehaviour
                 }
                 mWinImages[i].SetActive(false);
                 mWinImages[1 - i].SetActive(true);
+                mMusic.Stop();
+                mMusic.clip = Resources.Load<AudioClip>("music/Audio_Win");
+                mMusic.Play();
                 mBlockState = BlockState.eEnd;
                 return true;
               }
@@ -101,6 +107,7 @@ public partial class BlockListManager : MonoBehaviour
             mSkill2KeyCode = KeyCode.E;
             mUpBlockKey = KeyCode.W;
             mDownBlockKey = KeyCode.S;
+            mRefreshKey = KeyCode.R;
         }
 
         if (mPlayerIndex == 1)
@@ -111,6 +118,7 @@ public partial class BlockListManager : MonoBehaviour
             mSkill2KeyCode = KeyCode.Period;
             mUpBlockKey = KeyCode.UpArrow;
             mDownBlockKey = KeyCode.DownArrow;
+            mRefreshKey = KeyCode.Slash;
         }
     }
     
@@ -175,7 +183,7 @@ public partial class BlockListManager : MonoBehaviour
         script.SkillCast(skillInfo);
     }
     
-    #endregion
+
     
     /*
      * @SkillInfo
@@ -193,6 +201,7 @@ public partial class BlockListManager : MonoBehaviour
         cur.GolbalBlockListManager = this;
         return cur;
     }
+    #endregion
 
     #region Camera
     public void CameraEffect(GameObject player)
@@ -228,6 +237,7 @@ public partial class BlockListManager : MonoBehaviour
     }
     #endregion
 
+    #region UI
     private void DisplayLastStandUI()
     {
         mLastStandUI[mPlayerIndex].SetActive(true);
@@ -265,4 +275,45 @@ public partial class BlockListManager : MonoBehaviour
         }
         countdown.text = $"Round Left: {mTurnCnt}";
     }
+
+    private bool CanRefreshTower(int playerIndex)
+    {
+        return (canRefresh[playerIndex] && (maxTurn - mTurnCnt) <= 2);
+    }
+
+    private bool TriggerRefresh(bool haltAnimation = true)
+    {
+        
+        if(Input.GetKeyDown(mRefreshKey) && CanRefreshTower(mPlayerIndex))
+        {
+            if(haltAnimation)
+                mBlockAnimator.SetBool("IsSelected", false);
+            DyeOneBlockTowerRandomly(mPlayerIndex); 
+            canRefresh[mPlayerIndex] = false;
+            return true;
+        }
+        return false;
+    }
+
+    private void RefreshBlockHeight()
+    {
+        int[] blockHeight = new int[mBlockManagers.Length];
+        for (int i = 0; i < mBlockManagers.Length; i++)
+        {
+            blockHeight[i] = GetPlayerBlockHeight(i);
+        }
+        if (blockHeight[0] <= 3 )
+        {
+            mBlockHeight.GetComponent<TextMeshProUGUI>().text = $"<color=red>{blockHeight[0]}</color>       :       {blockHeight[1]}";
+        }
+        else if (blockHeight[1] <= 3 )
+        {
+            mBlockHeight.GetComponent<TextMeshProUGUI>().text = $"{blockHeight[0]}       :       <color=red>{blockHeight[1]}</color>";
+        }
+        else
+        {
+            mBlockHeight.GetComponent<TextMeshProUGUI>().text = $"{blockHeight[0]}       :       {blockHeight[1]}";
+        }
+    }
+    #endregion UI
 }
