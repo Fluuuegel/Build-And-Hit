@@ -57,8 +57,10 @@ public partial class BlockListManager
             }
             if (Input.GetKeyDown(mSpawnSlimeBlockKey))
             {
-                
+                mBlockManagers[mPlayerIndex].BuildOneBlock(mPlayerIndex, false, 3, false);
             }
         }
+        RefreshBlockHeight();
     }
+    
 }

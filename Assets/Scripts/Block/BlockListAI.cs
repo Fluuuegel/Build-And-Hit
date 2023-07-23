@@ -11,6 +11,10 @@ public partial class BlockListManager
     private float mSkillPossibility = 0.5f;
     private int[] mAIPlayerIndex = {1};
 
+    private bool ActiveAI()
+    {
+        return AIEnabled = true;
+    }
     private bool IsAITurn()
     {
         return mAIPlayerIndex.Contains(mPlayerIndex);
@@ -31,10 +35,18 @@ public partial class BlockListManager
     }
     private int AIAttackTarget()
     {
+        int height = mBlockManagers[1 - mPlayerIndex].GetHeight();
         int vision = curPlayer.VisionRange();
         int BestHit = -1;
-        for(int i = 1; i < vision; i++)
+        int maxDestroy = 0;
+        for(int i = 1; i <= vision; i++)
         {
+            if (maxDestroy < CalculateDestroyByHitThisBlock(height - i))
+            {
+                maxDestroy = CalculateDestroyByHitThisBlock(height - i);
+                BestHit = i;
+            }
+            
         }
         if(BestHit != -1)
         {
