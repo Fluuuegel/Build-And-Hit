@@ -63,6 +63,7 @@ public partial class BlockListManager : MonoBehaviour
     private bool mIsHitState = false;
 
     private bool[] mKirbyIsHungry = new bool[2] {true, true};
+
     private bool hasGainedSkill = false;
     private bool hasCharacterSkill = false;
     public float mHitSpeed = 2f;
@@ -535,16 +536,18 @@ public partial class BlockListManager : MonoBehaviour
 
         // You can retract the selection
         if (Input.GetKeyDown(mBuildKeyCode)) {
+            curPlayer.Recover();
             mBlockAnimator.SetBool("IsSelected", false);
-            mBlockAnimator.SetBool("Suck", false);
+            mPlayerAnimators[mPlayerIndex].SetBool("Suck", false);
             mBlockState = BlockState.eBuild;
         }
 
         //Use Gained Skills
         if (Input.GetKeyDown(mSkill2KeyCode) && (hasGainedSkill == true))
         {   
+            curPlayer.Recover();
             mBlockAnimator.SetBool("IsSelected", false);
-            mBlockAnimator.SetBool("Suck", false);
+            mPlayerAnimators[mPlayerIndex].SetBool("Suck", false);
             TriggerGainedSkill();
             mSkillButtons[mPlayerIndex].SetActive(false);
             mBlockState = BlockState.eWait;
@@ -563,7 +566,7 @@ public partial class BlockListManager : MonoBehaviour
     }
     private void ServiceSuckState() {
 
-        curPlayer.GetColor(mTargetBlock.GetComponent<BlockBehaviour>().GetBlockColour());
+        curPlayer.SetColor(mTargetBlock.GetComponent<BlockBehaviour>().GetBlockColour());
 
         mPlayerAnimators[mPlayerIndex].SetBool("Suck", true);
 

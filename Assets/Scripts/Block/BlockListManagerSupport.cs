@@ -182,9 +182,7 @@ public partial class BlockListManager : MonoBehaviour
         SkillInfo skillInfo = WriteCurrentSkillInfo();
         script.SkillCast(skillInfo);
     }
-    
-
-    
+        
     /*
      * @SkillInfo
      * write all information needed for casting a skill

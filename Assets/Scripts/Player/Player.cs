@@ -47,7 +47,7 @@ namespace Player
             mAnimator = animator;
         }
 
-        public virtual void GetColor(BlockBehaviour.BlockColourType color)
+        public virtual void SetColor(BlockBehaviour.BlockColourType color)
         {
             return;
         }
@@ -56,6 +56,9 @@ namespace Player
             {
                 mTimeUntilNextSkill--;
             }
+        }
+        public virtual void Recover() {
+            return;
         }
         
         public static Player MakeNewPlayer(string type)
