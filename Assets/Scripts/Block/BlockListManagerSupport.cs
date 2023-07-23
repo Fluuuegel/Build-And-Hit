@@ -251,7 +251,7 @@ public partial class BlockListManager : MonoBehaviour
         }
     }
 
-    private void ModifyCDValue()
+    private void ModifyCDUI()
     {
         PlayerBehaviour playerBehaviour = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>();
         Player.Player curPlayer = playerBehaviour.GetPlayer();

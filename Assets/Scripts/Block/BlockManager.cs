@@ -233,19 +233,18 @@ public partial class BlockManager
         return b1.GetBlockColour() == b2.GetBlockColour();
     }
 
-    public void BeingHitBlockDestroy(GameObject hitBlock, int index = 0)
+    public void BeingHitBlockDestroy(GameObject hitBlock, int index = 0, bool isSuck = false)
     {
-        if (index >= mBlocks.Count || !hitBlock)
+        if (index >= mBlocks.Count || (!hitBlock && !isSuck))
         {
             return;
         }
         
         int startDeleteIndex = index;
         int blocksToDestroyCnt = 1;
-        if (!BlockManager.SameColor(hitBlock, mBlocks[index]))
+        if (isSuck || !BlockManager.SameColor(hitBlock, mBlocks[index]))
         {
             DestroyOneBlock(index);
-            
         }
         else
         {
@@ -271,6 +270,7 @@ public partial class BlockManager
         }
 
         targetBlock1 = GetBlockAt(startDeleteIndex - 1);
+        Debug.Log("targetBlock1: " + (startDeleteIndex - 1));
         targetBlock2 = GetBlockAt(startDeleteIndex);
         setComboLowerBound(startDeleteIndex -1);
     }
