@@ -194,7 +194,7 @@ public partial class BlockListManager : MonoBehaviour
         UpdateFSM();
     }
     private void UpdateFSM() {
-        Debug.Log(mBlockState);
+        //Debug.Log(mBlockState);
         switch (mBlockState)
         {
             case BlockState.eIdle:
