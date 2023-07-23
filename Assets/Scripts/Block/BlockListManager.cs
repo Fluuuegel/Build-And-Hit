@@ -536,6 +536,7 @@ public partial class BlockListManager : MonoBehaviour
         // You can retract the selection
         if (Input.GetKeyDown(mBuildKeyCode)) {
             mBlockAnimator.SetBool("IsSelected", false);
+            mBlockAnimator.SetBool("Suck", false);
             mBlockState = BlockState.eBuild;
         }
 
@@ -543,6 +544,7 @@ public partial class BlockListManager : MonoBehaviour
         if (Input.GetKeyDown(mSkill2KeyCode) && (hasGainedSkill == true))
         {   
             mBlockAnimator.SetBool("IsSelected", false);
+            mBlockAnimator.SetBool("Suck", false);
             TriggerGainedSkill();
             mSkillButtons[mPlayerIndex].SetActive(false);
             mBlockState = BlockState.eWait;
@@ -562,7 +564,7 @@ public partial class BlockListManager : MonoBehaviour
     private void ServiceSuckState() {
 
         curPlayer.GetColor(mTargetBlock.GetComponent<BlockBehaviour>().GetBlockColour());
-        
+
         mPlayerAnimators[mPlayerIndex].SetBool("Suck", true);
 
         mTime += mSuckSpeed * Time.smoothDeltaTime;
