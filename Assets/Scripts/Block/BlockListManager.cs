@@ -107,6 +107,8 @@ public partial class BlockListManager : MonoBehaviour
     
     void Start()
     {
+        //developer key
+        BindDeveloperKey();
         // UI
         mBlockHeight = GameObject.Find("Canvas/BlockHeight");
         mCameraControll = FindObjectOfType<CameraControll>();
@@ -317,7 +319,6 @@ public partial class BlockListManager : MonoBehaviour
     private void ServiceWaitState()
     {
         TriggerRefresh();
-        
         if (Input.GetKeyDown(mBuildKeyCode)) {
             mBlockState = BlockState.eBuild;
             return ;
@@ -329,7 +330,6 @@ public partial class BlockListManager : MonoBehaviour
             
             if (mHitCoolDown[mPlayerIndex] <= 0)
             {
-                
                 mTargetBlockIndex = 1;
                 // Initialize block blink
                 mTargetBlock = mBlockManagers[1 - mPlayerIndex]
@@ -449,7 +449,6 @@ public partial class BlockListManager : MonoBehaviour
             }
         }
     }
-
     public void InitializeHit() {
 
         if (mPlayerIndex == 0) {
@@ -462,7 +461,6 @@ public partial class BlockListManager : MonoBehaviour
         mHitBlockPos = mHitBlock.transform.position;
         mTargetBlockPos = mTargetBlock.transform.position;
     }
-
     public void ServiceHitState() {
 
         mTime += mHitSpeed * Time.smoothDeltaTime;
@@ -553,6 +551,9 @@ public partial class BlockListManager : MonoBehaviour
         }
         RefreshBlockHeight();
     }
-    public void ServiceEndState() {
+    public void ServiceEndState()
+    {
+        mBlockState = BlockState.eIdle;
     }
+    
 }

@@ -286,7 +286,7 @@ public partial class BlockListManager : MonoBehaviour
         
         if(Input.GetKeyDown(mRefreshKey) && CanRefreshTower(mPlayerIndex))
         {
-            if(haltAnimation)
+            if(haltAnimation && mBlockAnimator != null)
                 mBlockAnimator.SetBool("IsSelected", false);
             DyeOneBlockTowerRandomly(mPlayerIndex); 
             canRefresh[mPlayerIndex] = false;
