@@ -84,6 +84,8 @@ public partial class BlockListManager : MonoBehaviour
 
     private GameObject[] mUIOfPlayers = new GameObject[2];
 
+    private GameObject[] mPopUp = new GameObject[2];
+
     // Audio
     private GameObject mAudioObj = null;
     private AudioSource mMusic = null;
@@ -149,6 +151,7 @@ public partial class BlockListManager : MonoBehaviour
 
             mPlayerAnimators[i] = mPlayers[i].GetComponent<PlayerBehaviour>().animator;
             mPlayers[i].GetComponent<PlayerBehaviour>().GetPlayer().GetAnimator(mPlayerAnimators[i]);
+            mPlayers[i].GetComponent<PlayerBehaviour>().GetPlayer().GetPlayerIndex(i);
 
             if (mUIOfPlayers[i] == null)
             {
@@ -248,6 +251,22 @@ public partial class BlockListManager : MonoBehaviour
             RoundRefresh();
             curPlayer.IncreaseTimeUntilNextSkill();
             ModifyCDUI();
+            
+            curPlayer.GetPlayerPosition(mPlayerManager.getPlayerPos(mPlayerIndex)); // Not used yet
+            for (int i = 0; i < kPlayerNum; i++)
+            {
+                if (mPopUp[i] != null)
+                {
+                    if (i == 0) {
+                        Vector3 pos = mPlayerManager.getPlayerPos(i);
+                        mPopUp[i].transform.position = new Vector3(pos.x - 2.5f, pos.y + 0.5f, 0);
+                    } else {
+                        Vector3 pos = mPlayerManager.getPlayerPos(i);
+                        mPopUp[i].transform.position = new Vector3(pos.x + 2.5f, pos.y + 0.5f, 0);
+                    }
+                }
+            }
+
             if (mBlockManagers[mPlayerIndex].LastStand())
             {
                 DisplayLastStandUI();
@@ -405,6 +424,7 @@ public partial class BlockListManager : MonoBehaviour
                         mBlockState = BlockState.eSelectSuck;
                     } else {
                         mKirbyIsHungry[mPlayerIndex] = true;
+                        GameObject.Destroy(mPopUp[mPlayerIndex]);
                     }
                 }
             }
@@ -516,6 +536,7 @@ public partial class BlockListManager : MonoBehaviour
                         mBlockState = BlockState.eSelectSuck;
                     } else {
                         mKirbyIsHungry[mPlayerIndex] = true;
+                        GameObject.Destroy(mPopUp[mPlayerIndex]);
                         mBlockState = BlockState.eWait;
                     }
                 }
@@ -593,8 +614,10 @@ public partial class BlockListManager : MonoBehaviour
     }
     private void ServiceSuckState() {
 
-        curPlayer.SetColor(mTargetBlock.GetComponent<BlockBehaviour>().GetBlockColour());
-        
+        BlockColor colour = mTargetBlock.GetComponent<BlockBehaviour>().GetBlockColour();
+        Vector3 pos = mTargetBlock.transform.position;
+        curPlayer.SetColor(colour);
+
         mPlayerAnimators[mPlayerIndex].SetBool("Suck", true);
 
         mTime += mSuckSpeed * Time.smoothDeltaTime;
@@ -620,6 +643,43 @@ public partial class BlockListManager : MonoBehaviour
             mBlockState = BlockState.eCombo;
             mKirbyIsHungry[mPlayerIndex] = false;
             mTime = 0;
+
+            // Pop up
+            if (mPlayerIndex == 0) {
+                        switch (colour)
+                        {
+                            case BlockBehaviour.BlockColourType.eRed:
+                                mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatRedL1")) as GameObject;
+                                break;
+                            case BlockBehaviour.BlockColourType.eGreen:
+                                mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatGreenL1")) as GameObject;
+                                break;
+                            case BlockBehaviour.BlockColourType.eBlue:
+                                mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatBlueL1")) as GameObject;
+                                break;
+                            case BlockBehaviour.BlockColourType.eSlime:
+                                mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatRedL1")) as GameObject;
+                                break;
+                        }
+                        mPopUp[mPlayerIndex].transform.position = new Vector3(pos.x - 2.5f, pos.y + 0.5f, 0);
+                    } else {
+                        switch (colour)
+                        {
+                            case BlockBehaviour.BlockColourType.eRed:
+                                mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatRedR1")) as GameObject;
+                                break;
+                            case BlockBehaviour.BlockColourType.eGreen:
+                                mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatGreenR1")) as GameObject;
+                                break;
+                            case BlockBehaviour.BlockColourType.eBlue:
+                                mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatBlueR1")) as GameObject;
+                                break;
+                            case BlockBehaviour.BlockColourType.eSlime:
+                                mPopUp[mPlayerIndex] = GameObject.Instantiate(Resources.Load("Prefabs/EatRedR1")) as GameObject;
+                                break;
+                        }
+                        mPopUp[mPlayerIndex].transform.position = new Vector3(pos.x + 2.5f, pos.y + 0.5f, 0);
+                    }
         }
     }
 
