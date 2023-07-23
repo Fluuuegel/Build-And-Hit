@@ -155,7 +155,7 @@ SortingGroup:
   m_GameObject: {fileID: 6186385690629784779}
   m_Enabled: 1
   m_SortingLayerID: 694436495
-  m_SortingLayer: 2
+  m_SortingLayer: 0
   m_SortingOrder: 0
 --- !u!198 &6186385690629784781
 ParticleSystem:
@@ -5024,11 +5024,11 @@ BoxCollider2D:
   m_GameObject: {fileID: 6186385690629784779}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 24b3254d7c8cdf94587ab4dda60760ef, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.0015659332, y: -0.026988685}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -5039,5 +5039,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.03, y: 0.52}
+  m_Size: {x: 1.0908389, y: 0.55502737}
   m_EdgeRadius: 0

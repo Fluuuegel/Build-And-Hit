@@ -238,6 +238,7 @@ public partial class BlockListManager : MonoBehaviour
         {
             RefreshBlockHeight();
             CameraEnd(mPlayers[winnerIdnex], mPlayers[1 - winnerIdnex]);
+            mTurnCnt = 0;
         }
         else
         {
@@ -333,7 +334,7 @@ public partial class BlockListManager : MonoBehaviour
     private void ServiceWaitState()
     {
         TriggerRefresh();
-        
+        DeveloperModeUpdate();
         if (Input.GetKeyDown(mBuildKeyCode)) {
             mBlockState = BlockState.eBuild;
             return ;
@@ -663,7 +664,7 @@ public partial class BlockListManager : MonoBehaviour
             mTime = 0;
         }
     }
-    public void ServiceBuildState(bool noSkillCast = true, bool buildSlimeBlock = false) {
+    public void ServiceBuildState(bool noSkillCast = true, bool buildSlimeBlock = false, int color = -1) {
         TriggerRefresh();
         if (noSkillCast)
         {
@@ -697,7 +698,6 @@ public partial class BlockListManager : MonoBehaviour
     }
     public void ServiceEndState()
     {
-        mBlockState = BlockState.eIdle;
     }
     
 }

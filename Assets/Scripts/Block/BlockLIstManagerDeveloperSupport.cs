@@ -4,7 +4,7 @@ public partial class BlockListManager
 {
     KeyCode mTotallyDestroyKey, mDyeTowerSameColorKey /*red for now*/, mSpawnRedBlockKey, mSpawnBlueBlockKey, mSpawnGreenBlockKey, mSpawnSlimeBlockKey;
     private int DyeColor = 0;
-    public bool DeveloperMode { get; private set; } = false;       
+    public bool DeveloperMode { get; private set; } = true;       
 
     private void BindDeveloperKey()
     {
