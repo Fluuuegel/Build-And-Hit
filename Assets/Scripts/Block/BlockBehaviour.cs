@@ -86,7 +86,7 @@ public class BlockBehaviour : MonoBehaviour
         if (mBlockManager.IsTargetBlock(this.gameObject, collision.gameObject))
         {
             mBlockManager.TargetBlockCollided();
-            Debug.Log("2 target collided");
+            //Debug.Log("2 target collided");
         }
     }
 
@@ -94,7 +94,7 @@ public class BlockBehaviour : MonoBehaviour
          if (mBlockManager.IsTargetBlock(this.gameObject, collision.gameObject))
         {
             mBlockManager.TargetBlockCollided();
-            Debug.Log("2 target stay collided");
+           // Debug.Log("2 target stay collided");
         }
     }
 

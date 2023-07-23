@@ -116,6 +116,10 @@ public partial class BlockListManager : MonoBehaviour
     
     void Start()
     {
+        // fortest
+        ActiveAI();
+        //developer key
+        BindDeveloperKey();
         // UI
         mBlockHeight = GameObject.Find("Canvas/BlockHeight");
         mCameraControll = FindObjectOfType<CameraControll>();
@@ -186,6 +190,7 @@ public partial class BlockListManager : MonoBehaviour
         UpdateFSM();
     }
     private void UpdateFSM() {
+        Debug.Log(mBlockState);
         switch (mBlockState)
         {
             case BlockState.eIdle:
@@ -228,7 +233,7 @@ public partial class BlockListManager : MonoBehaviour
         }
     }
     private void ServiceIdleState() {
-
+        StartAITimer();
         GainedSkillHintText.text = null;
         mTurnCnt--;
         DisplayCountDown();
@@ -237,6 +242,7 @@ public partial class BlockListManager : MonoBehaviour
         {
             RefreshBlockHeight();
             CameraEnd(mPlayers[winnerIdnex], mPlayers[1 - winnerIdnex]);
+            mTurnCnt = 0;
         }
         else
         {
@@ -332,14 +338,17 @@ public partial class BlockListManager : MonoBehaviour
     private void ServiceWaitState()
     {
         TriggerRefresh();
+        DeveloperModeUpdate();
         
-        if (Input.GetKeyDown(mBuildKeyCode)) {
+        if (Input.GetKeyDown(mBuildKeyCode) || AITriggerBuild()) {
             mBlockState = BlockState.eBuild;
             return ;
         } 
 
         // Only if the player has blocks, can he be hit
-        if (Input.GetKeyDown(mHitKeyCode) && (((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() > 0) || ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() > 0))) 
+        if ((Input.GetKeyDown(mHitKeyCode) && ((mPlayerIndex == 0) && mBlockManagers[1].GetHeight() > 0) || 
+                                              ((mPlayerIndex == 1) && mBlockManagers[0].GetHeight() > 0))||
+                                              AITriggerHit())
         {
             
             if (mHitCoolDown[mPlayerIndex] <= 0)
@@ -423,7 +432,7 @@ public partial class BlockListManager : MonoBehaviour
             mBlockAnimator.SetBool("IsSelected", true);
 
             mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
-            Debug.Log(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+//            Debug.Log(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
             return ;
         }
 
@@ -438,11 +447,12 @@ public partial class BlockListManager : MonoBehaviour
             mBlockAnimator.SetBool("IsSelected", true);
 
             mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
-            Debug.Log(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+//            Debug.Log(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
             return ;
         }
-
-        if (Input.GetKeyDown(mHitKeyCode)) {
+        
+        if (Input.GetKeyDown(mHitKeyCode))
+        {
             mCameraControll.CameraFocusOnBlock(mTargetBlock);
             mIsHitState = true;
             mBlockState = BlockState.eBuild;
@@ -450,10 +460,25 @@ public partial class BlockListManager : MonoBehaviour
         }
 
         // You can retract the selection
-        if (Input.GetKeyDown(mBuildKeyCode)) {
+        if (Input.GetKeyDown(mBuildKeyCode) || AITriggerBuild()) {
             mBlockAnimator.SetBool("IsSelected", false);
             mBlockState = BlockState.eBuild;
         }
+        
+        if (AITriggerHit())
+        {
+            mBlockAnimator.SetBool("IsSelected", false);
+            int AITarget = AIAttackTarget();
+            mTargetBlockIndex =  AITarget;
+            //mTargetBlock = mBlockManagers[0].GetBlockAt(mTargetBlockIndex);
+            Debug.Log("In select state AI target block: " + mTargetBlockIndex);
+            mCameraControll.CameraFocusOnBlock(mTargetBlock);
+            mIsHitState = true;
+            mBlockState = BlockState.eBuild;
+            return ;
+        }
+        
+        
 
         //Use Gained Skills
         if (Input.GetKeyDown(mSkill2KeyCode) && (hasGainedSkill == true))
@@ -631,6 +656,8 @@ public partial class BlockListManager : MonoBehaviour
                 mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1); // P1: Cur player
 
                 mCameraControll.CameraFocusOnBlock(mTargetBlock);
+
+                
             } else {
                 GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
                 mBlockManagers[0].BeingHitBlockDestroy(bullet,mBlockManagers[0].GetHeight() - mTargetBlockIndex);
@@ -646,7 +673,7 @@ public partial class BlockListManager : MonoBehaviour
 
     public void ServiceComboState()
     {
-        Debug.Log("Combo");
+//        Debug.Log("Combo");
         if (mPlayerIndex == 0)
         {
             mActiveManager = mBlockManagers[1];
@@ -658,7 +685,7 @@ public partial class BlockListManager : MonoBehaviour
 
         if (mActiveManager.UpdateComboState())
         {
-            Debug.Log("Combo done");
+//            Debug.Log("Combo done");
             mHitCoolDown[mPlayerIndex] = kHitCoolDown;
             mBlockState = BlockState.eIdle;
             
@@ -668,6 +695,7 @@ public partial class BlockListManager : MonoBehaviour
         }
     }
     public void ServiceBuildState(bool noSkillCast = true, bool buildSlimeBlock = false, int color = -1) {
+        Debug.Log("Build");
         TriggerRefresh();
         if (noSkillCast)
         {
@@ -699,6 +727,8 @@ public partial class BlockListManager : MonoBehaviour
         }
         RefreshBlockHeight();
     }
-    public void ServiceEndState() {
+    public void ServiceEndState()
+    {
     }
+    
 }

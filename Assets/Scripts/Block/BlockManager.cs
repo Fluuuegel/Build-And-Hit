@@ -270,7 +270,7 @@ public partial class BlockManager
         }
 
         targetBlock1 = GetBlockAt(startDeleteIndex - 1);
-        Debug.Log("targetBlock1: " + (startDeleteIndex - 1));
+//        Debug.Log("targetBlock1: " + (startDeleteIndex - 1));
         targetBlock2 = GetBlockAt(startDeleteIndex);
         setComboLowerBound(startDeleteIndex -1);
     }
