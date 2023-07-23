@@ -18,7 +18,7 @@ public partial class BlockListManager
         private const float mLowestWeight = 1;
         //after generate one block of certain color, decrease its weight by this value
         //and add other 2 colors' weight by half this size
-        private const float mWeightLostPerGen = 8f;
+        private const float mWeightLostPerGen = 3f;
 
         private const float mWeightShrinkFactorPerGen = 2.4f;
         

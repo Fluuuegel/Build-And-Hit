@@ -5,7 +5,7 @@ namespace Player
 {
     public class PlayerAPinkBall : Player
     {
-        private int kCD = 3;
+        private int kCD = 2;
         
         private bool mCanRelease = false;
 
