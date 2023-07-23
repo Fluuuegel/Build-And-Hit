@@ -302,13 +302,17 @@ public partial class BlockListManager : MonoBehaviour
         {
             blockHeight[i] = GetPlayerBlockHeight(i);
         }
-        if (blockHeight[0] <= 3 )
+        if (blockHeight[0] <= 3 && blockHeight[1] > 3)
         {
             mBlockHeight.GetComponent<TextMeshProUGUI>().text = $"<color=red>{blockHeight[0]}</color>       :       {blockHeight[1]}";
         }
-        else if (blockHeight[1] <= 3 )
+        else if (blockHeight[1] <= 3 && blockHeight[0] > 3)
         {
             mBlockHeight.GetComponent<TextMeshProUGUI>().text = $"{blockHeight[0]}       :       <color=red>{blockHeight[1]}</color>";
+        }
+        else if (blockHeight[0] <= 3 && blockHeight[1] <= 3)
+        {
+            mBlockHeight.GetComponent<TextMeshProUGUI>().text = $"<color=red>{blockHeight[0]}</color>       :       <color=red>{blockHeight[1]}</color>";
         }
         else
         {
