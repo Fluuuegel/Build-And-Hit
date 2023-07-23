@@ -283,13 +283,18 @@ public partial class BlockListManager : MonoBehaviour
 
     private bool TriggerRefresh(bool haltAnimation = true)
     {
-        
+        mRefreshButtons[mPlayerIndex].SetActive(false);
+        if(CanRefreshTower(mPlayerIndex))
+        {
+            mRefreshButtons[mPlayerIndex].SetActive(true);
+        }
         if(Input.GetKeyDown(mRefreshKey) && CanRefreshTower(mPlayerIndex))
         {
             if(haltAnimation && mBlockAnimator != null)
                 mBlockAnimator.SetBool("IsSelected", false);
             DyeOneBlockTowerRandomly(mPlayerIndex); 
             canRefresh[mPlayerIndex] = false;
+            mRefreshButtons[mPlayerIndex].SetActive(false);
             return true;
         }
         return false;

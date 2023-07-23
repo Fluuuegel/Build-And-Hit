@@ -25,6 +25,8 @@ public partial class BlockListManager : MonoBehaviour
 
     public GameObject[] mHitButtons = new GameObject[2];
 
+    public GameObject[] mRefreshButtons = new GameObject[2];
+
     public GameObject[] mWinImages = new GameObject[2];
 
     public GameObject mBlockHeight = null;
@@ -134,7 +136,8 @@ public partial class BlockListManager : MonoBehaviour
             mGainedSkillButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/GainedSkillButton");
             mSkillCDSlider[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/SkillButton/CDBackground");
             mLastStandUI[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/LastStandUI");
-
+            mRefreshButtons[i] = GameObject.Find("Canvas/UIOfPlayer" + (i + 1) + "/Action/RefreshButton");
+            mRefreshButtons[i].SetActive(false);
             mLastStandUI[i].SetActive(false);
             mSkillButtons[i].SetActive(false);
             mGainedSkillButtons[i].SetActive(false);
