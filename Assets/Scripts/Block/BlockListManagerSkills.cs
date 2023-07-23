@@ -9,12 +9,10 @@ public partial class BlockListManager : MonoBehaviour
     {
         if (TurnNow())
         {
-            GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
             mBlockManagers[1].DestroyOneBlock(mBlockManagers[1].GetHeight() - 1);
         }
         else
         {
-            GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
             mBlockManagers[0].DestroyOneBlock(mBlockManagers[0].GetHeight() - 1);
         }
         mMusic.clip = Resources.Load<AudioClip>("music/Audio_Debuff");
@@ -51,7 +49,6 @@ public partial class BlockListManager : MonoBehaviour
         mTargetBlockIndex = 1;
         if (TurnNow())
         {
-            GameObject bullet = mBlockManagers[0].GetBlockAt(mBlockManagers[0].GetHeight() - 1);
             SkillChangeColor = mBlockManagers[0].GetBlockColorAt(mBlockManagers[0].GetHeight() - 1);
             while(isSameColor)
             {
@@ -64,7 +61,6 @@ public partial class BlockListManager : MonoBehaviour
         }
         else
         {
-            GameObject bullet = mBlockManagers[1].GetBlockAt(mBlockManagers[1].GetHeight() - 1);
             SkillChangeColor = mBlockManagers[1].GetBlockColorAt(mBlockManagers[1].GetHeight() - 1);
             while(isSameColor)
             {
