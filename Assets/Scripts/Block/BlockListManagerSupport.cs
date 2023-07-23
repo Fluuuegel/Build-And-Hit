@@ -40,6 +40,9 @@ public partial class BlockListManager : MonoBehaviour
             }
             mWinImages[0].SetActive(true);
             mWinImages[1].SetActive(false);
+            mBGM.Stop();
+            mMusic.clip = Resources.Load<AudioClip>("music/Audio_Win");
+            mMusic.Play();
             mBlockState = BlockState.eEnd;
             return true;
         }
@@ -58,6 +61,9 @@ public partial class BlockListManager : MonoBehaviour
                 }
                 mWinImages[i].SetActive(false);
                 mWinImages[1 - i].SetActive(true);
+                mMusic.Stop();
+                mMusic.clip = Resources.Load<AudioClip>("music/Audio_Win");
+                mMusic.Play();
                 mBlockState = BlockState.eEnd;
                 return true;
               }
@@ -177,7 +183,7 @@ public partial class BlockListManager : MonoBehaviour
         script.SkillCast(skillInfo);
     }
     
-    #endregion
+
     
     /*
      * @SkillInfo
@@ -195,6 +201,7 @@ public partial class BlockListManager : MonoBehaviour
         cur.GolbalBlockListManager = this;
         return cur;
     }
+    #endregion
 
     #region Camera
     public void CameraEffect(GameObject player)
@@ -230,6 +237,7 @@ public partial class BlockListManager : MonoBehaviour
     }
     #endregion
 
+    #region UI
     private void DisplayLastStandUI()
     {
         mLastStandUI[mPlayerIndex].SetActive(true);
@@ -286,4 +294,26 @@ public partial class BlockListManager : MonoBehaviour
         }
         return false;
     }
+
+    private void RefreshBlockHeight()
+    {
+        int[] blockHeight = new int[mBlockManagers.Length];
+        for (int i = 0; i < mBlockManagers.Length; i++)
+        {
+            blockHeight[i] = GetPlayerBlockHeight(i);
+        }
+        if (blockHeight[0] <= 3 )
+        {
+            mBlockHeight.GetComponent<TextMeshProUGUI>().text = $"<color=red>{blockHeight[0]}</color>       :       {blockHeight[1]}";
+        }
+        else if (blockHeight[1] <= 3 )
+        {
+            mBlockHeight.GetComponent<TextMeshProUGUI>().text = $"{blockHeight[0]}       :       <color=red>{blockHeight[1]}</color>";
+        }
+        else
+        {
+            mBlockHeight.GetComponent<TextMeshProUGUI>().text = $"{blockHeight[0]}       :       {blockHeight[1]}";
+        }
+    }
+    #endregion UI
 }
