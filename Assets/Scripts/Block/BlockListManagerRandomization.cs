@@ -31,7 +31,7 @@ public partial class BlockListManager
         private int GenRandomColour()
         {
             const float normalizeFactor = (mWeightShrinkFactorPerGen - 1f) / 2;
-            Debug.Log("Gen random color");
+//            Debug.Log("Gen random color");
             BlockColor genBlockColor = BlockColor.eInvalidColour;
             float randomFloat = Random.Range(0f, 1f);
             float weightSum = mRedWeight + mBlueWeight + mGreenWeight;

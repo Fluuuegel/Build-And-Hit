@@ -6,8 +6,8 @@ using UnityEngine;
 public partial class BlockListManager
 {
     public bool AIEnabled { get; private set; } = false;
-    private float mBuildPossibility = 0.5f;
-    private float mHitPossibility = 0.5f;
+    private float mBuildPossibility = 0.7f;
+    private float mHitPossibility = 0.4f;
     private float mSkillPossibility = 0.5f;
     private int[] mAIPlayerIndex = {1};
 
@@ -21,27 +21,59 @@ public partial class BlockListManager
     }
     private bool AITriggerBuild()
     {
-        return Random.value < mBuildPossibility;
+        /*if(IsAITurn())
+            return true;*/
+        if (!IsAITurn() || !AICanOperate() || !AIEnabled)
+        {
+            if (!IsAITurn() )
+                Debug.Log("AI Build fail! Not his turn!");
+            if (!AICanOperate())
+                Debug.Log("AI In cool down! ");
+            Debug.Log("curplayerindex: " + mPlayerIndex);
+            return false;
+        }
+        Debug.Log("Ai Build success!");
+        float build = Random.value;
+        return build < mBuildPossibility;
+        StartAITimer();
     }
 
     private bool AITriggerHit()
     {
+        if (!IsAITurn() || !AICanOperate() || ! AIEnabled)
+        {
+            if (!IsAITurn() )
+                Debug.Log("AI Hit fail! Not his turn!");
+            if (!AICanOperate())
+                Debug.Log("AI Hit In cool down!");
+            return false;
+        }
+
+        if (mBlockManagers[1].GetHeight() == 1)
+        {
+            return true;
+        }
         return Random.value < mHitPossibility;
+        StartAITimer();
     }
 
     private bool AIUseSkill()
     {
-        return Random.value < 0.5f;
+        if (!IsAITurn() || !AICanOperate())
+            return false;
+        return Random.value < 1.0f;
+        StartAITimer();
     }
     private int AIAttackTarget()
     {
-        int height = mBlockManagers[1 - mPlayerIndex].GetHeight();
+        int height = mBlockManagers[0].GetHeight();
         int vision = curPlayer.VisionRange();
+        //return Random.Range(1, vision);
         int BestHit = -1;
         int maxDestroy = 0;
         for(int i = 1; i <= vision; i++)
         {
-            if (maxDestroy < CalculateDestroyByHitThisBlock(height - i))
+            if (maxDestroy < CalculateDestroyByHitThisBlock(height - i) && CalculateDestroyByHitThisBlock(height - i) > 2)
             {
                 maxDestroy = CalculateDestroyByHitThisBlock(height - i);
                 BestHit = i;
@@ -50,20 +82,35 @@ public partial class BlockListManager
         }
         if(BestHit != -1)
         {
+            Debug.Log("AI Attack Target: " + BestHit + " Destroy: " + maxDestroy + " blocks");
+            Debug.Log("NotRandom: ");
             return BestHit;
         }
         else
         {
-            return Random.Range(0, vision);
+            BestHit = Random.Range(1, vision);
+            Debug.Log("AI Attack Target: " + -1 + " Destroy: " + maxDestroy + " blocks");
+            Debug.Log("Vision: " + vision);
+            Debug.Log("Random: ");
+            return BestHit;
         }
     }
+    private float AITimer = 0;
+    private void StartAITimer()
+    {
+        AITimer = Time.time;
+    }
 
+    private bool AICanOperate()
+    {
+        return Time.time - AITimer > 0.5f;
+    }
     private int CalculateDestroyByHitThisBlock(int index)
     {
-        int total = 1;
+        int total = 0;
         int lower = index - 1;
         List<int> destroyList = new List<int>();
-        BlockManager blockManager = mBlockManagers[1 - mPlayerIndex];
+        BlockManager blockManager = mBlockManagers[0];
         for (int i = 0; i < blockManager.GetHeight(); i++)
         {
             destroyList.Add((int)blockManager.GetBlockColorAt(i));
@@ -77,7 +124,7 @@ public partial class BlockListManager
         }
         int LowerBound = index;
         index = temp;
-        while(index < destroyList.Count - 1 && destroyList[index] == destroyList[index + 1])
+        while(index > 0 && index < destroyList.Count - 1 && destroyList[index] == destroyList[index + 1])
         {
             index++;
             total++;
