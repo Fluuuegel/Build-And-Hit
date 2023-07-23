@@ -567,7 +567,7 @@ public partial class BlockListManager : MonoBehaviour
     private void ServiceSuckState() {
 
         curPlayer.SetColor(mTargetBlock.GetComponent<BlockBehaviour>().GetBlockColour());
-
+        
         mPlayerAnimators[mPlayerIndex].SetBool("Suck", true);
 
         mTime += mSuckSpeed * Time.smoothDeltaTime;
