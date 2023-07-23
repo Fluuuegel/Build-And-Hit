@@ -58,8 +58,8 @@ public partial class BlockListManager : MonoBehaviour
     private const int kInitBlockIndex = 15;
     private const int kPlayerNum = 2;
 
-    private int maxTurn = 31;
-    private int mTurnCnt = 31;
+    private int maxTurn = 21;
+    private int mTurnCnt = 21;
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
     private bool mIsHitState = false;
