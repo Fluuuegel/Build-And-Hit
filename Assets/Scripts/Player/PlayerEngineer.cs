@@ -4,8 +4,9 @@ using UnityEngine;
 namespace Player
 {   
     public class PlayerEngineer : Player
+    
     {
-        private const int kCD = 4;
+        private const int kCD = 5;
         public override int GetMaxCD()
         {
             return kCD;
@@ -23,5 +24,10 @@ namespace Player
                 mTimeUntilNextSkill = kCD;
             }
         }
+        public  override  int VisionRange()
+        {
+            return 4;
+        }
     }
+    
 }

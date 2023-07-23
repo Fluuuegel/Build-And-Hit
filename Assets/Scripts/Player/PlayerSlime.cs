@@ -12,7 +12,7 @@ namespace Player
         }
         public override int VisionRange()
         {
-            return 4;
+            return 5;
         }
         public override void SkillCast(SkillInfo skillInfo)
         {

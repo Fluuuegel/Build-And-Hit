@@ -55,7 +55,7 @@ public partial class BlockListManager : MonoBehaviour
     private BlockColor mBlockColor = BlockColor.eRed;
 
     // Constants
-    private const int kInitBlockIndex = 12;
+    private const int kInitBlockIndex = 15;
     private const int kPlayerNum = 2;
 
     private int maxTurn = 21;

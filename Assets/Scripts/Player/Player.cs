@@ -34,7 +34,7 @@ namespace Player
 
         public virtual int VisionRange()
         {
-            return 4;
+            return 5;
         }
 
         public virtual void ExtendedRefreshRound()
