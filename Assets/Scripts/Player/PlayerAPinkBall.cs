@@ -14,9 +14,13 @@ namespace Player
         {
             return kCD;
         }
-        public override void GetColor(BlockBehaviour.BlockColourType color)
+        public override void SetColor(BlockBehaviour.BlockColourType color)
         {
             mColour = color;
+        }
+        public override void Recover()
+        {
+            mCanRelease = false;
         }
         public override void SkillCast(SkillInfo skillInfo)
         {
@@ -39,8 +43,6 @@ namespace Player
                     Debug.Log("Suck");
                     mAnimator.SetBool("Released", false);
                     mCanRelease = true;
-                    // mAnimator.SetBool("Suck", true);
-                    // mAnimator.SetBool("Released", false);
                     mTimeUntilNextSkill = 0;
                 }
             }

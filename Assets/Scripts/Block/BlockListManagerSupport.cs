@@ -182,9 +182,7 @@ public partial class BlockListManager : MonoBehaviour
         SkillInfo skillInfo = WriteCurrentSkillInfo();
         script.SkillCast(skillInfo);
     }
-    
-
-    
+        
     /*
      * @SkillInfo
      * write all information needed for casting a skill
@@ -251,7 +249,7 @@ public partial class BlockListManager : MonoBehaviour
         }
     }
 
-    private void ModifyCDValue()
+    private void ModifyCDUI()
     {
         PlayerBehaviour playerBehaviour = mPlayers[mPlayerIndex].GetComponent<PlayerBehaviour>();
         Player.Player curPlayer = playerBehaviour.GetPlayer();
