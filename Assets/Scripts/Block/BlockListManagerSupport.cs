@@ -218,11 +218,13 @@ public partial class BlockListManager : MonoBehaviour
     public void CameraEnd(GameObject playerWin, GameObject playerLose)
     {
         Debug.Log("CameraEnd!");
-        if(mCameraControll != null)
-        {
+        
+        if (mCameraControll != null)
+        { 
+            PlayerManager.mTargetGroup.m_Targets = new CinemachineTargetGroup.Target[0];
             Debug.Log($"focus on {playerWin.name}");
-            mCameraControll.ModifyTarget(playerLose.name, 3f, 5f);
-            mCameraControll.ModifyTarget(playerWin.name, 40f, 0.1f);
+            PlayerManager.mTargetGroup.AddMember(playerWin.transform, 40f, 0.5f);
+            PlayerManager.mTargetGroup.AddMember(playerLose.transform, 10f, 0.5f);
         }
     }
 
@@ -281,13 +283,18 @@ public partial class BlockListManager : MonoBehaviour
 
     private bool TriggerRefresh(bool haltAnimation = true)
     {
-        
+        mRefreshButtons[mPlayerIndex].SetActive(false);
+        if(CanRefreshTower(mPlayerIndex))
+        {
+            mRefreshButtons[mPlayerIndex].SetActive(true);
+        }
         if(Input.GetKeyDown(mRefreshKey) && CanRefreshTower(mPlayerIndex))
         {
             if(haltAnimation && mBlockAnimator != null)
                 mBlockAnimator.SetBool("IsSelected", false);
             DyeOneBlockTowerRandomly(mPlayerIndex); 
             canRefresh[mPlayerIndex] = false;
+            mRefreshButtons[mPlayerIndex].SetActive(false);
             return true;
         }
         return false;
