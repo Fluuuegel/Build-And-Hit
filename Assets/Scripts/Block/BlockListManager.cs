@@ -476,15 +476,20 @@ public partial class BlockListManager : MonoBehaviour
 
                     // TODO: Fix this
                 } else if (type == Player.PlayerType.eAPinkBall) {
-                    mTargetBlockIndex = 1;
-                    // Initialize block blink
-                    mTargetBlock = mBlockManagers[1 - mPlayerIndex]
-                        .GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
-                    mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
-                    mBlockAnimator = mTargetBlock.GetComponent<Animator>();
-                    mBlockAnimator.SetBool("IsSelected", true);
+                    if (mKirbyIsHungry[mPlayerIndex]) {
+                        mTargetBlockIndex = 1;
+                        // Initialize block blink
+                        mTargetBlock = mBlockManagers[1 - mPlayerIndex]
+                            .GetBlockAt(mBlockManagers[1 - mPlayerIndex].GetHeight() - mTargetBlockIndex);
+                        mCameraControll.ModifyTarget(mTargetBlock, 20f, 7f);
+                        mBlockAnimator = mTargetBlock.GetComponent<Animator>();
+                        mBlockAnimator.SetBool("IsSelected", true);
 
-                    mBlockState = BlockState.eSelectSuck;
+                        mBlockState = BlockState.eSelectSuck;
+                    } else {
+                        mKirbyIsHungry[mPlayerIndex] = true;
+                        mBlockState = BlockState.eWait;
+                    }
                 }
             }
         }

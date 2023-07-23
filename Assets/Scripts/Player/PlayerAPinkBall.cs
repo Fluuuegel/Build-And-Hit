@@ -37,6 +37,7 @@ namespace Player
                 {
                     // TODO: Suck
                     Debug.Log("Suck");
+                    mAnimator.SetBool("Released", false);
                     mCanRelease = true;
                     // mAnimator.SetBool("Suck", true);
                     // mAnimator.SetBool("Released", false);
