@@ -563,6 +563,7 @@ public partial class BlockListManager : MonoBehaviour
             return ;
         }
 
+        
         // You can retract the selection
         if (Input.GetKeyDown(mBuildKeyCode)) {
             curPlayer.Recover();
@@ -570,6 +571,7 @@ public partial class BlockListManager : MonoBehaviour
             mPlayerAnimators[mPlayerIndex].SetBool("Suck", false);
             mBlockState = BlockState.eBuild;
         }
+        
 
         //Use Gained Skills
         if (Input.GetKeyDown(mSkill2KeyCode) && (hasGainedSkill == true))
@@ -586,6 +588,18 @@ public partial class BlockListManager : MonoBehaviour
             mBlockAnimator.SetBool("IsSelected", false);
             // TODO: Suck opponent's block
             mBlockState = BlockState.eInitSuck;
+        }
+        if (AIUseSkill())
+        {
+            mBlockAnimator.SetBool("IsSelected", false);
+            int AITarget = AIAttackTarget();
+            mTargetBlockIndex =  AITarget;
+            //mTargetBlock = mBlockManagers[0].GetBlockAt(mTargetBlockIndex);
+            Debug.Log("In select state AI target block: " + mTargetBlockIndex);
+            mCameraControll.CameraFocusOnBlock(mTargetBlock);
+            mIsHitState = true;
+            mBlockState = BlockState.eBuild;
+            return ;
         }
     }
 
