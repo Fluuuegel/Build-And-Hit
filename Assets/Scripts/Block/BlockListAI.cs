@@ -8,7 +8,7 @@ public partial class BlockListManager
     public bool AIEnabled { get; private set; } = false;
     private float mBuildPossibility = 0.5f;
     private float mHitPossibility = 1f;
-    private float mSkillPossibility = 0.5f;
+    // private float mSkillPossibility = 0.5f;
     private int[] mAIPlayerIndex = {1};
     private float mAISkillPossibility = 0.5f;
 
