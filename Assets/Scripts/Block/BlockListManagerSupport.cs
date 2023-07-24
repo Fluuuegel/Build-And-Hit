@@ -164,7 +164,7 @@ public partial class BlockListManager : MonoBehaviour
 
     private bool TriggerSkill()
     {
-        if (Input.GetKeyDown(mSkill1KeyCode) && (hasCharacterSkill))
+        if ((Input.GetKeyDown(mSkill1KeyCode)|| AIUseSkill()) && curPlayer.CanCastSkill())
         {
             GainedSkillHintText.text = null;
             CastUniqueSkill(mPlayers[mPlayerIndex]);

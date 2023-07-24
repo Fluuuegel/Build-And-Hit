@@ -10,7 +10,7 @@ public partial class BlockListManager
     private float mHitPossibility = 1f;
     // private float mSkillPossibility = 0.5f;
     private int[] mAIPlayerIndex = {1};
-    private float mAISkillPossibility = 0.5f;
+    private float mAISkillPossibility = 1f;
 
     public bool ActiveAI()
     {
@@ -69,6 +69,7 @@ public partial class BlockListManager
             return false;
         if (!IsAITurn() || !AICanOperate() || !AIEnabled)
             return false;
+        Debug.Log("Ai Skill success!");
         return Random.value < mAISkillPossibility;
         
     }

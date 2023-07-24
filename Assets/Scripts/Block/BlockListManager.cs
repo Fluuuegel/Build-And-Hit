@@ -55,11 +55,11 @@ public partial class BlockListManager : MonoBehaviour
     private BlockColor mBlockColor = BlockColor.eRed;
 
     // Constants
-    private const int kInitBlockIndex = 12;
+    private const int kInitBlockIndex = 15;
     private const int kPlayerNum = 2;
 
-    private int maxTurn = 31;
-    private int mTurnCnt = 31;
+    private int maxTurn = 21;
+    private int mTurnCnt = 21;
     private int mTargetBlockIndex = 0;
     private int mPlayerIndex = 0;
     private bool mIsHitState = false;
@@ -194,7 +194,7 @@ public partial class BlockListManager : MonoBehaviour
         UpdateFSM();
     }
     private void UpdateFSM() {
-        Debug.Log(mBlockState);
+        //Debug.Log(mBlockState);
         switch (mBlockState)
         {
             case BlockState.eIdle:
@@ -585,6 +585,7 @@ public partial class BlockListManager : MonoBehaviour
             return ;
         }
 
+        
         // You can retract the selection
         if (Input.GetKeyDown(mBuildKeyCode)) {
             curPlayer.Recover();
@@ -592,6 +593,7 @@ public partial class BlockListManager : MonoBehaviour
             mPlayerAnimators[mPlayerIndex].SetBool("Suck", false);
             mBlockState = BlockState.eBuild;
         }
+        
 
         //Use Gained Skills
         if (Input.GetKeyDown(mSkill2KeyCode) && (hasGainedSkill == true))
@@ -608,6 +610,18 @@ public partial class BlockListManager : MonoBehaviour
             mBlockAnimator.SetBool("IsSelected", false);
             // TODO: Suck opponent's block
             mBlockState = BlockState.eInitSuck;
+        }
+        if (AIUseSkill())
+        {
+            mBlockAnimator.SetBool("IsSelected", false);
+            int AITarget = AIAttackTarget();
+            mTargetBlockIndex =  AITarget;
+            //mTargetBlock = mBlockManagers[0].GetBlockAt(mTargetBlockIndex);
+            Debug.Log("In select state AI target block: " + mTargetBlockIndex);
+            mCameraControll.CameraFocusOnBlock(mTargetBlock);
+            mIsHitState = true;
+            mBlockState = BlockState.eBuild;
+            return ;
         }
     }
 

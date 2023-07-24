@@ -20,7 +20,7 @@ public partial class BlockListManager
         //and add other 2 colors' weight by half this size
         private const float mWeightLostPerGen = 3f;
 
-        private const float mWeightShrinkFactorPerGen = 4.7f;
+        private const float mWeightShrinkFactorPerGen = 3.2f;
         
         /*
          * @GenRanDomColour

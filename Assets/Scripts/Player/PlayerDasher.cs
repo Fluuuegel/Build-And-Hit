@@ -6,7 +6,7 @@ namespace Player
     public class PlayerDasher : Player
     {
         private bool GodVision;
-        private const int kCD = 4;
+        private const int kCD = 3;
         public override int GetMaxCD()
         {
             return kCD;
@@ -28,9 +28,9 @@ namespace Player
         public override int VisionRange()
         {
             if (GodVision) {
-                return 8;
+                return 50;
             }
-            return 4;
+            return 5;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Player
 
         public virtual int VisionRange()
         {
-            return 4;
+            return 5;
         }
 
         public virtual void ExtendedRefreshRound()
@@ -114,8 +114,6 @@ namespace Player
                 default:
                     throw new System.Exception("Player type not found");
             }
-            // all skills are in cooldown when game starts
-            // player.mTimeUntilNextSkill = player.GetMaxCD();
             return player;
         }
     }
